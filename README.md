@@ -2,8 +2,8 @@
 
 > Explore sacred texts from the world's major religions in one beautiful interface.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge)](https://holibooks.vercel.app)
-[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?style=for-the-badge)](https://ai-dev-2024.github.io/HoliBooks)
+[![Live Demo](https://img.shields.io/badge/🌐_Live-holibooks.vercel.app-brightgreen?style=for-the-badge)](https://holibooks.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-ai--dev--2024/HoliBooks-blue?style=for-the-badge&logo=github)](https://github.com/ai-dev-2024/HoliBooks)
 
 ![HoliBooks Screenshot](./screenshots/hero.png)
 
