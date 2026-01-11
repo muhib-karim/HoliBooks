@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhagavad Gita - HoliBooks</title>
+    <meta name="description"
+        content="Read the Bhagavad Gita with Sanskrit, Hindi, and English translations. Explore all 18 chapters of divine wisdom.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="gita.css">
+</head>
+
+<body>
+    <header class="nav-header">
+        <div class="container nav-content">
+            <a href="../../index.html" class="nav-logo">📖 HoliBooks</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../../index.html" class="nav-link">Home</a></li>
+                    <li><a href="../islam/quran.html" class="nav-link">Quran</a></li>
+                    <li><a href="../christianity/bible.html" class="nav-link">Bible</a></li>
+                    <li><a href="#" class="nav-link active">Gita</a></li>
+                    <li><a href="../judaism/torah.html" class="nav-link">Torah</a></li>
+                    <li><a href="../sikhism/gurbani.html" class="nav-link">Gurbani</a></li>
+                    <li><a href="../buddhism/tripitaka.html" class="nav-link">Dhammapada</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="btn btn-icon btn-secondary" id="theme-toggle" title="Toggle Theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container container-sm">
+        <section class="gita-header">
+            <h1 class="gita-title">🕉️ श्रीमद्भगवद्गीता</h1>
+            <p class="gita-subtitle">Shrimad Bhagavad Gita</p>
+        </section>
+
+        <section class="gita-nav">
+            <div class="chapter-selector">
+                <label for="chapter-select">Select Chapter:</label>
+                <div class="select-wrapper">
+                    <select id="chapter-select" class="select"></select>
+                </div>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prev-chapter" disabled>← Previous</button>
+                <button class="btn btn-secondary" id="next-chapter">Next →</button>
+            </div>
+        </section>
+
+        <section class="chapter-info">
+            <div class="chapter-info-card">
+                <h2 class="chapter-sanskrit" id="chapter-sanskrit">Loading...</h2>
+                <h3 class="chapter-english" id="chapter-english"></h3>
+                <div class="chapter-details">
+                    <span class="badge" id="verse-count"></span>
+                </div>
+            </div>
+        </section>
+
+        <main class="verses-container" id="verses-container">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading verses...</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="landing-footer"
+            style="text-align: center; padding: var(--space-2xl); border-top: 1px solid var(--border-color); margin-top: var(--space-3xl);">
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Made with ❤️ for spiritual seekers</p>
+            <a href="https://ko-fi.com/ai_dev_2024" target="_blank" rel="noopener noreferrer" class="btn btn-primary"
+                style="margin-top: var(--space-md);">
+                ☕ Support this project
+            </a>
+        </footer>
+    </div>
+
+    <script src="../../js/utils.js"></script>
+    <script src="gita.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guru Granth Sahib - HoliBooks</title>
+    <meta name="description"
+        content="Read the Guru Granth Sahib with Gurmukhi text, Punjabi translations, and English translations.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Gurmukhi:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="gurbani.css">
+</head>
+
+<body>
+    <header class="nav-header">
+        <div class="container nav-content">
+            <a href="../../index.html" class="nav-logo">📖 HoliBooks</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../../index.html" class="nav-link">Home</a></li>
+                    <li><a href="../islam/quran.html" class="nav-link">Quran</a></li>
+                    <li><a href="../christianity/bible.html" class="nav-link">Bible</a></li>
+                    <li><a href="../hinduism/gita.html" class="nav-link">Gita</a></li>
+                    <li><a href="../judaism/torah.html" class="nav-link">Torah</a></li>
+                    <li><a href="#" class="nav-link active">Gurbani</a></li>
+                    <li><a href="../buddhism/tripitaka.html" class="nav-link">Dhammapada</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="btn btn-icon btn-secondary" id="theme-toggle" title="Toggle Theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container container-sm">
+        <section class="gurbani-header">
+            <h1 class="gurbani-title">🪯 ਸ੍ਰੀ ਗੁਰੂ ਗ੍ਰੰਥ ਸਾਹਿਬ</h1>
+            <p class="gurbani-subtitle">Sri Guru Granth Sahib Ji</p>
+        </section>
+
+        <section class="gurbani-nav">
+            <div class="ang-selector">
+                <label for="ang-input">Go to Ang (Page):</label>
+                <input type="number" id="ang-input" class="select" min="1" max="1430" value="1" style="width: 100px;">
+                <button class="btn btn-primary" id="go-ang">Go</button>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prev-ang">← Previous</button>
+                <button class="btn btn-secondary" id="next-ang">Next →</button>
+            </div>
+        </section>
+
+        <section class="ang-info">
+            <div class="ang-info-card">
+                <h2 class="ang-title" id="ang-title">ਅੰਗ 1</h2>
+                <p class="ang-subtitle">Ang (Page) 1 of 1430</p>
+            </div>
+        </section>
+
+        <main class="verses-container" id="verses-container">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading Gurbani...</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="landing-footer"
+            style="text-align: center; padding: var(--space-2xl); border-top: 1px solid var(--border-color); margin-top: var(--space-3xl);">
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Made with ❤️ for spiritual seekers</p>
+            <a href="https://ko-fi.com/ai_dev_2024" target="_blank" rel="noopener noreferrer" class="btn btn-primary"
+                style="margin-top: var(--space-md);">
+                ☕ Support this project
+            </a>
+        </footer>
+    </div>
+
+    <script src="../../js/utils.js"></script>
+    <script src="gurbani.js"></script>
+</body>
+
+</html>

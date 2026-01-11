@@ -1,0 +1,157 @@
+/* Dhammapada/Buddhism specific styles */
+
+.dhamma-header {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    position: relative;
+}
+
+.dhamma-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--buddhism-primary), transparent);
+}
+
+.dhamma-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--buddhism-primary);
+    text-shadow: 0 0 30px rgba(155, 89, 182, 0.3);
+    margin-bottom: var(--space-sm);
+}
+
+.dhamma-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+.dhamma-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    margin: var(--space-xl) 0;
+}
+
+.chapter-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex: 1;
+}
+
+.chapter-selector label {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.chapter-info-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    text-align: center;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
+}
+
+.chapter-info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--buddhism-secondary), var(--buddhism-primary), var(--buddhism-secondary));
+}
+
+.chapter-pali {
+    font-family: var(--font-pali);
+    font-size: 1.8rem;
+    font-style: italic;
+    color: var(--buddhism-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.chapter-english {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+.chapter-details .badge {
+    background: rgba(155, 89, 182, 0.15);
+    color: var(--buddhism-primary);
+}
+
+/* Verse styling */
+.gatha-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-lg);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-normal);
+}
+
+.gatha-card:hover {
+    border-color: rgba(155, 89, 182, 0.4);
+}
+
+.gatha-number {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--buddhism-primary), var(--buddhism-secondary));
+    color: white;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: var(--space-md);
+}
+
+.gatha-pali {
+    font-family: var(--font-pali);
+    font-style: italic;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--buddhism-primary);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid rgba(155, 89, 182, 0.2);
+}
+
+.gatha-translation {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.verse-card .verse-number {
+    background: linear-gradient(135deg, var(--buddhism-primary), var(--buddhism-secondary));
+}
+
+@media (max-width: 768px) {
+    .dhamma-title {
+        font-size: 2rem;
+    }
+
+    .dhamma-nav {
+        flex-direction: column;
+    }
+
+    .chapter-selector {
+        width: 100%;
+    }
+}

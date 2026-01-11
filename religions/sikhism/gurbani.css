@@ -1,0 +1,149 @@
+/* Gurbani specific styles */
+
+.gurbani-header {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    position: relative;
+}
+
+.gurbani-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--sikhism-primary), transparent);
+}
+
+.gurbani-title {
+    font-family: var(--font-gurmukhi);
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--sikhism-primary);
+    text-shadow: 0 0 30px rgba(243, 156, 18, 0.3);
+    margin-bottom: var(--space-sm);
+}
+
+.gurbani-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+.gurbani-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    margin: var(--space-xl) 0;
+}
+
+.ang-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.ang-selector label {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.ang-selector .btn-primary {
+    background: linear-gradient(135deg, var(--sikhism-primary), var(--sikhism-secondary));
+}
+
+.ang-info-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    text-align: center;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
+}
+
+.ang-info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--sikhism-secondary), var(--sikhism-primary), var(--sikhism-secondary));
+}
+
+.ang-title {
+    font-family: var(--font-gurmukhi);
+    font-size: 2rem;
+    color: var(--sikhism-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.ang-subtitle {
+    color: var(--text-secondary);
+}
+
+/* Shabad styling */
+.shabad-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-lg);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-normal);
+}
+
+.shabad-card:hover {
+    border-color: rgba(243, 156, 18, 0.4);
+}
+
+.shabad-gurmukhi {
+    font-family: var(--font-gurmukhi);
+    font-size: 1.6rem;
+    line-height: 2;
+    color: var(--sikhism-primary);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid rgba(243, 156, 18, 0.2);
+}
+
+.shabad-transliteration {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+    font-size: 0.95rem;
+}
+
+.shabad-translation {
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+.verse-card .verse-number {
+    background: linear-gradient(135deg, var(--sikhism-primary), var(--sikhism-secondary));
+}
+
+@media (max-width: 768px) {
+    .gurbani-title {
+        font-size: 1.8rem;
+    }
+
+    .gurbani-nav {
+        flex-direction: column;
+    }
+
+    .ang-selector {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

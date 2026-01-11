@@ -1,0 +1,160 @@
+/* Bhagavad Gita specific styles */
+
+.gita-header {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    position: relative;
+}
+
+.gita-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--hinduism-primary), transparent);
+}
+
+.gita-title {
+    font-family: var(--font-devanagari);
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--hinduism-primary);
+    text-shadow: 0 0 30px rgba(230, 126, 34, 0.3);
+    margin-bottom: var(--space-sm);
+}
+
+.gita-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.gita-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    margin: var(--space-xl) 0;
+}
+
+.chapter-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex: 1;
+}
+
+.chapter-selector label {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.chapter-info-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    text-align: center;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
+}
+
+.chapter-info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--hinduism-secondary), var(--hinduism-primary), var(--hinduism-secondary));
+}
+
+.chapter-sanskrit {
+    font-family: var(--font-devanagari);
+    font-size: 2rem;
+    color: var(--hinduism-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.chapter-english {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+.chapter-details .badge {
+    background: rgba(230, 126, 34, 0.15);
+    color: var(--hinduism-primary);
+}
+
+/* Shloka styling */
+.shloka-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-lg);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-normal);
+}
+
+.shloka-card:hover {
+    border-color: rgba(230, 126, 34, 0.4);
+}
+
+.shloka-number {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--hinduism-primary), var(--hinduism-secondary));
+    color: white;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: var(--space-md);
+}
+
+.shloka-sanskrit {
+    font-family: var(--font-devanagari);
+    font-size: 1.5rem;
+    line-height: 2;
+    color: var(--hinduism-primary);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid rgba(230, 126, 34, 0.2);
+}
+
+.shloka-transliteration {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: var(--space-md);
+    font-size: 0.95rem;
+}
+
+.shloka-translation {
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+    .gita-title {
+        font-size: 2rem;
+    }
+
+    .gita-nav {
+        flex-direction: column;
+    }
+
+    .chapter-selector {
+        width: 100%;
+    }
+}

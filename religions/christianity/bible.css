@@ -1,0 +1,186 @@
+/* Bible-specific styles */
+
+/* Header */
+.bible-header {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    position: relative;
+}
+
+.bible-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--christianity-primary), transparent);
+}
+
+.bible-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--christianity-primary);
+    text-shadow: 0 0 30px rgba(107, 127, 212, 0.3);
+    margin-bottom: var(--space-sm);
+}
+
+.bible-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+/* Navigation */
+.bible-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    margin: var(--space-xl) 0;
+}
+
+.book-selector,
+.chapter-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.book-selector {
+    flex: 2;
+    min-width: 200px;
+}
+
+.chapter-selector {
+    flex: 1;
+    min-width: 100px;
+}
+
+.book-selector label,
+.chapter-selector label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.book-selector .select-wrapper,
+.chapter-selector .select-wrapper {
+    flex: 1;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+/* Chapter Info Card */
+.chapter-info-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    text-align: center;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
+}
+
+.chapter-info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--christianity-secondary), var(--christianity-primary), var(--christianity-secondary));
+}
+
+.chapter-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: var(--space-md);
+}
+
+.chapter-details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.chapter-details .badge {
+    background: rgba(107, 127, 212, 0.15);
+    color: var(--christianity-primary);
+}
+
+/* Verse Cards - Bible style */
+.bible-verses {
+    line-height: 2;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.bible-verse {
+    display: inline;
+}
+
+.bible-verse-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--christianity-primary);
+    vertical-align: super;
+    margin-right: 2px;
+}
+
+.bible-verse-text {
+    display: inline;
+}
+
+/* Individual verse card style (alternative) */
+.verse-card {
+    border-color: rgba(107, 127, 212, 0.2);
+}
+
+.verse-card:hover {
+    border-color: rgba(107, 127, 212, 0.4);
+}
+
+.verse-card .verse-number {
+    background: linear-gradient(135deg, var(--christianity-primary), var(--christianity-secondary));
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .bible-title {
+        font-size: 2rem;
+    }
+
+    .bible-nav {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .book-selector,
+    .chapter-selector {
+        width: 100%;
+    }
+
+    .nav-buttons {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .bible-title {
+        font-size: 1.8rem;
+    }
+}

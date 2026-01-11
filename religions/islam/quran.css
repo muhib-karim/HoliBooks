@@ -1,0 +1,259 @@
+/* Quran-specific styles */
+
+/* Header */
+.quran-header {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    position: relative;
+}
+
+.quran-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--islam-primary), transparent);
+}
+
+.quran-title {
+    font-family: var(--font-arabic);
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--islam-primary);
+    text-shadow: 0 0 30px rgba(27, 138, 90, 0.3);
+    letter-spacing: 2px;
+    margin-bottom: var(--space-sm);
+}
+
+.quran-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+/* Navigation */
+.quran-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    margin: var(--space-xl) 0;
+}
+
+.surah-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex: 1;
+    min-width: 280px;
+}
+
+.surah-selector label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.surah-selector .select-wrapper {
+    flex: 1;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+/* Surah Info Card */
+.surah-info-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-2xl);
+    text-align: center;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
+}
+
+.surah-info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--islam-secondary), var(--islam-primary), var(--islam-secondary));
+}
+
+.surah-arabic-name {
+    font-family: var(--font-arabic);
+    font-size: 2.8rem;
+    color: var(--text-arabic);
+    margin-bottom: var(--space-md);
+    text-shadow: 0 0 20px rgba(232, 213, 181, 0.2);
+}
+
+.surah-details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-lg);
+}
+
+.surah-details .badge {
+    background: rgba(27, 138, 90, 0.15);
+    color: var(--islam-primary);
+}
+
+.surah-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+}
+
+.surah-actions .btn-primary {
+    background: linear-gradient(135deg, var(--islam-primary), var(--islam-secondary));
+}
+
+.surah-actions .btn-primary:hover {
+    box-shadow: 0 8px 25px rgba(27, 138, 90, 0.4);
+}
+
+/* Bismillah Banner */
+.bismillah-banner {
+    text-align: center;
+    font-family: var(--font-arabic);
+    font-size: 2.2rem;
+    color: var(--islam-primary);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-lg);
+    background: linear-gradient(135deg, rgba(27, 138, 90, 0.08), rgba(13, 92, 60, 0.08));
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(27, 138, 90, 0.2);
+}
+
+/* Verse Cards */
+.verse-card {
+    position: relative;
+}
+
+.verse-card:hover {
+    border-color: rgba(27, 138, 90, 0.4);
+}
+
+.verse-number {
+    background: linear-gradient(135deg, var(--islam-primary), var(--islam-secondary));
+}
+
+.arabic-text {
+    font-family: var(--font-arabic);
+    font-size: 2rem;
+    color: var(--text-arabic);
+    text-align: right;
+    direction: rtl;
+    line-height: 2.2;
+    margin-bottom: var(--space-lg);
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid rgba(27, 138, 90, 0.1);
+}
+
+.translation-text {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-weight: 300;
+}
+
+.verse-audio {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.verse-card:hover .verse-audio {
+    opacity: 1;
+}
+
+.verse-audio .btn {
+    background: rgba(27, 138, 90, 0.2);
+    color: var(--islam-primary);
+}
+
+.verse-audio .btn:hover {
+    background: var(--islam-primary);
+    color: var(--bg-primary);
+}
+
+/* Playing state */
+.verse-card.playing {
+    background: rgba(27, 138, 90, 0.08);
+    border-color: var(--islam-primary);
+}
+
+.verse-card.playing .verse-number {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .quran-title {
+        font-size: 2.5rem;
+    }
+
+    .quran-nav {
+        flex-direction: column;
+        padding: var(--space-lg);
+    }
+
+    .surah-selector {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .nav-buttons .btn {
+        flex: 1;
+    }
+
+    .surah-arabic-name {
+        font-size: 2.2rem;
+    }
+
+    .arabic-text {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .quran-title {
+        font-size: 2rem;
+    }
+
+    .arabic-text {
+        font-size: 1.4rem;
+    }
+
+    .bismillah-banner {
+        font-size: 1.6rem;
+        padding: var(--space-lg);
+    }
+}

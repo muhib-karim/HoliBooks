@@ -1,0 +1,130 @@
+/* Torah specific styles */
+
+.torah-header {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    position: relative;
+}
+
+.torah-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--judaism-primary), transparent);
+}
+
+.torah-title {
+    font-family: var(--font-hebrew);
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--judaism-primary);
+    text-shadow: 0 0 30px rgba(52, 152, 219, 0.3);
+    margin-bottom: var(--space-sm);
+}
+
+.torah-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+.torah-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    margin: var(--space-xl) 0;
+}
+
+.book-selector,
+.chapter-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.book-selector {
+    flex: 2;
+}
+
+.chapter-selector {
+    flex: 1;
+}
+
+.chapter-info-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    text-align: center;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
+}
+
+.chapter-info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--judaism-secondary), var(--judaism-primary), var(--judaism-secondary));
+}
+
+.chapter-title {
+    font-size: 1.8rem;
+    margin-bottom: var(--space-md);
+}
+
+.chapter-details .badge {
+    background: rgba(52, 152, 219, 0.15);
+    color: var(--judaism-primary);
+}
+
+.hebrew-text {
+    font-family: var(--font-hebrew);
+    direction: rtl;
+    text-align: right;
+    font-size: 1.6rem;
+    line-height: 2;
+    color: var(--judaism-primary);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.verse-card {
+    border-color: rgba(52, 152, 219, 0.2);
+}
+
+.verse-card:hover {
+    border-color: rgba(52, 152, 219, 0.4);
+}
+
+.verse-card .verse-number {
+    background: linear-gradient(135deg, var(--judaism-primary), var(--judaism-secondary));
+}
+
+@media (max-width: 768px) {
+    .torah-title {
+        font-size: 2.2rem;
+    }
+
+    .torah-nav {
+        flex-direction: column;
+    }
+
+    .book-selector,
+    .chapter-selector {
+        width: 100%;
+    }
+}

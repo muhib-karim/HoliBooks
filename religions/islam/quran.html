@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Holy Quran - HoliBooks</title>
+    <meta name="description"
+        content="Read the Holy Quran with Arabic text and translations in 90+ languages. Listen to audio recitations by Mishary Alafasy.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="quran.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <header class="nav-header">
+        <div class="container nav-content">
+            <a href="../../index.html" class="nav-logo">📖 HoliBooks</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../../index.html" class="nav-link">Home</a></li>
+                    <li><a href="#" class="nav-link active">Quran</a></li>
+                    <li><a href="../christianity/bible.html" class="nav-link">Bible</a></li>
+                    <li><a href="../hinduism/gita.html" class="nav-link">Gita</a></li>
+                    <li><a href="../judaism/torah.html" class="nav-link">Torah</a></li>
+                    <li><a href="../sikhism/gurbani.html" class="nav-link">Gurbani</a></li>
+                    <li><a href="../buddhism/tripitaka.html" class="nav-link">Dhammapada</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="btn btn-secondary" id="language-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2.01h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
+                    </svg>
+                    <span id="current-language">English</span>
+                </button>
+                <button class="btn btn-icon btn-secondary" id="theme-toggle" title="Toggle Theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container container-sm">
+        <!-- Header -->
+        <section class="quran-header">
+            <h1 class="quran-title">القرآن الكريم</h1>
+            <p class="quran-subtitle">The Holy Quran</p>
+        </section>
+
+        <!-- Navigation Controls -->
+        <section class="quran-nav">
+            <div class="surah-selector">
+                <label for="surah-select">Select Surah:</label>
+                <div class="select-wrapper">
+                    <select id="surah-select" class="select">
+                        <option value="">Loading...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prev-surah" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                    </svg>
+                    Previous
+                </button>
+                <button class="btn btn-secondary" id="next-surah" disabled>
+                    Next
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Surah Info -->
+        <section class="surah-info" id="surah-info">
+            <div class="surah-info-card">
+                <h2 class="surah-arabic-name" id="surah-name">Loading...</h2>
+                <div class="surah-details">
+                    <span class="badge" id="surah-transliteration"></span>
+                    <span class="badge" id="surah-translation"></span>
+                    <span class="badge" id="surah-verses"></span>
+                    <span class="badge" id="surah-type"></span>
+                </div>
+                <div class="surah-actions">
+                    <button class="btn btn-primary" id="play-surah">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                        Play Surah
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Verses Container -->
+        <main class="verses-container" id="verses-container">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading verses...</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="landing-footer"
+            style="text-align: center; padding: var(--space-2xl); border-top: 1px solid var(--border-color); margin-top: var(--space-3xl);">
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Made with ❤️ for spiritual seekers</p>
+            <a href="https://ko-fi.com/ai_dev_2024" target="_blank" rel="noopener noreferrer" class="btn btn-primary"
+                style="margin-top: var(--space-md);">
+                ☕ Support this project
+            </a>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/audio-player.js"></script>
+    <script src="../../js/language-selector.js"></script>
+    <script src="quran.js"></script>
+</body>
+
+</html>
