@@ -59,10 +59,14 @@ async function loadChapter() {
     try {
         const book = TORAH_BOOKS.find(b => b.id === currentBook);
         const url = `${API_BASE}/${currentBook}/chapters/${currentChapter}.json`;
-        const data = await HoliBooks.fetchWithRetry(url, {}, 2);
+        const response = await HoliBooks.fetchWithRetry(url, {}, 2);
+
+        // API returns {data: [...]} not {verses: [...]}
+        const verses = response.data || response.verses || [];
+        const data = { verses: verses };
 
         chapterTitle.textContent = `${book.hebrew} - ${book.name} Chapter ${currentChapter}`;
-        verseCount.textContent = `${data.verses?.length || 0} Verses`;
+        verseCount.textContent = `${verses.length} Verses`;
 
         renderVerses(data);
         updateNavigation();
@@ -110,18 +114,22 @@ function getFallbackVerses(bookId, chapter) {
 }
 
 function renderVerses(data) {
-    if (!data.verses || data.verses.length === 0) {
+    const verses = data.verses || data.data || [];
+
+    if (verses.length === 0) {
         versesContainer.innerHTML = '<p class="loading">No verses found</p>';
         return;
     }
 
     let html = '';
-    data.verses.forEach(verse => {
+    verses.forEach(v => {
+        const verseNum = v.verse || v.number || '';
+        const verseText = v.text || '';
         html += `
             <article class="verse-card">
-                <div class="verse-number">${verse.verse}</div>
+                <div class="verse-number">${verseNum}</div>
                 <div class="verse-content">
-                    <p class="translation-text">${verse.text}</p>
+                    <p class="translation-text">${verseText}</p>
                 </div>
             </article>
         `;
