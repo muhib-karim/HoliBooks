@@ -9,7 +9,7 @@ const https = require('https');
 const APIS = [
     { name: 'Quran API (AlQuran Cloud)', url: 'https://api.alquran.cloud/v1/surah/1' },
     { name: 'Bible API (JSDelivr)', url: 'https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/en-kjv/books/genesis/chapters/1.json' },
-    { name: 'Bhagavad Gita API', url: 'https://bhagavadgitaapi.in/slok/1' },
+    { name: 'Bhagavad Gita API', url: 'https://vedicscriptures.github.io/slok/1/1' },
     { name: 'GurbaniNow API', url: 'https://api.gurbaninow.com/v2/ang/1' }
 ];
 

@@ -12,16 +12,16 @@ class AudioPlayer {
         this.currentIndex = 0;
         this.playbackRate = 1;
         this.isLooping = false;
-        
+
         this.init();
     }
-    
+
     init() {
         this.createPlayerUI();
         this.bindEvents();
         this.loadFromStorage();
     }
-    
+
     createPlayerUI() {
         const playerHTML = `
             <div class="audio-player" id="audio-player">
@@ -78,9 +78,9 @@ class AudioPlayer {
                 </div>
             </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', playerHTML);
-        
+
         // Cache DOM elements
         this.playerEl = document.getElementById('audio-player');
         this.titleEl = document.getElementById('audio-title');
@@ -98,37 +98,37 @@ class AudioPlayer {
         this.loopBtn = document.getElementById('audio-loop');
         this.closeBtn = document.getElementById('audio-close');
     }
-    
+
     bindEvents() {
         // Play/Pause
         this.playBtn.addEventListener('click', () => this.togglePlay());
-        
+
         // Previous/Next
         this.prevBtn.addEventListener('click', () => this.playPrevious());
         this.nextBtn.addEventListener('click', () => this.playNext());
-        
+
         // Progress bar
         this.progressBar.addEventListener('click', (e) => this.seek(e));
-        
+
         // Speed control
         this.speedBtn.addEventListener('click', () => this.cycleSpeed());
-        
+
         // Loop control
         this.loopBtn.addEventListener('click', () => this.toggleLoop());
-        
+
         // Close player
         this.closeBtn.addEventListener('click', () => this.hide());
-        
+
         // Audio events
         this.audio.addEventListener('timeupdate', () => this.updateProgress());
         this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
         this.audio.addEventListener('ended', () => this.onTrackEnd());
         this.audio.addEventListener('error', (e) => this.onError(e));
-        
+
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
     }
-    
+
     loadTrack(track) {
         this.currentTrack = track;
         this.audio.src = track.url;
@@ -137,7 +137,7 @@ class AudioPlayer {
         this.show();
         this.play();
     }
-    
+
     loadPlaylist(tracks, startIndex = 0) {
         this.playlist = tracks;
         this.currentIndex = startIndex;
@@ -145,7 +145,7 @@ class AudioPlayer {
             this.loadTrack(tracks[startIndex]);
         }
     }
-    
+
     play() {
         this.audio.play().then(() => {
             this.isPlaying = true;
@@ -154,13 +154,13 @@ class AudioPlayer {
             console.error('Playback failed:', err);
         });
     }
-    
+
     pause() {
         this.audio.pause();
         this.isPlaying = false;
         this.updatePlayButton();
     }
-    
+
     togglePlay() {
         if (this.isPlaying) {
             this.pause();
@@ -168,25 +168,25 @@ class AudioPlayer {
             this.play();
         }
     }
-    
+
     playPrevious() {
         if (this.playlist.length === 0) return;
         this.currentIndex = (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
         this.loadTrack(this.playlist[this.currentIndex]);
     }
-    
+
     playNext() {
         if (this.playlist.length === 0) return;
         this.currentIndex = (this.currentIndex + 1) % this.playlist.length;
         this.loadTrack(this.playlist[this.currentIndex]);
     }
-    
+
     seek(e) {
         const rect = this.progressBar.getBoundingClientRect();
         const percent = (e.clientX - rect.left) / rect.width;
         this.audio.currentTime = percent * this.audio.duration;
     }
-    
+
     cycleSpeed() {
         const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
         const currentIdx = speeds.indexOf(this.playbackRate);
@@ -194,19 +194,19 @@ class AudioPlayer {
         this.audio.playbackRate = this.playbackRate;
         this.speedBtn.textContent = this.playbackRate + 'x';
     }
-    
+
     toggleLoop() {
         this.isLooping = !this.isLooping;
         this.audio.loop = this.isLooping;
         this.loopBtn.classList.toggle('active', this.isLooping);
         this.loopBtn.style.color = this.isLooping ? 'var(--accent-primary)' : '';
     }
-    
+
     updatePlayButton() {
         this.playIcon.style.display = this.isPlaying ? 'none' : 'block';
         this.pauseIcon.style.display = this.isPlaying ? 'block' : 'none';
     }
-    
+
     updateProgress() {
         if (this.audio.duration) {
             const percent = (this.audio.currentTime / this.audio.duration) * 100;
@@ -214,18 +214,18 @@ class AudioPlayer {
             this.currentTimeEl.textContent = this.formatTime(this.audio.currentTime);
         }
     }
-    
+
     updateDuration() {
         this.durationEl.textContent = this.formatTime(this.audio.duration);
     }
-    
+
     formatTime(seconds) {
         if (isNaN(seconds)) return '0:00';
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
-    
+
     onTrackEnd() {
         if (!this.isLooping && this.playlist.length > 1) {
             this.playNext();
@@ -233,16 +233,28 @@ class AudioPlayer {
             this.pause();
         }
     }
-    
+
     onError(e) {
         console.error('Audio error:', e);
-        this.titleEl.textContent = 'Error loading audio';
+        this.isPlaying = false;
+        this.updatePlayButton();
+
+        // Show user-friendly error message
+        this.titleEl.textContent = 'Audio unavailable';
+        this.subtitleEl.textContent = 'Try playing another verse or check your connection';
+
+        // Auto-advance to next track after short delay if in playlist
+        if (this.playlist.length > 1) {
+            setTimeout(() => {
+                this.playNext();
+            }, 2000);
+        }
     }
-    
+
     handleKeyboard(e) {
         // Only if player is visible
         if (!this.playerEl.classList.contains('visible')) return;
-        
+
         switch (e.code) {
             case 'Space':
                 if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
@@ -258,18 +270,18 @@ class AudioPlayer {
                 break;
         }
     }
-    
+
     show() {
         this.playerEl.classList.add('visible');
         document.body.style.paddingBottom = '80px';
     }
-    
+
     hide() {
         this.pause();
         this.playerEl.classList.remove('visible');
         document.body.style.paddingBottom = '';
     }
-    
+
     loadFromStorage() {
         const saved = localStorage.getItem('holibooks_audio');
         if (saved) {
@@ -279,7 +291,7 @@ class AudioPlayer {
             this.speedBtn.textContent = this.playbackRate + 'x';
         }
     }
-    
+
     saveToStorage() {
         localStorage.setItem('holibooks_audio', JSON.stringify({
             playbackRate: this.playbackRate

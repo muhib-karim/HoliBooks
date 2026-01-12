@@ -129,9 +129,9 @@ async function loadSurah(surahId) {
             }))
         };
 
-        // Build audio playlist
+        // Build audio playlist - use full reciter ID (ar.alafasy not just alafasy)
         audioPlaylist = currentSurahData.ayahs.map(ayah => ({
-            url: `https://cdn.islamic.network/quran/audio/128/${AUDIO_RECITER.split('.')[1]}/${ayah.number}.mp3`,
+            url: `https://cdn.islamic.network/quran/audio/128/${AUDIO_RECITER}/${ayah.number}.mp3`,
             title: `Ayah ${ayah.numberInSurah}`,
             subtitle: `Surah ${currentSurahData.englishName}`
         }));
