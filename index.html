@@ -411,30 +411,58 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
+        /* Gradient border on hover using pseudo-element */
         .religion-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-xl);
+            padding: 2px;
+            background: linear-gradient(135deg, var(--religion-color, var(--accent-primary)), transparent 50%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+
+        .religion-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Top accent line */
+        .religion-card::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 3px;
             background: linear-gradient(90deg, var(--religion-color, var(--accent-primary)), transparent);
-            opacity: 1;
-            transition: opacity var(--transition-normal);
-        }
-
-        .religion-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-                rgba(255, 255, 255, 0.15) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity var(--transition-normal);
-            pointer-events: none;
+            opacity: 0.6;
+            transition: all var(--transition-normal);
         }
 
         .religion-card:hover::after {
+            opacity: 1;
+            height: 4px;
+            background: linear-gradient(90deg, var(--religion-color, var(--accent-primary)), var(--religion-color, var(--accent-primary)) 50%, transparent);
+        }
+
+        /* Radial gradient hover effect */
+        .religion-card .card-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+            pointer-events: none;
+            border-radius: var(--radius-xl);
+        }
+
+        .religion-card:hover .card-glow {
             opacity: 1;
         }
 
@@ -579,40 +607,170 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, 
-                rgba(201, 165, 92, 0.1) 0%, 
-                rgba(201, 165, 92, 0.05) 100%);
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.02) 100%);
             border-radius: var(--radius-full);
-            border: 2px solid rgba(201, 165, 92, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
-            transition: transform var(--transition-normal);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-normal);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .religion-icon-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, 
+                var(--religion-color, var(--accent-primary)) 0%, 
+                transparent 70%);
+            opacity: 0.15;
+            transition: opacity var(--transition-normal);
         }
 
         [data-theme="light"] .religion-icon-wrapper {
-            background: linear-gradient(135deg, 
-                rgba(201, 165, 92, 0.15) 0%, 
-                rgba(201, 165, 92, 0.08) 100%);
-            border: 2px solid rgba(201, 165, 92, 0.3);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(245, 245, 245, 0.8) 100%);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
         .religion-card:hover .religion-icon-wrapper {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.08);
             border-color: var(--religion-color, var(--accent-primary));
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.25),
+                0 0 40px var(--religion-glow, var(--accent-glow)),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
-        .religion-icon {
-            font-size: 3.5rem;
-            filter: drop-shadow(0 10px 20px var(--religion-glow));
+        .religion-card:hover .religion-icon-wrapper::before {
+            opacity: 0.25;
+        }
+
+        .religion-icon-svg {
+            width: 56px;
+            height: 56px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            transition: all var(--transition-normal);
+            position: relative;
+            z-index: 1;
+        }
+
+        .religion-card:hover .religion-icon-svg {
+            transform: scale(1.1);
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+        }
+
+        /* Religion-specific icon wrapper gradients */
+        .religion-card[data-religion="islam"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(27, 138, 90, 0.15) 0%, 
+                rgba(27, 138, 90, 0.05) 100%);
+            border-color: rgba(27, 138, 90, 0.3);
+        }
+
+        .religion-card[data-religion="christianity"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(212, 175, 55, 0.15) 0%, 
+                rgba(212, 175, 55, 0.05) 100%);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .religion-card[data-religion="hinduism"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(255, 140, 0, 0.15) 0%, 
+                rgba(255, 107, 53, 0.05) 100%);
+            border-color: rgba(255, 140, 0, 0.3);
+        }
+
+        .religion-card[data-religion="judaism"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(123, 104, 238, 0.15) 0%, 
+                rgba(74, 144, 226, 0.05) 100%);
+            border-color: rgba(123, 104, 238, 0.3);
+        }
+
+        .religion-card[data-religion="sikhism"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(255, 140, 0, 0.15) 0%, 
+                rgba(74, 144, 226, 0.05) 100%);
+            border-color: rgba(255, 140, 0, 0.3);
+        }
+
+        .religion-card[data-religion="buddhism"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(212, 175, 55, 0.15) 0%, 
+                rgba(139, 105, 20, 0.05) 100%);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="islam"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(27, 138, 90, 0.1) 0%, 
+                rgba(27, 138, 90, 0.02) 100%);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="christianity"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(212, 175, 55, 0.1) 0%, 
+                rgba(212, 175, 55, 0.02) 100%);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="hinduism"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(255, 140, 0, 0.1) 0%, 
+                rgba(255, 107, 53, 0.02) 100%);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="judaism"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(123, 104, 238, 0.1) 0%, 
+                rgba(74, 144, 226, 0.02) 100%);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="sikhism"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(255, 140, 0, 0.1) 0%, 
+                rgba(74, 144, 226, 0.02) 100%);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="buddhism"] .religion-icon-wrapper {
+            background: linear-gradient(145deg, 
+                rgba(212, 175, 55, 0.1) 0%, 
+                rgba(139, 105, 20, 0.02) 100%);
         }
 
         .religion-name {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.6rem;
+            font-weight: 600;
             margin-bottom: var(--space-xs);
             color: var(--text-primary);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            letter-spacing: -0.02em;
+            position: relative;
+            display: inline-block;
+        }
+
+        .religion-name::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--religion-color, var(--accent-primary)), transparent);
+            transition: width var(--transition-normal);
+        }
+
+        .religion-card:hover .religion-name::after {
+            width: 60%;
         }
 
         [data-theme="light"] .religion-name {
@@ -621,15 +779,19 @@
 
         .religion-book {
             color: var(--religion-color, var(--accent-primary));
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 500;
             margin-bottom: var(--space-sm);
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            opacity: 0.9;
         }
 
         .religion-desc {
             color: var(--text-secondary);
             font-size: 0.875rem;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-weight: 400;
         }
 
         [data-theme="light"] .religion-desc {
@@ -1028,8 +1190,9 @@
                 height: 80px;
             }
 
-            .religion-icon {
-                font-size: 2.5rem;
+            .religion-icon-svg {
+                width: 44px;
+                height: 44px;
             }
 
             .stats-grid {
@@ -1201,8 +1364,30 @@
             <div class="religions-grid">
                 <!-- Islam -->
                 <a href="religions/islam/quran.html" class="card religion-card" data-religion="islam" style="opacity: 1; visibility: visible;">
+                    <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
-                        <div class="religion-icon">☪️</div>
+                        <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="islamGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#1B8A5A"/>
+                                    <stop offset="50%" style="stop-color:#2ECC71"/>
+                                    <stop offset="100%" style="stop-color:#27AE60"/>
+                                </linearGradient>
+                                <filter id="islamGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            <!-- Crescent Moon -->
+                            <path d="M46 18C46 18 42 14 36 14C26 14 18 22 18 32C18 42 26 50 36 50C42 50 46 46 46 46C42 52 34 56 26 54C16 52 10 42 12 32C14 22 24 16 34 18C38 19 42 21 46 18Z" 
+                                  fill="url(#islamGradient)" filter="url(#islamGlow)"/>
+                            <!-- Star -->
+                            <path d="M44 12L46 18L52 18L47 22L49 28L44 24L39 28L41 22L36 18L42 18L44 12Z" 
+                                  fill="url(#islamGradient)" filter="url(#islamGlow)"/>
+                        </svg>
                     </div>
                     <h3 class="religion-name">Islam</h3>
                     <p class="religion-book">The Holy Quran</p>
@@ -1214,8 +1399,27 @@
 
                 <!-- Christianity -->
                 <a href="religions/christianity/bible.html" class="card religion-card" data-religion="christianity" style="opacity: 1; visibility: visible;">
+                    <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
-                        <div class="religion-icon">✝️</div>
+                        <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="christianGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF37"/>
+                                    <stop offset="50%" style="stop-color:#FFD700"/>
+                                    <stop offset="100%" style="stop-color:#B8860B"/>
+                                </linearGradient>
+                                <filter id="christianGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            <!-- Cross -->
+                            <path d="M32 8V56M16 24H48" stroke="url(#christianGradient)" stroke-width="6" stroke-linecap="round" filter="url(#christianGlow)"/>
+                            <path d="M32 5V59M13 24H51" stroke="url(#christianGradient)" stroke-width="3" stroke-linecap="round" filter="url(#christianGlow)"/>
+                        </svg>
                     </div>
                     <h3 class="religion-name">Christianity</h3>
                     <p class="religion-book">The Holy Bible</p>
@@ -1227,8 +1431,32 @@
 
                 <!-- Hinduism -->
                 <a href="religions/hinduism/gita.html" class="card religion-card" data-religion="hinduism" style="opacity: 1; visibility: visible;">
+                    <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
-                        <div class="religion-icon">🕉️</div>
+                        <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="hinduGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FF8C00"/>
+                                    <stop offset="50%" style="stop-color:#FF6B35"/>
+                                    <stop offset="100%" style="stop-color:#E65100"/>
+                                </linearGradient>
+                                <filter id="hinduGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            <!-- Om Symbol -->
+                            <path d="M20 48C16 48 12 44 12 38C12 32 16 28 22 28C26 28 30 30 32 34C34 30 38 28 42 28C48 28 52 32 52 38C52 44 48 48 44 48" 
+                                  stroke="url(#hinduGradient)" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#hinduGlow)"/>
+                            <path d="M32 34V20C32 16 28 14 24 16C22 17 20 20 20 24C20 28 24 30 28 28" 
+                                  stroke="url(#hinduGradient)" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#hinduGlow)"/>
+                            <circle cx="32" cy="14" r="4" fill="url(#hinduGradient)" filter="url(#hinduGlow)"/>
+                            <path d="M36 44C38 44 40 42 40 40C40 38 38 36 36 36C34 36 32 38 32 40C32 42 34 44 36 44Z" 
+                                  fill="url(#hinduGradient)" filter="url(#hinduGlow)"/>
+                        </svg>
                     </div>
                     <h3 class="religion-name">Hinduism</h3>
                     <p class="religion-book">Bhagavad Gita</p>
@@ -1240,8 +1468,29 @@
 
                 <!-- Judaism -->
                 <a href="religions/judaism/torah.html" class="card religion-card" data-religion="judaism" style="opacity: 1; visibility: visible;">
+                    <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
-                        <div class="religion-icon">✡️</div>
+                        <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="judaismGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#4A90E2"/>
+                                    <stop offset="50%" style="stop-color:#7B68EE"/>
+                                    <stop offset="100%" style="stop-color:#4169E1"/>
+                                </linearGradient>
+                                <filter id="judaismGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            <!-- Star of David -->
+                            <path d="M32 8L38 20H50L40 28L44 40L32 32L20 40L24 28L14 20H26L32 8Z" 
+                                  stroke="url(#judaismGradient)" stroke-width="3" stroke-linejoin="round" fill="none" filter="url(#judaismGlow)"/>
+                            <path d="M32 8L38 20H50L40 28L44 40L32 32L20 40L24 28L14 20H26L32 8Z" 
+                                  fill="url(#judaismGradient)" opacity="0.2" filter="url(#judaismGlow)"/>
+                        </svg>
                     </div>
                     <h3 class="religion-name">Judaism</h3>
                     <p class="religion-book">Torah / Tanakh</p>
@@ -1253,8 +1502,37 @@
 
                 <!-- Sikhism -->
                 <a href="religions/sikhism/gurbani.html" class="card religion-card" data-religion="sikhism" style="opacity: 1; visibility: visible;">
+                    <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
-                        <div class="religion-icon">🪯</div>
+                        <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="sikhGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FF8C00"/>
+                                    <stop offset="50%" style="stop-color:#4A90E2"/>
+                                    <stop offset="100%" style="stop-color:#FF6B35"/>
+                                </linearGradient>
+                                <filter id="sikhGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            <!-- Khanda Symbol -->
+                            <!-- Center Chakkar (Circle) -->
+                            <circle cx="32" cy="32" r="10" stroke="url(#sikhGradient)" stroke-width="3" fill="none" filter="url(#sikhGlow)"/>
+                            <!-- Inner circle -->
+                            <circle cx="32" cy="32" r="6" stroke="url(#sikhGradient)" stroke-width="1.5" fill="none" opacity="0.6" filter="url(#sikhGlow)"/>
+                            <!-- Vertical sword -->
+                            <path d="M32 8V56" stroke="url(#sikhGradient)" stroke-width="4" stroke-linecap="round" filter="url(#sikhGlow)"/>
+                            <!-- Left sword -->
+                            <path d="M32 20L18 44" stroke="url(#sikhGradient)" stroke-width="3" stroke-linecap="round" filter="url(#sikhGlow)"/>
+                            <!-- Right sword -->
+                            <path d="M32 20L46 44" stroke="url(#sikhGradient)" stroke-width="3" stroke-linecap="round" filter="url(#sikhGlow)"/>
+                            <!-- Cross guard -->
+                            <path d="M24 36H40" stroke="url(#sikhGradient)" stroke-width="3" stroke-linecap="round" filter="url(#sikhGlow)"/>
+                        </svg>
                     </div>
                     <h3 class="religion-name">Sikhism</h3>
                     <p class="religion-book">Guru Granth Sahib</p>
@@ -1266,8 +1544,34 @@
 
                 <!-- Buddhism -->
                 <a href="religions/buddhism/tripitaka.html" class="card religion-card" data-religion="buddhism" style="opacity: 1; visibility: visible;">
+                    <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
-                        <div class="religion-icon">☸️</div>
+                        <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="buddhaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF37"/>
+                                    <stop offset="50%" style="stop-color:#8B6914"/>
+                                    <stop offset="100%" style="stop-color:#B8860B"/>
+                                </linearGradient>
+                                <filter id="buddhaGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            <!-- Dharma Wheel -->
+                            <!-- Outer circle -->
+                            <circle cx="32" cy="32" r="24" stroke="url(#buddhaGradient)" stroke-width="3" fill="none" filter="url(#buddhaGlow)"/>
+                            <!-- Inner circle -->
+                            <circle cx="32" cy="32" r="6" stroke="url(#buddhaGradient)" stroke-width="2" fill="none" filter="url(#buddhaGlow)"/>
+                            <!-- Hub -->
+                            <circle cx="32" cy="32" r="3" fill="url(#buddhaGradient)" filter="url(#buddhaGlow)"/>
+                            <!-- Spokes -->
+                            <path d="M32 8V20M32 44V56M8 32H20M44 32H56M14 14L22 22M42 42L50 50M50 14L42 22M22 42L14 50" 
+                                  stroke="url(#buddhaGradient)" stroke-width="2.5" stroke-linecap="round" filter="url(#buddhaGlow)"/>
+                        </svg>
                     </div>
                     <h3 class="religion-name">Buddhism</h3>
                     <p class="religion-book">Dhammapada</p>
