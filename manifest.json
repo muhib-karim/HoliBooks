@@ -1,0 +1,76 @@
+{
+  "name": "HoliBooks",
+  "short_name": "HoliBooks",
+  "description": "Read and listen to sacred texts from the world's major religions. Explore the Quran, Bible, Bhagavad Gita, Torah, Guru Granth Sahib, and Buddhist scriptures in multiple languages.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0f",
+  "theme_color": "#c9a55c",
+  "categories": ["books", "education", "religion", "spirituality"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "screenshots/home.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "screenshots/quran.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/home.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "HoliBooks Home Page"
+    },
+    {
+      "src": "screenshots/quran.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Quran Reader"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Read Quran",
+      "short_name": "Quran",
+      "description": "Open the Holy Quran",
+      "url": "religions/islam/quran.html",
+      "icons": [{ "src": "screenshots/quran.png", "sizes": "1920x1080" }]
+    },
+    {
+      "name": "Read Bible",
+      "short_name": "Bible",
+      "description": "Open the Holy Bible",
+      "url": "religions/christianity/bible.html"
+    },
+    {
+      "name": "Read Bhagavad Gita",
+      "short_name": "Gita",
+      "description": "Open the Bhagavad Gita",
+      "url": "religions/hinduism/gita.html"
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

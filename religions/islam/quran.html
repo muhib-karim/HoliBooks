@@ -8,6 +8,13 @@
     <meta name="description"
         content="Read the Holy Quran with Arabic text and translations in 90+ languages. Listen to audio recitations by Mishary Alafasy.">
 
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="../../manifest.json">
+    <meta name="theme-color" content="#1b8a5a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Quran - HoliBooks">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,11 +28,87 @@
     <link rel="stylesheet" href="quran.css">
 
     <style>
+        /* ===== MODERNIZED STYLES ===== */
+
         /* Enhanced Navigation */
         .nav-actions {
             display: flex;
             align-items: center;
             gap: var(--space-sm);
+        }
+
+        /* Sticky Header with Progress */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .sticky-header.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .sticky-header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md) var(--space-lg);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .sticky-surah-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .sticky-surah-name {
+            font-family: var(--font-arabic);
+            font-size: 1.4rem;
+            color: var(--islam-primary);
+            font-weight: 700;
+        }
+
+        .sticky-surah-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .sticky-nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .sticky-nav-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sticky-nav-btn:hover:not(:disabled) {
+            background: var(--islam-primary);
+            border-color: var(--islam-primary);
+            color: var(--bg-primary);
+        }
+
+        .sticky-nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
 
         /* Reading Progress Bar */
@@ -43,7 +126,37 @@
             height: 100%;
             background: linear-gradient(90deg, var(--islam-primary), var(--accent-primary));
             width: 0%;
-            transition: width 0.1s;
+            transition: width 0.1s linear;
+        }
+
+        /* Progress Percentage Indicator */
+        .progress-indicator {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) var(--space-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            z-index: 90;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            transition: all 0.3s ease;
+        }
+
+        .progress-indicator:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .progress-percentage {
+            color: var(--islam-primary);
+            font-weight: 600;
         }
 
         /* Enhanced Surah Navigation */
@@ -215,6 +328,123 @@
             visibility: visible;
         }
 
+        /* ===== VERSE HIGHLIGHTING ===== */
+        .verse-card.highlighted {
+            background: linear-gradient(135deg, 
+                rgba(27, 138, 90, 0.15) 0%, 
+                rgba(27, 138, 90, 0.08) 100%);
+            border-color: var(--islam-primary);
+            box-shadow: 0 0 30px rgba(27, 138, 90, 0.3), 
+                        inset 0 0 20px rgba(27, 138, 90, 0.1);
+            animation: versePulse 2s ease-in-out infinite;
+        }
+
+        .verse-card.highlighted .verse-number {
+            background: linear-gradient(135deg, var(--islam-primary), var(--islam-secondary));
+            animation: verseNumberGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes versePulse {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(27, 138, 90, 0.3), 
+                            inset 0 0 20px rgba(27, 138, 90, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(27, 138, 90, 0.5), 
+                            inset 0 0 30px rgba(27, 138, 90, 0.2);
+            }
+        }
+
+        @keyframes verseNumberGlow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(27, 138, 90, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(27, 138, 90, 0.8);
+            }
+        }
+
+        /* ===== ENHANCED TYPOGRAPHY ===== */
+        .verse-card {
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Staggered animation delays for verses */
+        .verse-card:nth-child(1) { animation-delay: 0.05s; }
+        .verse-card:nth-child(2) { animation-delay: 0.1s; }
+        .verse-card:nth-child(3) { animation-delay: 0.15s; }
+        .verse-card:nth-child(4) { animation-delay: 0.2s; }
+        .verse-card:nth-child(5) { animation-delay: 0.25s; }
+        .verse-card:nth-child(6) { animation-delay: 0.3s; }
+        .verse-card:nth-child(7) { animation-delay: 0.35s; }
+        .verse-card:nth-child(8) { animation-delay: 0.4s; }
+        .verse-card:nth-child(9) { animation-delay: 0.45s; }
+        .verse-card:nth-child(10) { animation-delay: 0.5s; }
+        .verse-card:nth-child(n+11) { animation-delay: 0.55s; }
+
+        /* Enhanced Arabic Text */
+        .arabic-text {
+            font-family: var(--font-arabic);
+            font-size: 2rem;
+            color: var(--text-arabic);
+            text-align: right;
+            direction: rtl;
+            line-height: 2.6;
+            margin-bottom: var(--space-lg);
+            padding: var(--space-md) 0;
+            border-bottom: 1px solid rgba(27, 138, 90, 0.1);
+            letter-spacing: 0.02em;
+        }
+
+        /* Enhanced Verse Number Badge */
+        .verse-number {
+            background: linear-gradient(135deg, var(--islam-primary), var(--islam-secondary));
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            position: absolute;
+            top: var(--space-md);
+            left: var(--space-md);
+            box-shadow: 0 2px 8px rgba(27, 138, 90, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .verse-card:hover .verse-number {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(27, 138, 90, 0.4);
+        }
+
+        /* Improved Spacing Between Verses */
+        .verses-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        /* Translation Text Enhancement */
+        .translation-text {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            font-weight: 300;
+            padding-top: var(--space-sm);
+        }
+
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .verse-actions {
@@ -235,6 +465,54 @@
             .quick-nav {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .sticky-header-content {
+                padding: var(--space-sm) var(--space-md);
+            }
+
+            .sticky-surah-name {
+                font-size: 1.1rem;
+            }
+
+            .sticky-surah-meta {
+                display: none;
+            }
+
+            .progress-indicator {
+                bottom: var(--space-md);
+                right: var(--space-md);
+                font-size: 0.8rem;
+            }
+
+            .arabic-text {
+                font-size: 1.6rem;
+                line-height: 2.4;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quran-title {
+                font-size: 2rem;
+            }
+
+            .arabic-text {
+                font-size: 1.4rem;
+                line-height: 2.2;
+            }
+
+            .bismillah-banner {
+                font-size: 1.6rem;
+                padding: var(--space-lg);
+            }
+
+            .sticky-nav-buttons {
+                gap: var(--space-xs);
+            }
+
+            .sticky-nav-btn {
+                width: 32px;
+                height: 32px;
             }
         }
     </style>
@@ -305,6 +583,33 @@
             </div>
         </div>
     </header>
+
+    <!-- Sticky Header with Surah Info -->
+    <div class="sticky-header" id="sticky-header">
+        <div class="sticky-header-content">
+            <div class="sticky-surah-info">
+                <span class="sticky-surah-name" id="sticky-surah-name">Loading...</span>
+                <span class="sticky-surah-meta" id="sticky-surah-meta"></span>
+            </div>
+            <div class="sticky-nav-buttons">
+                <button class="sticky-nav-btn" id="sticky-prev" title="Previous Surah">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <button class="sticky-nav-btn" id="sticky-next" title="Next Surah">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                    </svg>
+                </button>
+                <button class="sticky-nav-btn" onclick="HoliBooks.scrollToTop()" title="Back to top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div class="container container-sm">
         <!-- Header -->
@@ -413,6 +718,12 @@
         </footer>
     </div>
 
+    <!-- Progress Indicator -->
+    <div class="progress-indicator" id="progress-indicator" style="display: none;">
+        <span>Reading:</span>
+        <span class="progress-percentage" id="progress-percentage">0%</span>
+    </div>
+
     <!-- Scripts -->
     <script src="../../js/utils.js"></script>
     <script src="../../js/audio-player.js"></script>
@@ -420,6 +731,21 @@
     <script src="../../js/bookmarks.js"></script>
     <script src="../../js/search.js"></script>
     <script src="quran.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('../../sw.js')
+                    .then((registration) => {
+                        console.log('[PWA] Service Worker registered:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.error('[PWA] Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 
 </html>

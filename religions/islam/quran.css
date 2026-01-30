@@ -147,33 +147,44 @@
 /* Verse Cards */
 .verse-card {
     position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    padding-left: calc(var(--space-xl) + 40px);
+    transition: all 0.3s ease;
 }
 
 .verse-card:hover {
     border-color: rgba(27, 138, 90, 0.4);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .verse-number {
     background: linear-gradient(135deg, var(--islam-primary), var(--islam-secondary));
 }
 
+/* Enhanced Arabic Text */
 .arabic-text {
     font-family: var(--font-arabic);
     font-size: 2rem;
     color: var(--text-arabic);
     text-align: right;
     direction: rtl;
-    line-height: 2.2;
+    line-height: 2.6;
     margin-bottom: var(--space-lg);
     padding: var(--space-md) 0;
     border-bottom: 1px solid rgba(27, 138, 90, 0.1);
+    letter-spacing: 0.02em;
 }
 
 .translation-text {
     font-size: 1.05rem;
     color: var(--text-secondary);
-    line-height: 1.8;
+    line-height: 1.9;
     font-weight: 300;
+    padding-top: var(--space-sm);
 }
 
 .verse-audio {
@@ -240,6 +251,12 @@
 
     .arabic-text {
         font-size: 1.6rem;
+        line-height: 2.4;
+    }
+
+    .verse-card {
+        padding: var(--space-lg);
+        padding-left: calc(var(--space-lg) + 35px);
     }
 }
 
@@ -250,10 +267,16 @@
 
     .arabic-text {
         font-size: 1.4rem;
+        line-height: 2.2;
     }
 
     .bismillah-banner {
         font-size: 1.6rem;
         padding: var(--space-lg);
+    }
+
+    .verse-card {
+        padding: var(--space-md);
+        padding-left: calc(var(--space-md) + 30px);
     }
 }

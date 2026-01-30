@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - HoliBooks</title>
+    <meta name="description" content="You are currently offline. HoliBooks requires an internet connection to load sacred texts.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== CSS Variables (matching global.css) ===== */
+        :root {
+            --background: #0a0a0f;
+            --foreground: #f0f0f5;
+            --card: #12121a;
+            --card-foreground: #f0f0f5;
+            --primary: #c9a55c;
+            --primary-foreground: #0a0a0f;
+            --secondary: #1a1a24;
+            --secondary-foreground: #f0f0f5;
+            --muted: #1a1a24;
+            --muted-foreground: #a0a0b0;
+            --accent: #c9a55c;
+            --accent-foreground: #0a0a0f;
+            --border: rgba(201, 165, 92, 0.2);
+            --ring: #c9a55c;
+            
+            /* Legacy mappings */
+            --bg-primary: var(--background);
+            --bg-secondary: var(--card);
+            --bg-card: var(--card);
+            --bg-hover: #22222e;
+            --text-primary: var(--foreground);
+            --text-secondary: var(--muted-foreground);
+            --text-muted: #666;
+            --border-color: var(--border);
+            --accent-primary: var(--accent);
+            --accent-secondary: #8b6914;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+            
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            --space-3xl: 64px;
+            
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --radius-full: 9999px;
+        }
+
+        /* Light theme */
+        @media (prefers-color-scheme: light) {
+            :root {
+                --background: #f8f9fc;
+                --foreground: #1a1a1f;
+                --card: #ffffff;
+                --card-foreground: #1a1a1f;
+                --primary: #8b6914;
+                --primary-foreground: #ffffff;
+                --secondary: #f0f0f5;
+                --secondary-foreground: #1a1a1f;
+                --muted: #f0f0f5;
+                --muted-foreground: #666;
+                --accent: #8b6914;
+                --accent-foreground: #ffffff;
+                --border: rgba(139, 105, 20, 0.2);
+                --ring: #8b6914;
+                
+                --bg-primary: var(--background);
+                --bg-secondary: var(--card);
+                --bg-card: var(--card);
+                --bg-hover: #e8e8ed;
+                --text-primary: var(--foreground);
+                --text-secondary: var(--muted-foreground);
+                --text-muted: #888;
+                --border-color: var(--border);
+                --accent-primary: var(--accent);
+                --accent-secondary: #6b4f10;
+                
+                --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+                --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+                --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+            }
+        }
+
+        /* ===== Reset ===== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+
+        /* ===== Offline Container ===== */
+        .offline-container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* ===== Icon ===== */
+        .offline-icon {
+            font-size: 5rem;
+            margin-bottom: var(--space-xl);
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 30px rgba(201, 165, 92, 0.3));
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ===== Card ===== */
+        .offline-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-color);
+            padding: var(--space-3xl);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .offline-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        /* ===== Title ===== */
+        .offline-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            background: linear-gradient(135deg, var(--accent-primary), #e8d5b5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===== Message ===== */
+        .offline-message {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: var(--space-xl);
+        }
+
+        .offline-message strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* ===== Status ===== */
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: var(--radius-full);
+            color: #ff6b35;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: var(--space-xl);
+        }
+
+        .connection-status.online {
+            background: rgba(27, 138, 90, 0.1);
+            border-color: rgba(27, 138, 90, 0.3);
+            color: #1b8a5a;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* ===== Buttons ===== */
+        .offline-actions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-xl);
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(201, 165, 92, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-primary);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ===== Tips ===== */
+        .offline-tips {
+            margin-top: var(--space-2xl);
+            padding-top: var(--space-xl);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .tips-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tips-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .tips-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .tips-list li::before {
+            content: '•';
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        /* ===== Logo ===== */
+        .offline-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--space-2xl);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 480px) {
+            .offline-card {
+                padding: var(--space-xl);
+            }
+
+            .offline-title {
+                font-size: 1.5rem;
+            }
+
+            .offline-message {
+                font-size: 1rem;
+            }
+
+            .offline-icon {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <!-- Logo -->
+        <div class="offline-logo">
+            <span>📖</span>
+            <span>HoliBooks</span>
+        </div>
+
+        <!-- Offline Card -->
+        <div class="offline-card">
+            <!-- Icon -->
+            <div class="offline-icon">📡</div>
+
+            <!-- Status -->
+            <div class="connection-status" id="connection-status">
+                <span class="status-dot"></span>
+                <span id="status-text">You are offline</span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="offline-title">Connection Lost</h1>
+
+            <!-- Message -->
+            <p class="offline-message">
+                It seems you've lost your internet connection. 
+                <strong>HoliBooks</strong> requires an internet connection to load sacred texts and translations.
+            </p>
+
+            <!-- Actions -->
+            <div class="offline-actions">
+                <button class="btn btn-primary" id="retry-btn" onclick="retryConnection()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    Try Again
+                </button>
+                <a href="/" class="btn btn-secondary" id="home-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                    Go Home
+                </a>
+            </div>
+
+            <!-- Tips -->
+            <div class="offline-tips">
+                <h3 class="tips-title">Troubleshooting Tips</h3>
+                <ul class="tips-list">
+                    <li>Check if your Wi-Fi or mobile data is turned on</li>
+                    <li>Try turning airplane mode on and off</li>
+                    <li>Move closer to your Wi-Fi router</li>
+                    <li>Restart your browser or device</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Check online status and update UI
+         */
+        function updateOnlineStatus() {
+            const statusEl = document.getElementById('connection-status');
+            const statusText = document.getElementById('status-text');
+            const retryBtn = document.getElementById('retry-btn');
+            const homeBtn = document.getElementById('home-btn');
+
+            if (navigator.onLine) {
+                statusEl.classList.add('online');
+                statusText.textContent = 'You are back online!';
+                retryBtn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Continue to HoliBooks
+                `;
+                retryBtn.onclick = () => window.location.href = '/';
+                
+                // Auto-redirect after 3 seconds
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+            } else {
+                statusEl.classList.remove('online');
+                statusText.textContent = 'You are offline';
+                retryBtn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    Try Again
+                `;
+                retryBtn.onclick = retryConnection;
+            }
+        }
+
+        /**
+         * Retry connection attempt
+         */
+        function retryConnection() {
+            const retryBtn = document.getElementById('retry-btn');
+            retryBtn.disabled = true;
+            retryBtn.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="animation: spin 1s linear infinite;">
+                    <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                </svg>
+                Checking...
+            `;
+
+            // Check connection
+            fetch('/', { method: 'HEAD', mode: 'no-cors' })
+                .then(() => {
+                    window.location.reload();
+                })
+                .catch(() => {
+                    retryBtn.disabled = false;
+                    updateOnlineStatus();
+                });
+        }
+
+        // Listen for online/offline events
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        // Initial check
+        updateOnlineStatus();
+
+        // Add spin animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

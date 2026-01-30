@@ -1,5 +1,5 @@
 /**
- * HoliBooks - Quran Module (Enhanced)
+ * HoliBooks - Quran Module (Modernized)
  * Fetches Quran data from Al Quran Cloud API with multi-language translations, audio, and enhanced UX
  */
 
@@ -15,6 +15,7 @@ let currentSurahData = null;
 let audioPlaylist = [];
 let currentFontSize = 1;
 let currentViewMode = 'both'; // 'both', 'arabic', 'translation'
+let highlightedVerse = null;
 
 // DOM Elements
 const surahSelect = document.getElementById('surah-select');
@@ -22,7 +23,11 @@ const prevBtn = document.getElementById('prev-surah');
 const nextBtn = document.getElementById('next-surah');
 const prevBtnBottom = document.getElementById('prev-surah-bottom');
 const nextBtnBottom = document.getElementById('next-surah-bottom');
+const stickyPrevBtn = document.getElementById('sticky-prev');
+const stickyNextBtn = document.getElementById('sticky-next');
 const surahName = document.getElementById('surah-name');
+const stickySurahName = document.getElementById('sticky-surah-name');
+const stickySurahMeta = document.getElementById('sticky-surah-meta');
 const surahTransliteration = document.getElementById('surah-transliteration');
 const surahTranslation = document.getElementById('surah-translation');
 const surahVerses = document.getElementById('surah-verses');
@@ -34,6 +39,9 @@ const playSurahBtn = document.getElementById('play-surah');
 const themeToggle = document.getElementById('theme-toggle');
 const bookmarkSurahBtn = document.getElementById('bookmark-surah');
 const readingProgress = document.getElementById('reading-progress');
+const progressIndicator = document.getElementById('progress-indicator');
+const progressPercentage = document.getElementById('progress-percentage');
+const stickyHeader = document.getElementById('sticky-header');
 
 // Initialize
 async function init() {
@@ -45,6 +53,9 @@ async function init() {
         const params = HoliBooks.getQueryParams();
         if (params.surah) {
             currentSurahId = parseInt(params.surah);
+        }
+        if (params.verse) {
+            highlightedVerse = parseInt(params.verse);
         }
 
         // Show loading
@@ -60,11 +71,19 @@ async function init() {
         // Load current surah
         await loadSurah(currentSurahId);
 
+        // Handle verse highlighting after load
+        if (highlightedVerse) {
+            setTimeout(() => highlightAndScrollToVerse(highlightedVerse), 500);
+        }
+
         // Setup event listeners
         setupEventListeners();
 
         // Setup scroll progress
         setupScrollProgress();
+
+        // Setup sticky header
+        setupStickyHeader();
 
     } catch (error) {
         console.error('Failed to initialize:', error);
@@ -81,6 +100,8 @@ async function init() {
         
         showFallbackNotice();
         setupEventListeners();
+        setupScrollProgress();
+        setupStickyHeader();
     }
 }
 
@@ -164,6 +185,7 @@ async function loadSurah(surahId) {
         renderVerses(currentSurahData);
         updateNavigationState();
         updateBookmarkButton();
+        updateStickyHeader();
 
         // Update URL and save state
         HoliBooks.setQueryParams({ surah: surahId });
@@ -172,7 +194,7 @@ async function loadSurah(surahId) {
         // Update dropdown
         surahSelect.value = surahId;
 
-        // Scroll to top
+        // Scroll to top with smooth animation
         HoliBooks.scrollToTop();
 
     } catch (error) {
@@ -190,6 +212,7 @@ function useFallbackData(surahId) {
         renderVerses(fallbackData);
         updateNavigationState();
         updateBookmarkButton();
+        updateStickyHeader();
         
         versesContainer.innerHTML = `
             <div class="fallback-notice" style="margin-bottom: var(--space-lg);">
@@ -253,6 +276,14 @@ function updateSurahInfo(surah) {
     surahType.textContent = surah.revelationType;
 }
 
+// Update sticky header info
+function updateStickyHeader() {
+    if (currentSurahData) {
+        stickySurahName.textContent = currentSurahData.name;
+        stickySurahMeta.textContent = `${currentSurahData.englishName} • ${currentSurahData.numberOfAyahs} Verses`;
+    }
+}
+
 // Render verses
 function renderVerses(surah) {
     let html = '';
@@ -274,7 +305,7 @@ function renderVerses(surah) {
         const translationStyle = currentViewMode === 'arabic' ? 'display: none;' : '';
         
         html += `
-            <article class="verse-card" id="verse-${ayah.numberInSurah}" data-index="${index}">
+            <article class="verse-card" id="verse-${ayah.numberInSurah}" data-index="${index}" data-verse="${ayah.numberInSurah}">
                 <div class="verse-number">${ayah.numberInSurah}</div>
                 <div class="verse-content" style="font-size: ${currentFontSize}rem;">
                     <p class="arabic-text" style="${arabicStyle}">${ayah.text}</p>
@@ -320,6 +351,9 @@ function updateNavigationState() {
     nextBtn.disabled = !canGoNext;
     prevBtnBottom.disabled = !canGoPrev;
     nextBtnBottom.disabled = !canGoNext;
+    
+    if (stickyPrevBtn) stickyPrevBtn.disabled = !canGoPrev;
+    if (stickyNextBtn) stickyNextBtn.disabled = !canGoNext;
 }
 
 // Setup event listeners
@@ -334,6 +368,10 @@ function setupEventListeners() {
     nextBtn.addEventListener('click', () => navigateSurah(1));
     prevBtnBottom.addEventListener('click', () => navigateSurah(-1));
     nextBtnBottom.addEventListener('click', () => navigateSurah(1));
+    
+    // Sticky header navigation
+    if (stickyPrevBtn) stickyPrevBtn.addEventListener('click', () => navigateSurah(-1));
+    if (stickyNextBtn) stickyNextBtn.addEventListener('click', () => navigateSurah(1));
 
     // Quick navigation
     const quickNavInput = document.getElementById('quick-nav-input');
@@ -564,12 +602,84 @@ function highlightPlayingVerse(index) {
 
 // Setup scroll progress
 function setupScrollProgress() {
-    window.addEventListener('scroll', () => {
+    const updateProgress = () => {
         const scrollTop = window.scrollY;
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const scrollPercent = (scrollTop / docHeight) * 100;
-        readingProgress.style.width = scrollPercent + '%';
+        const scrollPercent = Math.min(100, Math.max(0, (scrollTop / docHeight) * 100));
+        
+        // Update progress bar
+        if (readingProgress) {
+            readingProgress.style.width = scrollPercent + '%';
+        }
+        
+        // Update percentage indicator
+        if (progressPercentage) {
+            progressPercentage.textContent = Math.round(scrollPercent) + '%';
+        }
+        
+        // Show/hide progress indicator
+        if (progressIndicator) {
+            if (scrollPercent > 5) {
+                progressIndicator.style.display = 'flex';
+            } else {
+                progressIndicator.style.display = 'none';
+            }
+        }
+    };
+
+    window.addEventListener('scroll', HoliBooks.throttle(updateProgress, 50));
+    updateProgress();
+}
+
+// Setup sticky header
+function setupStickyHeader() {
+    if (!stickyHeader) return;
+    
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    stickyHeader.classList.add('scrolled');
+                } else {
+                    stickyHeader.classList.remove('scrolled');
+                }
+            });
+        },
+        { threshold: 0 }
+    );
+    
+    // Observe the main header
+    const mainHeader = document.querySelector('.quran-header');
+    if (mainHeader) {
+        observer.observe(mainHeader);
+    }
+}
+
+// Highlight and scroll to verse
+function highlightAndScrollToVerse(verseNumber) {
+    // Remove any existing highlights
+    document.querySelectorAll('.verse-card.highlighted').forEach(el => {
+        el.classList.remove('highlighted');
     });
+    
+    // Find and highlight the verse
+    const verseCard = document.getElementById(`verse-${verseNumber}`);
+    if (verseCard) {
+        verseCard.classList.add('highlighted');
+        
+        // Smooth scroll to verse
+        setTimeout(() => {
+            verseCard.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 100);
+        
+        // Remove highlight after 5 seconds
+        setTimeout(() => {
+            verseCard.classList.remove('highlighted');
+        }, 5000);
+    }
 }
 
 // Show toast notification

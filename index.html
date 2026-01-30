@@ -8,6 +8,13 @@
     <meta name="description"
         content="Read and listen to sacred texts from major world religions including the Quran, Bible, Bhagavad Gita, Torah, Guru Granth Sahib, and Buddhist scriptures in multiple languages.">
 
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c9a55c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HoliBooks">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +27,25 @@
     <link rel="stylesheet" href="css/animations.css">
 
     <style>
-        /* ===== Hero Section ===== */
+        /* ===== Glass Morphism Variables ===== */
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="light"] {
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ===== Smooth Scroll ===== */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ===== Aurora Gradient Background ===== */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -33,7 +58,6 @@
             overflow: hidden;
         }
 
-        /* Animated Background */
         .hero-bg {
             position: absolute;
             inset: 0;
@@ -42,6 +66,94 @@
                 radial-gradient(ellipse at 20% 20%, rgba(201, 165, 92, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 80%, rgba(27, 138, 90, 0.1) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 50%, rgba(123, 104, 238, 0.05) 0%, transparent 70%);
+        }
+
+        /* Aurora Gradient Animation */
+        .aurora-bg {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: aurora-float 20s ease-in-out infinite;
+        }
+
+        .aurora-blob-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(201, 165, 92, 0.4) 0%, transparent 70%);
+            top: -200px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .aurora-blob-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 140, 0, 0.3) 0%, transparent 70%);
+            top: 50%;
+            right: -150px;
+            animation-delay: -5s;
+        }
+
+        .aurora-blob-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(27, 138, 90, 0.25) 0%, transparent 70%);
+            bottom: -100px;
+            left: 30%;
+            animation-delay: -10s;
+        }
+
+        .aurora-blob-4 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(123, 104, 238, 0.2) 0%, transparent 70%);
+            top: 20%;
+            left: 50%;
+            animation-delay: -15s;
+        }
+
+        @keyframes aurora-float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(50px, -30px) scale(1.1);
+            }
+            50% {
+                transform: translate(-30px, 50px) scale(0.95);
+            }
+            75% {
+                transform: translate(-50px, -20px) scale(1.05);
+            }
+        }
+
+        /* Mesh Gradient Overlay */
+        .aurora-mesh {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 30% 20%, rgba(201, 165, 92, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(27, 138, 90, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(123, 104, 238, 0.05) 0%, transparent 60%);
+            z-index: -1;
+            animation: mesh-shift 30s ease-in-out infinite;
+        }
+
+        @keyframes mesh-shift {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
         }
 
         /* Floating Particles Container */
@@ -277,7 +389,7 @@
             margin: 0 auto;
         }
 
-        /* Enhanced Religion Cards */
+        /* Enhanced Religion Cards with 3D Tilt Effect */
         .religion-card {
             position: relative;
             background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
@@ -291,6 +403,7 @@
             transform-style: preserve-3d;
             perspective: 1000px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            will-change: transform;
         }
 
         [data-theme="light"] .religion-card {
@@ -326,17 +439,106 @@
         }
 
         .religion-card:hover {
-            transform: translateY(-8px);
             border-color: var(--religion-color, var(--accent-primary));
             box-shadow: 
                 0 20px 40px rgba(0, 0, 0, 0.3),
-                0 0 40px var(--religion-glow, var(--accent-glow));
+                0 0 60px var(--religion-glow, var(--accent-glow));
         }
 
         [data-theme="light"] .religion-card:hover {
             box-shadow: 
                 0 20px 40px rgba(0, 0, 0, 0.12),
-                0 0 40px var(--religion-glow, var(--accent-glow));
+                0 0 60px var(--religion-glow, var(--accent-glow));
+        }
+
+        /* 3D Tilt Effect Classes */
+        .religion-card.tilting {
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Glow Effects for Each Religion */
+        .religion-card[data-religion="islam"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(27, 138, 90, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .religion-card[data-religion="christianity"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(74, 144, 226, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .religion-card[data-religion="hinduism"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(255, 107, 53, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .religion-card[data-religion="judaism"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(123, 104, 238, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .religion-card[data-religion="sikhism"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(255, 140, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .religion-card[data-religion="buddhism"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(212, 175, 55, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="islam"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                0 0 60px rgba(27, 138, 90, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="christianity"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                0 0 60px rgba(74, 144, 226, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="hinduism"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                0 0 60px rgba(255, 107, 53, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="judaism"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                0 0 60px rgba(123, 104, 238, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="sikhism"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                0 0 60px rgba(255, 140, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        [data-theme="light"] .religion-card[data-religion="buddhism"]:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                0 0 60px rgba(212, 175, 55, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
         }
 
         /* Religion Colors */
@@ -478,16 +680,83 @@
             z-index: -1;
         }
 
+        /* Modern Quote of the Day - Glass Morphism Card */
         .featured-card {
             max-width: 800px;
             margin: 0 auto;
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-xl);
             padding: var(--space-3xl);
             text-align: center;
             position: relative;
+            box-shadow: 
+                var(--glass-shadow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-normal);
+        }
+
+        [data-theme="light"] .featured-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                var(--glass-shadow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .featured-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 60px rgba(201, 165, 92, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="light"] .featured-card:hover {
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.15),
+                0 0 60px rgba(201, 165, 92, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        /* Animated Quotation Marks */
+        .featured-card::before,
+        .featured-card::after {
+            content: '"';
+            position: absolute;
+            font-family: 'Playfair Display', serif;
+            font-size: 8rem;
+            color: var(--accent-primary);
+            opacity: 0.1;
+            line-height: 1;
+            pointer-events: none;
+            animation: quote-pulse 4s ease-in-out infinite;
+        }
+
+        .featured-card::before {
+            top: 20px;
+            left: 30px;
+            animation-delay: 0s;
+        }
+
+        .featured-card::after {
+            bottom: 20px;
+            right: 30px;
+            transform: rotate(180deg);
+            animation-delay: 2s;
+        }
+
+        @keyframes quote-pulse {
+            0%, 100% {
+                opacity: 0.05;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.15;
+                transform: scale(1.1);
+            }
         }
 
         .featured-label {
@@ -500,22 +769,46 @@
             margin-bottom: var(--space-xl);
             padding: var(--space-sm) var(--space-md);
             background: rgba(201, 165, 92, 0.1);
+            border: 1px solid rgba(201, 165, 92, 0.2);
             border-radius: var(--radius-full);
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-fast);
+        }
+
+        .featured-card:hover .featured-label {
+            background: rgba(201, 165, 92, 0.15);
+            border-color: rgba(201, 165, 92, 0.3);
+            transform: translateY(-2px);
         }
 
         .featured-verse {
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
             font-style: italic;
-            line-height: 1.8;
+            line-height: 1.9;
             color: var(--text-primary);
             margin-bottom: var(--space-lg);
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.01em;
         }
 
         .featured-source {
             color: var(--accent-primary);
             font-size: 0.95rem;
             font-weight: 500;
+            position: relative;
+            display: inline-block;
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(201, 165, 92, 0.05);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(201, 165, 92, 0.1);
+            transition: all var(--transition-fast);
+        }
+
+        .featured-card:hover .featured-source {
+            background: rgba(201, 165, 92, 0.1);
+            border-color: rgba(201, 165, 92, 0.2);
         }
 
         .featured-actions {
@@ -523,6 +816,14 @@
             justify-content: center;
             gap: var(--space-md);
             margin-top: var(--space-xl);
+        }
+
+        .featured-actions .btn {
+            transition: all var(--transition-fast);
+        }
+
+        .featured-actions .btn:hover {
+            transform: translateY(-2px);
         }
 
         /* ===== Footer ===== */
@@ -597,6 +898,58 @@
         .footer-bottom p {
             color: var(--text-muted);
             font-size: 0.9rem;
+        }
+
+        /* ===== Skeleton Loading Animation ===== */
+        .skeleton {
+            background: linear-gradient(
+                90deg,
+                var(--bg-secondary) 25%,
+                var(--bg-hover) 50%,
+                var(--bg-secondary) 75%
+            );
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+            border-radius: var(--radius-md);
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .skeleton-text {
+            height: 1em;
+            margin-bottom: 0.5em;
+        }
+
+        .skeleton-text:last-child {
+            width: 80%;
+        }
+
+        .skeleton-card {
+            height: 300px;
+            width: 100%;
+        }
+
+        .skeleton-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto var(--space-lg);
+        }
+
+        /* Loading State for Content */
+        .loading-skeleton {
+            pointer-events: none;
+        }
+
+        .loading-skeleton .religion-card {
+            opacity: 0.7;
         }
 
         /* ===== Responsive Design ===== */
@@ -682,14 +1035,48 @@
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
             }
+
+            /* Aurora blobs responsive */
+            .aurora-blob-1 {
+                width: 300px;
+                height: 300px;
+            }
+
+            .aurora-blob-2 {
+                width: 250px;
+                height: 250px;
+            }
+
+            .aurora-blob-3 {
+                width: 200px;
+                height: 200px;
+            }
+
+            .aurora-blob-4 {
+                width: 175px;
+                height: 175px;
+            }
+
+            /* Quote card responsive */
+            .featured-card::before,
+            .featured-card::after {
+                font-size: 4rem;
+            }
+
+            .featured-card::before {
+                top: 10px;
+                left: 15px;
+            }
+
+            .featured-card::after {
+                bottom: 10px;
+                right: 15px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Particle Background -->
-    <div class="particles-bg" id="particles"></div>
-
     <!-- Theme Toggle -->
     <button class="btn btn-icon btn-secondary theme-toggle" id="theme-toggle" title="Toggle Theme"
         style="position: fixed; top: var(--space-lg); right: var(--space-lg); z-index: 100;">
@@ -706,6 +1093,18 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-bg"></div>
+        
+        <!-- Aurora Background -->
+        <div class="aurora-bg" id="aurora">
+            <div class="aurora-blob aurora-blob-1"></div>
+            <div class="aurora-blob aurora-blob-2"></div>
+            <div class="aurora-blob aurora-blob-3"></div>
+            <div class="aurora-blob aurora-blob-4"></div>
+            <div class="aurora-mesh"></div>
+        </div>
+        
+        <!-- Particle Background -->
+        <div class="particles-bg" id="particles"></div>
         
         <div class="hero-content">
             <div class="hero-icon-wrapper reveal-scale">
@@ -966,6 +1365,22 @@
 
     <!-- Scripts -->
     <script src="js/utils.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('[PWA] Service Worker registered:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.error('[PWA] Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+    
     <script>
         // ===== Theme Toggle =====
         const themeToggle = document.getElementById('theme-toggle');
@@ -1088,16 +1503,22 @@
                     const centerX = rect.width / 2;
                     const centerY = rect.height / 2;
                     
-                    const rotateX = (y - centerY) / 20;
-                    const rotateY = (centerX - x) / 20;
+                    const rotateX = (y - centerY) / 15;
+                    const rotateY = (centerX - x) / 15;
                     
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+                    card.classList.add('tilting');
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
                     card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
                     card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
                 });
                 
                 card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+                    card.classList.remove('tilting');
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+                });
+                
+                card.addEventListener('mouseenter', () => {
+                    card.classList.add('tilting');
                 });
             });
         }
@@ -1218,6 +1639,79 @@
                 }
             });
         });
+
+        // ===== Skeleton Loading State =====
+        function showSkeletonLoading() {
+            const religionsGrid = document.querySelector('.religions-grid');
+            if (!religionsGrid) return;
+
+            // Add loading class to grid
+            religionsGrid.classList.add('loading-skeleton');
+
+            // Create skeleton cards
+            const skeletonCards = Array.from({ length: 6 }, (_, i) => {
+                const card = document.createElement('div');
+                card.className = 'religion-card skeleton-card';
+                card.innerHTML = `
+                    <div class="skeleton skeleton-icon"></div>
+                    <div class="skeleton skeleton-text" style="width: 60%; margin: 0 auto var(--space-md);"></div>
+                    <div class="skeleton skeleton-text" style="width: 80%; margin: 0 auto var(--space-sm);"></div>
+                    <div class="skeleton skeleton-text" style="width: 90%; margin: 0 auto;"></div>
+                `;
+                return card;
+            });
+
+            // Store original content
+            religionsGrid.dataset.originalContent = religionsGrid.innerHTML;
+            religionsGrid.innerHTML = '';
+            skeletonCards.forEach(card => religionsGrid.appendChild(card));
+        }
+
+        function hideSkeletonLoading() {
+            const religionsGrid = document.querySelector('.religions-grid');
+            if (!religionsGrid || !religionsGrid.dataset.originalContent) return;
+
+            // Fade out skeleton
+            religionsGrid.style.opacity = '0';
+
+            setTimeout(() => {
+                religionsGrid.classList.remove('loading-skeleton');
+                religionsGrid.innerHTML = religionsGrid.dataset.originalContent;
+                religionsGrid.style.opacity = '1';
+                religionsGrid.style.transition = 'opacity 0.3s ease';
+
+                // Re-initialize card tilt effect
+                initCardTilt();
+            }, 300);
+        }
+
+        // Show skeleton on initial load, then hide after content is "ready"
+        // Uncomment the following lines to enable skeleton loading:
+        // showSkeletonLoading();
+        // setTimeout(hideSkeletonLoading, 800);
+
+        // ===== Aurora Animation Enhancement =====
+        function initAuroraAnimation() {
+            const aurora = document.getElementById('aurora');
+            if (!aurora) return;
+
+            // Add parallax effect on mouse move
+            let ticking = false;
+            document.addEventListener('mousemove', (e) => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                        const y = (e.clientY / window.innerHeight - 0.5) * 20;
+                        
+                        aurora.style.transform = `translate(${x}px, ${y}px)`;
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        }
+
+        initAuroraAnimation();
     </script>
 </body>
 
