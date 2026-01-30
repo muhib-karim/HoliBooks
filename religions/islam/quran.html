@@ -17,15 +17,241 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../../css/global.css">
+    <link rel="stylesheet" href="../../css/animations.css">
     <link rel="stylesheet" href="quran.css">
+
+    <style>
+        /* Enhanced Navigation */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        /* Reading Progress Bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--bg-secondary);
+            z-index: 101;
+        }
+
+        .reading-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--islam-primary), var(--accent-primary));
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        /* Enhanced Surah Navigation */
+        .quick-nav {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .quick-nav-input {
+            width: 60px;
+            padding: var(--space-sm);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .quick-nav-input:focus {
+            outline: none;
+            border-color: var(--islam-primary);
+        }
+
+        /* Font Size Controls */
+        .font-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: var(--bg-secondary);
+            padding: var(--space-xs);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .font-control-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .font-control-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        /* View Mode Toggle */
+        .view-toggle {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .view-toggle-btn {
+            padding: var(--space-sm) var(--space-md);
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active {
+            background: var(--islam-primary);
+            color: var(--bg-primary);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .font-controls,
+            .view-toggle {
+                display: none;
+            }
+        }
+
+        /* Verse Actions */
+        .verse-actions {
+            display: flex;
+            gap: var(--space-xs);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .verse-card:hover .verse-actions {
+            opacity: 1;
+        }
+
+        .verse-action-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-hover);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .verse-action-btn:hover {
+            background: var(--islam-primary);
+            color: var(--bg-primary);
+            border-color: var(--islam-primary);
+        }
+
+        .verse-action-btn.active {
+            background: var(--islam-primary);
+            color: var(--bg-primary);
+        }
+
+        .verse-action-btn.active svg {
+            fill: currentColor;
+        }
+
+        /* Tafsir Tooltip */
+        .tafsir-btn {
+            position: relative;
+        }
+
+        .tafsir-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            width: 300px;
+            max-width: 90vw;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .tafsir-btn:hover .tafsir-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .verse-actions {
+                opacity: 1;
+                position: static;
+                margin-top: var(--space-md);
+                justify-content: flex-end;
+            }
+
+            .surah-info-card {
+                padding: var(--space-xl);
+            }
+
+            .quran-title {
+                font-size: 2.5rem;
+            }
+
+            .quick-nav {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Reading Progress -->
+    <div class="reading-progress">
+        <div class="reading-progress-bar" id="reading-progress"></div>
+    </div>
+
     <!-- Navigation -->
     <header class="nav-header">
         <div class="container nav-content">
             <a href="../../index.html" class="nav-logo">📖 HoliBooks</a>
-            <nav>
+            
+            <nav class="desktop-nav">
                 <ul class="nav-links">
                     <li><a href="../../index.html" class="nav-link">Home</a></li>
                     <li><a href="#" class="nav-link active">Quran</a></li>
@@ -36,18 +262,44 @@
                     <li><a href="../buddhism/tripitaka.html" class="nav-link">Dhammapada</a></li>
                 </ul>
             </nav>
+
             <div class="nav-actions">
+                <!-- View Toggle -->
+                <div class="view-toggle" id="view-toggle">
+                    <button class="view-toggle-btn active" data-view="both">Both</button>
+                    <button class="view-toggle-btn" data-view="arabic">Arabic</button>
+                    <button class="view-toggle-btn" data-view="translation">Translation</button>
+                </div>
+
+                <!-- Font Controls -->
+                <div class="font-controls">
+                    <button class="font-control-btn" id="font-decrease" title="Decrease font size">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 13H5v-2h14v2z"/>
+                        </svg>
+                    </button>
+                    <button class="font-control-btn" id="font-increase" title="Increase font size">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Language Selector -->
                 <button class="btn btn-secondary" id="language-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2.01h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
+                        <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2.01h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04z"/>
                     </svg>
                     <span id="current-language">English</span>
                 </button>
+
+                <!-- Theme Toggle -->
                 <button class="btn btn-icon btn-secondary" id="theme-toggle" title="Toggle Theme">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" />
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="theme-icon-dark">
+                        <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+                    </svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="theme-icon-light" style="display:none">
+                        <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
                     </svg>
                 </button>
             </div>
@@ -65,23 +317,30 @@
         <section class="quran-nav">
             <div class="surah-selector">
                 <label for="surah-select">Select Surah:</label>
-                <div class="select-wrapper">
+                <div class="select-wrapper" style="flex: 1;">
                     <select id="surah-select" class="select">
                         <option value="">Loading...</option>
                     </select>
                 </div>
             </div>
+            
+            <div class="quick-nav">
+                <span>Go to:</span>
+                <input type="number" id="quick-nav-input" class="quick-nav-input" min="1" max="114" placeholder="#">
+                <button class="btn btn-secondary" id="quick-nav-btn">Go</button>
+            </div>
+            
             <div class="nav-buttons">
                 <button class="btn btn-secondary" id="prev-surah" disabled>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
                     </svg>
                     Previous
                 </button>
                 <button class="btn btn-secondary" id="next-surah" disabled>
                     Next
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
                     </svg>
                 </button>
             </div>
@@ -100,9 +359,15 @@
                 <div class="surah-actions">
                     <button class="btn btn-primary" id="play-surah">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M8 5v14l11-7z" />
+                            <path d="M8 5v14l11-7z"/>
                         </svg>
                         Play Surah
+                    </button>
+                    <button class="btn btn-secondary" id="bookmark-surah">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                        </svg>
+                        Bookmark
                     </button>
                 </div>
             </div>
@@ -116,13 +381,34 @@
             </div>
         </main>
 
+        <!-- Bottom Navigation -->
+        <section class="quran-nav" style="margin-top: var(--space-2xl);">
+            <button class="btn btn-secondary" id="prev-surah-bottom" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+                Previous Surah
+            </button>
+            <button class="btn btn-icon btn-secondary" onclick="HoliBooks.scrollToTop()" title="Back to top">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+                </svg>
+            </button>
+            <button class="btn btn-secondary" id="next-surah-bottom" disabled>
+                Next Surah
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </button>
+        </section>
+
         <!-- Footer -->
         <footer class="landing-footer"
             style="text-align: center; padding: var(--space-2xl); border-top: 1px solid var(--border-color); margin-top: var(--space-3xl);">
             <p style="color: var(--text-secondary); font-size: 0.9rem;">Made with ❤️ for spiritual seekers</p>
-            <a href="https://ko-fi.com/ai_dev_2024" target="_blank" rel="noopener noreferrer" class="btn btn-primary"
+            <a href="https://github.com/ai-dev-2024/HoliBooks" target="_blank" rel="noopener noreferrer" class="btn btn-primary"
                 style="margin-top: var(--space-md);">
-                ☕ Support this project
+                ⭐ Star on GitHub
             </a>
         </footer>
     </div>
@@ -131,6 +417,8 @@
     <script src="../../js/utils.js"></script>
     <script src="../../js/audio-player.js"></script>
     <script src="../../js/language-selector.js"></script>
+    <script src="../../js/bookmarks.js"></script>
+    <script src="../../js/search.js"></script>
     <script src="quran.js"></script>
 </body>
 

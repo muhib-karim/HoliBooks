@@ -8,75 +8,117 @@
     <meta name="description"
         content="Read and listen to sacred texts from major world religions including the Quran, Bible, Bhagavad Gita, Torah, Guru Granth Sahib, and Buddhist scriptures in multiple languages.">
 
-    <!-- Fonts for multiple scripts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Gurmukhi:wght@400;600&family=Noto+Serif:ital,wght@0,400;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Gurmukhi:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
         rel="stylesheet">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/animations.css">
 
     <style>
-        /* Landing Page Specific Styles */
+        /* ===== Hero Section ===== */
         .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
             padding: var(--space-3xl) var(--space-lg);
             position: relative;
             overflow: hidden;
         }
 
-        .hero::before {
-            content: '';
+        /* Animated Background */
+        .hero-bg {
             position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(201, 165, 92, 0.1) 0%, transparent 70%);
-            pointer-events: none;
+            inset: 0;
+            z-index: -2;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(201, 165, 92, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(27, 138, 90, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(123, 104, 238, 0.05) 0%, transparent 70%);
+        }
+
+        /* Floating Particles Container */
+        .particles-bg {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            opacity: 0.4;
+            box-shadow: 0 0 10px var(--accent-primary);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        /* 3D Book Icon */
+        .hero-icon-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: var(--space-xl);
         }
 
         .hero-icon {
-            font-size: 4rem;
-            margin-bottom: var(--space-lg);
+            font-size: 5rem;
             display: inline-block;
-            animation: float 3s ease-in-out infinite;
+            animation: float 6s ease-in-out infinite;
+            filter: drop-shadow(0 20px 40px rgba(201, 165, 92, 0.3));
         }
 
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
+        .hero-icon-glow {
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse-glow 4s ease-in-out infinite;
+            z-index: -1;
         }
 
+        /* Title */
         .hero-title {
-            font-size: 3.5rem;
+            font-size: clamp(2.5rem, 8vw, 5rem);
             font-weight: 700;
-            background: linear-gradient(135deg, #c9a55c, #b48b32, #8b6914);
+            margin-bottom: var(--space-md);
+            line-height: 1.1;
+        }
+
+        .hero-title .gradient-text {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, #e8d5b5 50%, var(--accent-secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: var(--space-md);
-            letter-spacing: -1px;
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite;
         }
 
+        /* Typewriter Subtitle */
         .hero-subtitle {
-            font-size: 1.25rem;
+            font-size: clamp(1rem, 2.5vw, 1.35rem);
             color: var(--text-secondary);
             max-width: 600px;
             margin: 0 auto var(--space-xl);
             line-height: 1.7;
+            font-weight: 300;
         }
 
+        /* Features */
         .hero-features {
             display: flex;
             justify-content: center;
@@ -91,87 +133,566 @@
             gap: var(--space-sm);
             color: var(--text-secondary);
             font-size: 0.95rem;
+            padding: var(--space-sm) var(--space-md);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            backdrop-filter: blur(10px);
         }
 
         .hero-feature svg {
             color: var(--accent-primary);
+            width: 18px;
+            height: 18px;
         }
 
-        /* Religion Grid */
-        .religions-section {
-            padding: var(--space-2xl) 0;
+        /* CTA Buttons */
+        .hero-cta {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-3xl);
         }
 
-        .section-title {
+        .btn-glow {
+            position: relative;
+        }
+
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: calc(var(--radius-md) + 2px);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+            filter: blur(10px);
+        }
+
+        .btn-glow:hover::before {
+            opacity: 0.7;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            animation: scroll-indicator 2s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ===== Stats Section ===== */
+        .stats-section {
+            padding: var(--space-3xl) 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(201, 165, 92, 0.03) 50%, transparent 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-xl);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
             text-align: center;
-            margin-bottom: var(--space-2xl);
+            padding: var(--space-xl);
         }
 
-        .section-title h2 {
-            font-size: 2rem;
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
             margin-bottom: var(--space-sm);
         }
 
-        .section-title p {
+        .stat-label {
             color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ===== Religions Section ===== */
+        .religions-section {
+            padding: var(--space-3xl) 0;
+            position: relative;
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                rgba(201, 165, 92, 0.02) 20%,
+                rgba(201, 165, 92, 0.05) 50%,
+                rgba(201, 165, 92, 0.02) 80%,
+                transparent 100%);
+        }
+
+        [data-theme="light"] .religions-section {
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                rgba(139, 105, 20, 0.03) 20%,
+                rgba(139, 105, 20, 0.06) 50%,
+                rgba(139, 105, 20, 0.03) 80%,
+                transparent 100%);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-3xl);
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: var(--space-md);
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .religions-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-lg);
+            gap: var(--space-xl);
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
+        /* Enhanced Religion Cards */
+        .religion-card {
+            position: relative;
+            background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-color);
+            padding: var(--space-2xl);
+            text-align: center;
+            transition: all var(--transition-normal);
+            overflow: hidden;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="light"] .religion-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .religion-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--religion-color, var(--accent-primary)), transparent);
+            opacity: 1;
+            transition: opacity var(--transition-normal);
+        }
+
+        .religion-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+            pointer-events: none;
+        }
+
+        .religion-card:hover::after {
+            opacity: 1;
+        }
+
+        .religion-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--religion-color, var(--accent-primary));
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 40px var(--religion-glow, var(--accent-glow));
+        }
+
+        [data-theme="light"] .religion-card:hover {
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                0 0 40px var(--religion-glow, var(--accent-glow));
+        }
+
+        /* Religion Colors */
+        .religion-card[data-religion="islam"] {
+            --religion-color: var(--islam-primary);
+            --religion-glow: rgba(27, 138, 90, 0.2);
+        }
+
+        .religion-card[data-religion="christianity"] {
+            --religion-color: var(--christianity-primary);
+            --religion-glow: rgba(74, 144, 226, 0.2);
+        }
+
+        .religion-card[data-religion="hinduism"] {
+            --religion-color: var(--hinduism-primary);
+            --religion-glow: rgba(255, 107, 53, 0.2);
+        }
+
+        .religion-card[data-religion="judaism"] {
+            --religion-color: var(--judaism-primary);
+            --religion-glow: rgba(123, 104, 238, 0.2);
+        }
+
+        .religion-card[data-religion="sikhism"] {
+            --religion-color: var(--sikhism-primary);
+            --religion-glow: rgba(255, 140, 0, 0.2);
+        }
+
+        .religion-card[data-religion="buddhism"] {
+            --religion-color: var(--buddhism-primary);
+            --religion-glow: rgba(212, 175, 55, 0.2);
+        }
+
+        .religion-icon-wrapper {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto var(--space-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, 
+                rgba(201, 165, 92, 0.1) 0%, 
+                rgba(201, 165, 92, 0.05) 100%);
+            border-radius: var(--radius-full);
+            border: 2px solid rgba(201, 165, 92, 0.2);
+            position: relative;
+            transition: transform var(--transition-normal);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .religion-icon-wrapper {
+            background: linear-gradient(135deg, 
+                rgba(201, 165, 92, 0.15) 0%, 
+                rgba(201, 165, 92, 0.08) 100%);
+            border: 2px solid rgba(201, 165, 92, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .religion-card:hover .religion-icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+            border-color: var(--religion-color, var(--accent-primary));
+        }
+
+        .religion-icon {
+            font-size: 3.5rem;
+            filter: drop-shadow(0 10px 20px var(--religion-glow));
+        }
+
+        .religion-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            color: var(--text-primary);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .religion-name {
+            color: #1a1a1a;
+        }
+
+        .religion-book {
+            color: var(--religion-color, var(--accent-primary));
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+
+        .religion-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        [data-theme="light"] .religion-desc {
+            color: #666;
+        }
+
+        .religion-arrow {
+            position: absolute;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all var(--transition-fast);
+            color: var(--religion-color, var(--accent-primary));
+            background: var(--bg-secondary);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="light"] .religion-arrow {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .religion-card:hover .religion-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ===== Featured Verse Section ===== */
+        .featured-section {
+            padding: var(--space-3xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-bg {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 30% 50%, rgba(201, 165, 92, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 50%, rgba(123, 104, 238, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .featured-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-3xl);
+            text-align: center;
+            position: relative;
+        }
+
+        .featured-label {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--accent-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: var(--space-xl);
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(201, 165, 92, 0.1);
+            border-radius: var(--radius-full);
+        }
+
+        .featured-verse {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-style: italic;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: var(--space-lg);
+        }
+
+        .featured-source {
+            color: var(--accent-primary);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .featured-actions {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            padding: var(--space-3xl) 0 var(--space-2xl);
+            border-top: 1px solid var(--border-color);
+            margin-top: var(--space-3xl);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: var(--space-2xl);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--space-md);
+            display: inline-block;
+        }
+
+        .footer-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .footer-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-md);
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: var(--space-sm);
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: var(--space-2xl);
+            margin-top: var(--space-2xl);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-bottom p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ===== Responsive Design ===== */
         @media (max-width: 1024px) {
             .religions-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-        }
 
-        @media (max-width: 640px) {
-            .religions-grid {
-                grid-template-columns: 1fr;
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .hero-title {
-                font-size: 2.5rem;
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                min-height: auto;
+                padding: var(--space-2xl) var(--space-md);
             }
 
             .hero-features {
                 flex-direction: column;
                 align-items: center;
             }
+
+            .hero-cta {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .hero-cta .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .scroll-indicator {
+                display: none;
+            }
+
+            .religions-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-md);
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .featured-card {
+                padding: var(--space-xl);
+                margin: 0 var(--space-md);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-brand {
+                max-width: 100%;
+            }
         }
 
-        /* Theme Toggle */
-        .theme-toggle {
-            position: fixed;
-            top: var(--space-lg);
-            right: var(--space-lg);
-            z-index: 100;
-        }
+        @media (max-width: 480px) {
+            .religion-icon-wrapper {
+                width: 80px;
+                height: 80px;
+            }
 
-        /* Footer */
-        .landing-footer {
-            text-align: center;
-            padding: var(--space-2xl);
-            border-top: 1px solid var(--border-color);
-            margin-top: var(--space-3xl);
-        }
+            .religion-icon {
+                font-size: 2.5rem;
+            }
 
-        .landing-footer p {
-            font-size: 0.9rem;
-        }
-
-        .landing-footer a {
-            color: var(--accent-primary);
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- Particle Background -->
+    <div class="particles-bg" id="particles"></div>
+
     <!-- Theme Toggle -->
-    <button class="btn btn-icon btn-secondary theme-toggle" id="theme-toggle" title="Toggle Theme">
+    <button class="btn btn-icon btn-secondary theme-toggle" id="theme-toggle" title="Toggle Theme"
+        style="position: fixed; top: var(--space-lg); right: var(--space-lg); z-index: 100;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="theme-icon-dark">
             <path
                 d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" />
@@ -182,126 +703,271 @@
         </svg>
     </button>
 
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-icon">📖</div>
-            <h1 class="hero-title">HoliBooks</h1>
-            <p class="hero-subtitle">
-                Explore sacred texts from the world's major religions. Read in multiple languages,
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        
+        <div class="hero-content">
+            <div class="hero-icon-wrapper reveal-scale">
+                <div class="hero-icon-glow"></div>
+                <div class="hero-icon">📖</div>
+            </div>
+
+            <h1 class="hero-title reveal">
+                <span class="gradient-text">HoliBooks</span>
+            </h1>
+
+            <p class="hero-subtitle reveal">
+                Explore sacred texts from the world's major religions. Read in multiple languages, 
                 listen to audio recitations, and deepen your understanding of spiritual wisdom.
             </p>
 
-            <div class="hero-features">
+            <div class="hero-features stagger-children">
                 <div class="hero-feature">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2.01h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v2.01h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
                     </svg>
                     <span>100+ Languages</span>
                 </div>
                 <div class="hero-feature">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
                     </svg>
                     <span>Audio Recitations</span>
                 </div>
                 <div class="hero-feature">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z" />
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
                     </svg>
                     <span>6 Major Religions</span>
                 </div>
             </div>
-        </section>
 
-        <!-- Religions Grid -->
-        <section class="religions-section">
-            <div class="section-title">
-                <h2>Choose Your Path</h2>
-                <p>Select a religion to explore its sacred texts</p>
+            <div class="hero-cta reveal">
+                <a href="#religions" class="btn btn-primary btn-glow btn-ripple">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                    </svg>
+                    Explore Texts
+                </a>
+                <a href="religions/islam/quran.html" class="btn btn-secondary btn-ripple">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Start Reading
+                </a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator" onclick="document.getElementById('stats').scrollIntoView({behavior: 'smooth'})">
+            <span>Scroll to explore</span>
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section" id="stats">
+        <div class="container">
+            <div class="stats-grid stagger-children">
+                <div class="stat-item reveal">
+                    <div class="stat-number" data-target="6">0</div>
+                    <div class="stat-label">Sacred Texts</div>
+                </div>
+                <div class="stat-item reveal">
+                    <div class="stat-number" data-target="100">0</div>
+                    <div class="stat-label">Languages</div>
+                </div>
+                <div class="stat-item reveal">
+                    <div class="stat-number" data-target="6236">0</div>
+                    <div class="stat-label">Verses</div>
+                </div>
+                <div class="stat-item reveal">
+                    <div class="stat-number" data-target="24">0</div>
+                    <div class="stat-label">Hour Access</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Religions Section -->
+    <section class="religions-section" id="religions">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2 class="section-title">Choose Your Path</h2>
+                <p class="section-subtitle">Select a religion to explore its sacred texts and discover timeless wisdom</p>
             </div>
 
-            <div class="religions-grid stagger-animation">
+            <div class="religions-grid">
                 <!-- Islam -->
-                <a href="religions/islam/quran.html" class="card religion-card" data-religion="islam">
-                    <div class="religion-icon">☪️</div>
+                <a href="religions/islam/quran.html" class="card religion-card" data-religion="islam" style="opacity: 1; visibility: visible;">
+                    <div class="religion-icon-wrapper">
+                        <div class="religion-icon">☪️</div>
+                    </div>
                     <h3 class="religion-name">Islam</h3>
                     <p class="religion-book">The Holy Quran</p>
-                    <p class="religion-desc" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">
-                        114 Surahs • 90+ Languages • Audio
-                    </p>
+                    <p class="religion-desc">114 Surahs • 90+ Languages • Audio Recitations</p>
+                    <svg class="religion-arrow" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                    </svg>
                 </a>
 
                 <!-- Christianity -->
-                <a href="religions/christianity/bible.html" class="card religion-card" data-religion="christianity">
-                    <div class="religion-icon">✝️</div>
+                <a href="religions/christianity/bible.html" class="card religion-card" data-religion="christianity" style="opacity: 1; visibility: visible;">
+                    <div class="religion-icon-wrapper">
+                        <div class="religion-icon">✝️</div>
+                    </div>
                     <h3 class="religion-name">Christianity</h3>
                     <p class="religion-book">The Holy Bible</p>
-                    <p class="religion-desc" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">
-                        66 Books • 200+ Versions
-                    </p>
+                    <p class="religion-desc">66 Books • 200+ Versions • Old & New Testament</p>
+                    <svg class="religion-arrow" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                    </svg>
                 </a>
 
                 <!-- Hinduism -->
-                <a href="religions/hinduism/gita.html" class="card religion-card" data-religion="hinduism">
-                    <div class="religion-icon">🕉️</div>
+                <a href="religions/hinduism/gita.html" class="card religion-card" data-religion="hinduism" style="opacity: 1; visibility: visible;">
+                    <div class="religion-icon-wrapper">
+                        <div class="religion-icon">🕉️</div>
+                    </div>
                     <h3 class="religion-name">Hinduism</h3>
                     <p class="religion-book">Bhagavad Gita</p>
-                    <p class="religion-desc" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">
-                        18 Chapters • Sanskrit • Hindi • English
-                    </p>
+                    <p class="religion-desc">18 Chapters • Sanskrit • Hindi • English</p>
+                    <svg class="religion-arrow" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                    </svg>
                 </a>
 
                 <!-- Judaism -->
-                <a href="religions/judaism/torah.html" class="card religion-card" data-religion="judaism">
-                    <div class="religion-icon">✡️</div>
+                <a href="religions/judaism/torah.html" class="card religion-card" data-religion="judaism" style="opacity: 1; visibility: visible;">
+                    <div class="religion-icon-wrapper">
+                        <div class="religion-icon">✡️</div>
+                    </div>
                     <h3 class="religion-name">Judaism</h3>
                     <p class="religion-book">Torah / Tanakh</p>
-                    <p class="religion-desc" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">
-                        5 Books • Hebrew • English
-                    </p>
+                    <p class="religion-desc">5 Books • Hebrew • English Translations</p>
+                    <svg class="religion-arrow" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                    </svg>
                 </a>
 
                 <!-- Sikhism -->
-                <a href="religions/sikhism/gurbani.html" class="card religion-card" data-religion="sikhism">
-                    <div class="religion-icon">🪯</div>
+                <a href="religions/sikhism/gurbani.html" class="card religion-card" data-religion="sikhism" style="opacity: 1; visibility: visible;">
+                    <div class="religion-icon-wrapper">
+                        <div class="religion-icon">🪯</div>
+                    </div>
                     <h3 class="religion-name">Sikhism</h3>
                     <p class="religion-book">Guru Granth Sahib</p>
-                    <p class="religion-desc" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">
-                        1430 Pages • Gurmukhi • Punjabi
-                    </p>
+                    <p class="religion-desc">1430 Pages • Gurmukhi • Punjabi • English</p>
+                    <svg class="religion-arrow" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                    </svg>
                 </a>
 
                 <!-- Buddhism -->
-                <a href="religions/buddhism/tripitaka.html" class="card religion-card" data-religion="buddhism">
-                    <div class="religion-icon">☸️</div>
+                <a href="religions/buddhism/tripitaka.html" class="card religion-card" data-religion="buddhism" style="opacity: 1; visibility: visible;">
+                    <div class="religion-icon-wrapper">
+                        <div class="religion-icon">☸️</div>
+                    </div>
                     <h3 class="religion-name">Buddhism</h3>
-                    <p class="religion-book">Tripitaka / Dhammapada</p>
-                    <p class="religion-desc" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">
-                        423 Verses • Pali • English
-                    </p>
+                    <p class="religion-book">Dhammapada</p>
+                    <p class="religion-desc">423 Verses • Pali • English Translations</p>
+                    <svg class="religion-arrow" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                    </svg>
                 </a>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Footer -->
-        <footer class="landing-footer">
-            <p>
-                Made with ❤️ for spiritual seekers everywhere
-            </p>
-            <a href="https://ko-fi.com/ai_dev_2024" target="_blank" rel="noopener noreferrer" class="btn btn-primary support-btn" style="margin-top: var(--space-md);">
-                ☕ Support this project
-            </a>
-        </footer>
-    </div>
+    <!-- Featured Verse Section -->
+    <section class="featured-section">
+        <div class="featured-bg"></div>
+        <div class="container">
+            <div class="featured-card reveal-scale">
+                <div class="featured-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    Verse of the Day
+                </div>
+                <blockquote class="featured-verse" id="featured-verse">
+                    "Guide us to the straight path. The path of those upon whom You have bestowed favor, 
+                    not of those who have evoked anger or of those who are astray."
+                </blockquote>
+                <div class="featured-source" id="featured-source">
+                    — The Holy Quran, Al-Fatihah (1:6-7)
+                </div>
+                <div class="featured-actions">
+                    <button class="btn btn-secondary btn-icon" onclick="copyVerse()" title="Copy verse">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-secondary btn-icon" onclick="shareVerse()" title="Share verse">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+                        </svg>
+                    </button>
+                    <a href="religions/islam/quran.html" class="btn btn-primary">
+                        Read More
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand reveal">
+                <div class="footer-logo">📖 HoliBooks</div>
+                <p class="footer-desc">
+                    A spiritual sanctuary for seekers of wisdom. Explore sacred texts from the world's 
+                    major religions in multiple languages.
+                </p>
+            </div>
+            <div class="footer-column reveal">
+                <h4 class="footer-title">Explore</h4>
+                <ul class="footer-links">
+                    <li><a href="religions/islam/quran.html">Quran</a></li>
+                    <li><a href="religions/christianity/bible.html">Bible</a></li>
+                    <li><a href="religions/hinduism/gita.html">Bhagavad Gita</a></li>
+                    <li><a href="religions/judaism/torah.html">Torah</a></li>
+                </ul>
+            </div>
+            <div class="footer-column reveal">
+                <h4 class="footer-title">More Texts</h4>
+                <ul class="footer-links">
+                    <li><a href="religions/sikhism/gurbani.html">Guru Granth Sahib</a></li>
+                    <li><a href="religions/buddhism/tripitaka.html">Dhammapada</a></li>
+                </ul>
+            </div>
+            <div class="footer-column reveal">
+                <h4 class="footer-title">Connect</h4>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/ai-dev-2024/HoliBooks" target="_blank">GitHub</a></li>
+                    <li><a href="https://github.com/ai-dev-2024/HoliBooks" target="_blank">GitHub</a></li>
+                    <li><a href="https://holibooks.vercel.app" target="_blank">Live Site</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Made with ❤️ for spiritual seekers everywhere</p>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
     <!-- Scripts -->
     <script src="js/utils.js"></script>
     <script>
-        // Theme toggle functionality
+        // ===== Theme Toggle =====
         const themeToggle = document.getElementById('theme-toggle');
         const darkIcon = document.getElementById('theme-icon-dark');
         const lightIcon = document.getElementById('theme-icon-light');
@@ -319,10 +985,225 @@
 
         updateThemeIcon();
 
-        // Add hover sound effect class to cards
-        document.querySelectorAll('.religion-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.setProperty('--religion-color', getComputedStyle(card).getPropertyValue('--religion-color'));
+        // ===== Particle System =====
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 25;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random position
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                
+                // Random size
+                const size = Math.random() * 3 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random animation duration and delay
+                const duration = Math.random() * 10 + 10;
+                const delay = Math.random() * 5;
+                particle.style.animationDuration = duration + 's';
+                particle.style.animationDelay = delay + 's';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                
+                container.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        // ===== Scroll Reveal =====
+        function initScrollReveal() {
+            const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            reveals.forEach(el => observer.observe(el));
+        }
+
+        initScrollReveal();
+
+        // ===== Animated Counter =====
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                        entry.target.classList.add('counted');
+                        const target = parseInt(entry.target.dataset.target);
+                        animateCount(entry.target, target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            counters.forEach(counter => observer.observe(counter));
+        }
+
+        function animateCount(element, target) {
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.textContent = target === 6236 ? '6,236' : 
+                                         target === 100 ? '100+' : 
+                                         target + '+';
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+
+        animateCounters();
+
+        // ===== Card 3D Tilt Effect =====
+        function initCardTilt() {
+            const cards = document.querySelectorAll('.religion-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = (centerX - x) / 20;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+                    card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+                    card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+                });
+            });
+        }
+
+        initCardTilt();
+
+        // ===== Toast Notifications =====
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+            
+            toast.innerHTML = `
+                <span style="font-size: 1.2rem;">${icon}</span>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ===== Copy & Share Functions =====
+        function copyVerse() {
+            const verse = document.getElementById('featured-verse').textContent.trim();
+            const source = document.getElementById('featured-source').textContent.trim();
+            const text = `"${verse}" ${source}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Verse copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy verse', 'error');
+            });
+        }
+
+        function shareVerse() {
+            const verse = document.getElementById('featured-verse').textContent.trim();
+            const source = document.getElementById('featured-source').textContent.trim();
+            const text = `"${verse}" ${source}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'HoliBooks - Verse of the Day',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                copyVerse();
+            }
+        }
+
+        // ===== Daily Verse Rotation =====
+        const dailyVerses = [
+            {
+                text: "Guide us to the straight path. The path of those upon whom You have bestowed favor, not of those who have evoked anger or of those who are astray.",
+                source: "— The Holy Quran, Al-Fatihah (1:6-7)"
+            },
+            {
+                text: "Love is patient, love is kind. It does not envy, it does not boast, it is not proud.",
+                source: "— The Bible, 1 Corinthians 13:4"
+            },
+            {
+                text: "The soul is neither born, nor does it die. It is not that having been non-existent, it came into existence. It is unborn, eternal, everlasting, and primeval.",
+                source: "— Bhagavad Gita, Chapter 2"
+            },
+            {
+                text: "What is hateful to you, do not do to your fellow: this is the whole Torah; the rest is commentary.",
+                source: "— Talmud, Shabbat 31a"
+            },
+            {
+                text: "Recognize the whole human race as one. There is only one God and one humanity.",
+                source: "— Guru Granth Sahib"
+            },
+            {
+                text: "Better than a thousand useless words is one useful word, hearing which one attains peace.",
+                source: "— Dhammapada, Verse 8"
+            }
+        ];
+
+        function setDailyVerse() {
+            const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            const verseIndex = dayOfYear % dailyVerses.length;
+            const verse = dailyVerses[verseIndex];
+            
+            document.getElementById('featured-verse').textContent = `"${verse.text}"`;
+            document.getElementById('featured-source').textContent = verse.source;
+        }
+
+        setDailyVerse();
+
+        // ===== Smooth Scroll for Anchor Links =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
         });
     </script>
