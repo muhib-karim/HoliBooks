@@ -1158,27 +1158,33 @@
         const dailyVerses = [
             {
                 text: "Guide us to the straight path. The path of those upon whom You have bestowed favor, not of those who have evoked anger or of those who are astray.",
-                source: "— The Holy Quran, Al-Fatihah (1:6-7)"
+                source: "— The Holy Quran, Al-Fatihah (1:6-7)",
+                url: "religions/islam/quran.html?surah=1"
             },
             {
                 text: "Love is patient, love is kind. It does not envy, it does not boast, it is not proud.",
-                source: "— The Bible, 1 Corinthians 13:4"
+                source: "— The Bible, 1 Corinthians 13:4",
+                url: "religions/christianity/bible.html?book=1corinthians&chapter=13"
             },
             {
                 text: "The soul is neither born, nor does it die. It is not that having been non-existent, it came into existence. It is unborn, eternal, everlasting, and primeval.",
-                source: "— Bhagavad Gita, Chapter 2"
+                source: "— Bhagavad Gita, Chapter 2",
+                url: "religions/hinduism/gita.html?chapter=2"
             },
             {
                 text: "What is hateful to you, do not do to your fellow: this is the whole Torah; the rest is commentary.",
-                source: "— Talmud, Shabbat 31a"
+                source: "— Talmud, Shabbat 31a",
+                url: "religions/judaism/torah.html"
             },
             {
                 text: "Recognize the whole human race as one. There is only one God and one humanity.",
-                source: "— Guru Granth Sahib"
+                source: "— Guru Granth Sahib",
+                url: "religions/sikhism/gurbani.html"
             },
             {
                 text: "Better than a thousand useless words is one useful word, hearing which one attains peace.",
-                source: "— Dhammapada, Verse 8"
+                source: "— Dhammapada, Verse 8",
+                url: "religions/buddhism/tripitaka.html"
             }
         ];
 
@@ -1189,6 +1195,12 @@
             
             document.getElementById('featured-verse').textContent = `"${verse.text}"`;
             document.getElementById('featured-source').textContent = verse.source;
+            
+            // Update the "Read More" button link to match the current verse
+            const readMoreBtn = document.querySelector('.featured-actions a.btn-primary');
+            if (readMoreBtn && verse.url) {
+                readMoreBtn.href = verse.url;
+            }
         }
 
         setDailyVerse();
