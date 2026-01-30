@@ -120,6 +120,23 @@ async function init() {
         if (savedChapter) currentChapter = savedChapter;
         if (savedVersion) currentVersion = savedVersion;
 
+        // Check URL params
+        const params = HoliBooks.getQueryParams();
+        if (params.book) {
+            const bookId = params.book.toLowerCase();
+            const bookExists = ALL_BOOKS.some(b => b.id === bookId);
+            if (bookExists) {
+                currentBook = bookId;
+            }
+        }
+        if (params.chapter) {
+            const chapterNum = parseInt(params.chapter);
+            const book = ALL_BOOKS.find(b => b.id === currentBook);
+            if (book && chapterNum >= 1 && chapterNum <= book.chapters) {
+                currentChapter = chapterNum;
+            }
+        }
+
         // Populate dropdowns
         populateBookDropdown();
         updateChapterDropdown();

@@ -32,6 +32,23 @@ async function init() {
     if (savedBook) currentBook = savedBook;
     if (savedChapter) currentChapter = savedChapter;
 
+    // Check URL params
+    const params = HoliBooks.getQueryParams();
+    if (params.book) {
+        const bookId = params.book.toLowerCase();
+        const bookExists = TORAH_BOOKS.some(b => b.id === bookId);
+        if (bookExists) {
+            currentBook = bookId;
+        }
+    }
+    if (params.chapter) {
+        const chapterNum = parseInt(params.chapter);
+        const book = TORAH_BOOKS.find(b => b.id === currentBook);
+        if (book && chapterNum >= 1 && chapterNum <= book.chapters) {
+            currentChapter = chapterNum;
+        }
+    }
+
     populateBookDropdown();
     updateChapterDropdown();
     await loadChapter();
