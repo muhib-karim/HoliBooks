@@ -2,8 +2,9 @@
 
 > Explore sacred texts from the world's major religions in one beautiful interface.
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live-holibooks.vercel.app-brightgreen?style=for-the-badge)](https://holibooks.vercel.app)
-[![GitHub](https://img.shields.io/badge/GitHub-ai--dev--2024/HoliBooks-blue?style=for-the-badge&logo=github)](https://github.com/ai-dev-2024/HoliBooks)
+[![Live Demo](https://img.shields.io/badge/🌐_Live-holibooks.vercel.app-22c55e?style=for-the-badge)](https://holibooks.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-Repo-3b82f6?style=for-the-badge&logo=github)](https://github.com/ai-dev-2024/HoliBooks)
+[![Ko-fi](https://img.shields.io/badge/☕_Support-Ko--fi-ff5e5b?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/ai_dev_2024)
 
 ![HoliBooks Screenshot](./screenshots/hero.png)
 
@@ -119,9 +120,9 @@ HoliBooks/
 
 ## 💝 Support
 
-If you find this project helpful, consider supporting its development:
+If HoliBooks has helped you in your spiritual journey, consider supporting its development:
 
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-ff5e5b?style=for-the-badge&logo=ko-fi)](https://ko-fi.com/ai_dev_2024)
+[![Ko-fi](https://img.shields.io/badge/☕_Buy_me_a_coffee-ff5e5b?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/ai_dev_2024)
 
 ## 🔧 Customization
 
