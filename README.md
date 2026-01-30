@@ -117,6 +117,12 @@ HoliBooks/
 └── screenshots/           # README images
 ```
 
+## 💝 Support
+
+If you find this project helpful, consider supporting its development:
+
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-ff5e5b?style=for-the-badge&logo=ko-fi)](https://ko-fi.com/ai_dev_2024)
+
 ## 🔧 Customization
 
 ### Change Default Language
