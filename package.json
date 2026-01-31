@@ -1,0 +1,57 @@
+{
+  "name": "holibooks",
+  "version": "2.0.0",
+  "description": "Universal access to sacred texts from world religions - Quran, Bible, Bhagavad Gita, Torah, Guru Granth Sahib, and Buddhist scriptures in 90+ languages",
+  "main": "serve.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node serve.js",
+    "start": "node serve.js",
+    "build": "echo 'No build step required - vanilla JS project'",
+    "test": "node test-apis.js",
+    "deploy": "vercel --prod",
+    "preview": "vercel"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ai-dev-2024/HoliBooks.git"
+  },
+  "keywords": [
+    "quran",
+    "bible",
+    "gita",
+    "torah",
+    "gurbani",
+    "tripitaka",
+    "islam",
+    "christianity",
+    "hinduism",
+    "judaism",
+    "sikhism",
+    "buddhism",
+    "spirituality",
+    "sacred-texts",
+    "religion",
+    "pwa",
+    "progressive-web-app",
+    "multilingual",
+    "offline-first",
+    "vanilla-js",
+    "glass-morphism",
+    "spiritual",
+    "scriptures",
+    "holy-books"
+  ],
+  "author": "HoliBooks Contributors",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ai-dev-2024/HoliBooks/issues"
+  },
+  "homepage": "https://holibooks.vercel.app",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}

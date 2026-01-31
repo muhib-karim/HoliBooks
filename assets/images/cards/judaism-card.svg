@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1030"/>
+      <stop offset="50%" stop-color="#2d1b4e"/>
+      <stop offset="100%" stop-color="#1a1030"/>
+    </linearGradient>
+    
+    <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a90e2"/>
+      <stop offset="50%" stop-color="#7b68ee"/>
+      <stop offset="100%" stop-color="#4169e1"/>
+    </linearGradient>
+    
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c9a55c"/>
+      <stop offset="100%" stop-color="#d4af37"/>
+    </linearGradient>
+    
+    <!-- Pattern -->
+    <pattern id="starPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M40 10 L45 25 L60 25 L48 35 L52 50 L40 40 L28 50 L32 35 L20 25 L35 25 Z" 
+            fill="none" stroke="rgba(123,104,238,0.06)" stroke-width="1"/>
+    </pattern>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGradient)"/>
+  <rect width="800" height="600" fill="url(#starPattern)"/>
+  
+  <!-- Decorative Torah scroll elements -->
+  <g opacity="0.2" transform="translate(100, 300)">
+    <rect x="0" y="-60" width="20" height="120" rx="10" fill="url(#goldGradient)"/>
+    <rect x="-5" y="-50" width="30" height="100" rx="5" fill="none" stroke="url(#goldGradient)" stroke-width="2"/>
+  </g>
+  <g opacity="0.2" transform="translate(700, 300)">
+    <rect x="-20" y="-60" width="20" height="120" rx="10" fill="url(#goldGradient)"/>
+    <rect x="-25" y="-50" width="30" height="100" rx="5" fill="none" stroke="url(#goldGradient)" stroke-width="2"/>
+  </g>
+  
+  <!-- Central Star of David -->
+  <g transform="translate(400, 270)" filter="url(#strongGlow)">
+    <!-- Outer hexagram -->
+    <polygon points="0,-70 60,-35 60,35 0,70 -60,35 -60,-35" 
+             fill="none" stroke="url(#starGradient)" stroke-width="4" stroke-linejoin="round"/>
+    <!-- Inner lines -->
+    <polygon points="0,-55 48,-27 48,27 0,55 -48,27 -48,-27" 
+             fill="none" stroke="url(#starGradient)" stroke-width="2" stroke-linejoin="round" opacity="0.6"/>
+    <!-- Intersection lines -->
+    <path d="M0,-70 L0,70 M-60,-35 L60,35 M-60,35 L60,-35" 
+          fill="none" stroke="url(#starGradient)" stroke-width="2" opacity="0.4"/>
+    <!-- Center highlight -->
+    <circle cx="0" cy="0" r="15" fill="url(#starGradient)" opacity="0.3" filter="url(#glow)"/>
+  </g>
+  
+  <!-- Decorative Hebrew-like script decoration -->
+  <g opacity="0.15" transform="translate(400, 150)">
+    <path d="M-100 0 L-80 -20 L-60 0 L-40 -20 L-20 0 L0 -20 L20 0 L40 -20 L60 0 L80 -20 L100 0" 
+          fill="none" stroke="url(#goldGradient)" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Text elements -->
+  <text x="400" y="420" text-anchor="middle" font-family="'Frank Ruhl Libre', 'Georgia', serif" font-size="44" font-weight="600" fill="url(#starGradient)" filter="url(#glow)">
+    The Torah
+  </text>
+  
+  <text x="400" y="465" text-anchor="middle" font-family="'Inter', sans-serif" font-size="20" fill="#7b68ee" opacity="0.9">
+    5 Books
+  </text>
+  
+  <!-- Bottom decorative line -->
+  <g transform="translate(400, 520)" opacity="0.5">
+    <line x1="-60" y1="0" x2="60" y2="0" stroke="url(#goldGradient)" stroke-width="2"/>
+    <polygon points="0,-8 6,0 0,8 -6,0" fill="url(#goldGradient)"/>
+  </g>
+</svg>

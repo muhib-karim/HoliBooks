@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a0f2e"/>
+      <stop offset="50%" stop-color="#2d1b4e"/>
+      <stop offset="100%" stop-color="#1a0f2e"/>
+    </linearGradient>
+    
+    <linearGradient id="khandaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff8c00"/>
+      <stop offset="50%" stop-color="#4a90e2"/>
+      <stop offset="100%" stop-color="#ff6b35"/>
+    </linearGradient>
+    
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#ff8c00"/>
+    </linearGradient>
+    
+    <!-- Pattern -->
+    <pattern id="khandaPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,140,0,0.05)" stroke-width="1"/>
+      <path d="M50 20 L50 80 M20 50 L80 50" stroke="rgba(74,144,226,0.04)" stroke-width="1"/>
+    </pattern>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGradient)"/>
+  <rect width="800" height="600" fill="url(#khandaPattern)"/>
+  
+  <!-- Decorative elements -->
+  <g opacity="0.3">
+    <circle cx="150" cy="150" r="50" fill="none" stroke="url(#goldGradient)" stroke-width="1"/>
+    <circle cx="650" cy="450" r="50" fill="none" stroke="url(#goldGradient)" stroke-width="1"/>
+  </g>
+  
+  <!-- Central Khanda Symbol -->
+  <g transform="translate(400, 270)" filter="url(#strongGlow)">
+    <!-- Outer Chakkar (Circle) -->
+    <circle cx="0" cy="0" r="75" fill="none" stroke="url(#khandaGradient)" stroke-width="4"/>
+    <circle cx="0" cy="0" r="65" fill="none" stroke="url(#khandaGradient)" stroke-width="2" opacity="0.6"/>
+    <circle cx="0" cy="0" r="55" fill="none" stroke="url(#khandaGradient)" stroke-width="1" opacity="0.4"/>
+    
+    <!-- Inner decorative circles -->
+    <circle cx="0" cy="0" r="15" fill="none" stroke="url(#khandaGradient)" stroke-width="2"/>
+    <circle cx="0" cy="0" r="8" fill="url(#khandaGradient)" opacity="0.3"/>
+    
+    <!-- Vertical sword (main) -->
+    <path d="M-6 -70 L-6 50 Q-6 70 0 80 Q6 70 6 50 L6 -70 Z" fill="url(#khandaGradient)"/>
+    <path d="M-3 -65 L-3 45 Q-3 60 0 70 Q3 60 3 45 L3 -65 Z" fill="rgba(255,255,255,0.3)"/>
+    
+    <!-- Cross guard -->
+    <rect x="-25" y="30" width="50" height="8" rx="2" fill="url(#khandaGradient)"/>
+    
+    <!-- Left sword (Kirpan) -->
+    <path d="M-25 10 L-50 50 Q-55 60 -45 65 Q-35 60 -30 50 L-15 20 Z" fill="url(#khandaGradient)" opacity="0.9"/>
+    
+    <!-- Right sword (Kirpan) -->
+    <path d="M25 10 L50 50 Q55 60 45 65 Q35 60 30 50 L15 20 Z" fill="url(#khandaGradient)" opacity="0.9"/>
+  </g>
+  
+  <!-- Ek Onkar symbol decoration -->
+  <g transform="translate(400, 150)" opacity="0.2">
+    <path d="M-60 0 Q-30 -20 0 0 Q30 -20 60 0" fill="none" stroke="url(#goldGradient)" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="-10" r="5" fill="url(#goldGradient)"/>
+  </g>
+  
+  <!-- Text elements -->
+  <text x="400" y="420" text-anchor="middle" font-family="'Noto Sans Gurmukhi', 'Georgia', serif" font-size="40" font-weight="600" fill="url(#khandaGradient)" filter="url(#glow)">
+    Guru Granth Sahib
+  </text>
+  
+  <text x="400" y="465" text-anchor="middle" font-family="'Inter', sans-serif" font-size="20" fill="#4a90e2" opacity="0.9">
+    1430 Pages
+  </text>
+  
+  <!-- Bottom decorative element -->
+  <g transform="translate(400, 520)" opacity="0.5">
+    <path d="M-50 0 L-10 0 L0 -8 L10 0 L50 0" fill="none" stroke="url(#goldGradient)" stroke-width="2"/>
+    <circle cx="0" cy="0" r="4" fill="url(#goldGradient)"/>
+  </g>
+</svg>

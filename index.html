@@ -393,6 +393,8 @@
         .religion-card {
             position: relative;
             background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+            background-size: cover;
+            background-position: center;
             border-radius: var(--radius-xl);
             border: 1px solid var(--border-color);
             padding: var(--space-2xl);
@@ -406,9 +408,71 @@
             will-change: transform;
         }
 
+        /* Religion-specific card backgrounds */
+        .religion-card[data-religion="islam"] {
+            background-image: url('assets/images/cards/islam-card.svg');
+        }
+
+        .religion-card[data-religion="christianity"] {
+            background-image: url('assets/images/cards/christianity-card.svg');
+        }
+
+        .religion-card[data-religion="hinduism"] {
+            background-image: url('assets/images/cards/hinduism-card.svg');
+        }
+
+        .religion-card[data-religion="judaism"] {
+            background-image: url('assets/images/cards/judaism-card.svg');
+        }
+
+        .religion-card[data-religion="sikhism"] {
+            background-image: url('assets/images/cards/sikhism-card.svg');
+        }
+
+        .religion-card[data-religion="buddhism"] {
+            background-image: url('assets/images/cards/buddhism-card.svg');
+        }
+
+        /* Overlay for better text readability on SVG backgrounds */
+        .religion-card .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, 
+                rgba(13, 17, 23, 0.7) 0%, 
+                rgba(13, 17, 23, 0.85) 50%,
+                rgba(13, 17, 23, 0.9) 100%);
+            border-radius: var(--radius-xl);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        [data-theme="light"] .religion-card .card-overlay {
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.75) 0%, 
+                rgba(255, 255, 255, 0.9) 50%,
+                rgba(255, 255, 255, 0.95) 100%);
+        }
+
+        /* Ensure content stays above overlay */
+        .religion-card > *:not(.card-overlay):not(.card-glow) {
+            position: relative;
+            z-index: 1;
+        }
+
         [data-theme="light"] .religion-card {
             background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Light mode specific backgrounds */
+        [data-theme="light"] .religion-card[data-religion="islam"],
+        [data-theme="light"] .religion-card[data-religion="christianity"],
+        [data-theme="light"] .religion-card[data-religion="hinduism"],
+        [data-theme="light"] .religion-card[data-religion="judaism"],
+        [data-theme="light"] .religion-card[data-religion="sikhism"],
+        [data-theme="light"] .religion-card[data-religion="buddhism"] {
+            background-size: cover;
+            background-position: center;
         }
 
         /* Gradient border on hover using pseudo-element */
@@ -1062,6 +1126,107 @@
             font-size: 0.9rem;
         }
 
+        /* ===== Mobile Preview Mode ===== */
+        [data-preview="mobile"] {
+            background: var(--bg-secondary);
+        }
+        
+        [data-preview="mobile"] body {
+            max-width: 375px;
+            margin: 0 auto;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            min-height: 100vh;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        [data-preview="mobile"] .hero {
+            min-height: auto;
+            padding: var(--space-xl) var(--space-md);
+        }
+        
+        [data-preview="mobile"] .hero-icon {
+            font-size: 3rem;
+        }
+        
+        [data-preview="mobile"] .hero-features {
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        [data-preview="mobile"] .hero-cta {
+            flex-direction: column;
+            width: 100%;
+            max-width: 280px;
+        }
+        
+        [data-preview="mobile"] .hero-cta .btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        [data-preview="mobile"] .religions-grid {
+            grid-template-columns: 1fr;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+        
+        [data-preview="mobile"] .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+        
+        [data-preview="mobile"] .stat-number {
+            font-size: 2rem;
+        }
+        
+        [data-preview="mobile"] .featured-card {
+            padding: var(--space-xl);
+            margin: 0 var(--space-md);
+        }
+        
+        [data-preview="mobile"] .footer-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+        
+        [data-preview="mobile"] .footer-brand {
+            max-width: 100%;
+        }
+        
+        [data-preview="mobile"] .scroll-indicator {
+            display: none;
+        }
+        
+        /* Device frame styling for mobile preview */
+        [data-preview="mobile"]::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 375px;
+            height: 100vh;
+            border: 12px solid var(--bg-hover);
+            border-radius: 40px;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 
+                inset 0 0 0 2px var(--border-color),
+                0 0 0 100vmax var(--bg-secondary);
+        }
+        
+        [data-preview="mobile"] .theme-toggle,
+        [data-preview="mobile"] .view-toggle {
+            position: fixed !important;
+            right: calc(50% - 140px) !important;
+        }
+        
+        [data-preview="mobile"] .view-toggle {
+            right: calc(50% - 80px) !important;
+        }
+        
         /* ===== Skeleton Loading Animation ===== */
         .skeleton {
             background: linear-gradient(
@@ -1253,6 +1418,17 @@
         </svg>
     </button>
 
+    <!-- View Toggle (Desktop/Mobile) -->
+    <button class="btn btn-icon btn-secondary view-toggle" id="view-toggle" title="Toggle Mobile/Desktop View"
+        style="position: fixed; top: var(--space-lg); right: calc(var(--space-lg) + 60px); z-index: 100;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="view-icon-desktop">
+            <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2H0c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2h-4zM4 5h16v11H4V5z"/>
+        </svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="view-icon-mobile" style="display:none">
+            <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>
+        </svg>
+    </button>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-bg"></div>
@@ -1364,6 +1540,7 @@
             <div class="religions-grid">
                 <!-- Islam -->
                 <a href="religions/islam/quran.html" class="card religion-card" data-religion="islam" style="opacity: 1; visibility: visible;">
+                    <div class="card-overlay"></div>
                     <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
                         <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1399,6 +1576,7 @@
 
                 <!-- Christianity -->
                 <a href="religions/christianity/bible.html" class="card religion-card" data-religion="christianity" style="opacity: 1; visibility: visible;">
+                    <div class="card-overlay"></div>
                     <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
                         <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1431,6 +1609,7 @@
 
                 <!-- Hinduism -->
                 <a href="religions/hinduism/gita.html" class="card religion-card" data-religion="hinduism" style="opacity: 1; visibility: visible;">
+                    <div class="card-overlay"></div>
                     <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
                         <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1468,6 +1647,7 @@
 
                 <!-- Judaism -->
                 <a href="religions/judaism/torah.html" class="card religion-card" data-religion="judaism" style="opacity: 1; visibility: visible;">
+                    <div class="card-overlay"></div>
                     <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
                         <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1502,6 +1682,7 @@
 
                 <!-- Sikhism -->
                 <a href="religions/sikhism/gurbani.html" class="card religion-card" data-religion="sikhism" style="opacity: 1; visibility: visible;">
+                    <div class="card-overlay"></div>
                     <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
                         <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1544,6 +1725,7 @@
 
                 <!-- Buddhism -->
                 <a href="religions/buddhism/tripitaka.html" class="card religion-card" data-religion="buddhism" style="opacity: 1; visibility: visible;">
+                    <div class="card-overlay"></div>
                     <div class="card-glow"></div>
                     <div class="religion-icon-wrapper">
                         <svg class="religion-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1669,6 +1851,7 @@
 
     <!-- Scripts -->
     <script src="js/utils.js"></script>
+    <script src="js/api-monitor.js"></script>
     
     <!-- Service Worker Registration -->
     <script>
@@ -1703,6 +1886,52 @@
         });
 
         updateThemeIcon();
+
+        // ===== View Toggle (Desktop/Mobile) =====
+        const viewToggle = document.getElementById('view-toggle');
+        const desktopIcon = document.getElementById('view-icon-desktop');
+        const mobileIcon = document.getElementById('view-icon-mobile');
+        const htmlElement = document.documentElement;
+
+        function getSavedView() {
+            return localStorage.getItem('holibooks_view') || 'desktop';
+        }
+
+        function saveView(view) {
+            localStorage.setItem('holibooks_view', view);
+        }
+
+        function updateViewIcon() {
+            const isMobile = htmlElement.getAttribute('data-preview') === 'mobile';
+            desktopIcon.style.display = isMobile ? 'none' : 'block';
+            mobileIcon.style.display = isMobile ? 'block' : 'none';
+            viewToggle.title = isMobile ? 'Switch to Desktop View' : 'Switch to Mobile View';
+        }
+
+        function toggleView() {
+            const currentView = htmlElement.getAttribute('data-preview');
+            const newView = currentView === 'mobile' ? 'desktop' : 'mobile';
+            
+            if (newView === 'mobile') {
+                htmlElement.setAttribute('data-preview', 'mobile');
+                showToast('Switched to Mobile Preview', 'info');
+            } else {
+                htmlElement.removeAttribute('data-preview');
+                showToast('Switched to Desktop View', 'info');
+            }
+            
+            saveView(newView);
+            updateViewIcon();
+        }
+
+        viewToggle.addEventListener('click', toggleView);
+
+        // Initialize view from localStorage
+        const savedView = getSavedView();
+        if (savedView === 'mobile') {
+            htmlElement.setAttribute('data-preview', 'mobile');
+        }
+        updateViewIcon();
 
         // ===== Particle System =====
         function createParticles() {

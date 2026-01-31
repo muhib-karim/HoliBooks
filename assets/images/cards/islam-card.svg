@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d3328"/>
+      <stop offset="50%" stop-color="#1a5c44"/>
+      <stop offset="100%" stop-color="#0d3328"/>
+    </linearGradient>
+    
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4af37"/>
+      <stop offset="50%" stop-color="#f4d03f"/>
+      <stop offset="100%" stop-color="#b8860b"/>
+    </linearGradient>
+    
+    <linearGradient id="moonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f4d03f"/>
+      <stop offset="100%" stop-color="#d4af37"/>
+    </linearGradient>
+    
+    <!-- Patterns -->
+    <pattern id="geometricPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M50 0 L100 50 L50 100 L0 50 Z" fill="none" stroke="rgba(212,175,55,0.1)" stroke-width="1"/>
+      <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(212,175,55,0.08)" stroke-width="1"/>
+      <path d="M50 20 L80 50 L50 80 L20 50 Z" fill="none" stroke="rgba(212,175,55,0.06)" stroke-width="1"/>
+    </pattern>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGradient)"/>
+  <rect width="800" height="600" fill="url(#geometricPattern)"/>
+  
+  <!-- Decorative corner elements -->
+  <path d="M20 20 Q60 20 60 60" fill="none" stroke="url(#goldGradient)" stroke-width="2" opacity="0.6"/>
+  <path d="M780 20 Q740 20 740 60" fill="none" stroke="url(#goldGradient)" stroke-width="2" opacity="0.6"/>
+  <path d="M20 580 Q60 580 60 540" fill="none" stroke="url(#goldGradient)" stroke-width="2" opacity="0.6"/>
+  <path d="M780 580 Q740 580 740 540" fill="none" stroke="url(#goldGradient)" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Central crescent moon and star -->
+  <g transform="translate(400, 280)" filter="url(#softGlow)">
+    <!-- Crescent moon -->
+    <path d="M-40 -60 C-80 -60 -100 -20 -100 20 C-100 70 -60 100 -20 100 C-60 90 -80 50 -80 20 C-80 -10 -60 -50 -20 -60 Z" 
+          fill="url(#moonGradient)"/>
+    <!-- Star -->
+    <polygon points="60,-50 65,-35 80,-35 68,-25 72,-10 60,-20 48,-10 52,-25 40,-35 55,-35" 
+             fill="url(#moonGradient)" filter="url(#glow)"/>
+  </g>
+  
+  <!-- Arabic calligraphy style decoration -->
+  <g opacity="0.15" transform="translate(400, 150)">
+    <path d="M-150 0 Q-100 -30 -50 0 T50 0 T150 0" fill="none" stroke="url(#goldGradient)" stroke-width="3"/>
+    <path d="M-120 20 Q-70 -10 -20 20 T80 20 T180 20" fill="none" stroke="url(#goldGradient)" stroke-width="2"/>
+  </g>
+  
+  <!-- Text elements -->
+  <text x="400" y="420" text-anchor="middle" font-family="'Amiri', 'Georgia', serif" font-size="42" font-weight="700" fill="url(#goldGradient)" filter="url(#glow)">
+    The Holy Quran
+  </text>
+  
+  <text x="400" y="465" text-anchor="middle" font-family="'Inter', sans-serif" font-size="20" fill="#c9a55c" opacity="0.9">
+    114 Surahs
+  </text>
+  
+  <!-- Bottom decorative line -->
+  <line x1="300" y1="500" x2="500" y2="500" stroke="url(#goldGradient)" stroke-width="2" opacity="0.5"/>
+  <circle cx="300" cy="500" r="3" fill="url(#goldGradient)"/>
+  <circle cx="500" cy="500" r="3" fill="url(#goldGradient)"/>
+</svg>

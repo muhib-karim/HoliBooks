@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="50%" stop-color="#1a2d4a"/>
+      <stop offset="100%" stop-color="#0a1628"/>
+    </linearGradient>
+    
+    <linearGradient id="crossGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8d5b5"/>
+      <stop offset="50%" stop-color="#f4e8d0"/>
+      <stop offset="100%" stop-color="#c9a55c"/>
+    </linearGradient>
+    
+    <linearGradient id="lightGradient" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="rgba(244,232,208,0.3)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+    
+    <!-- Stained glass pattern -->
+    <pattern id="crossPattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="rgba(201,165,92,0.08)" stroke-width="1"/>
+      <circle cx="30" cy="30" r="15" fill="none" stroke="rgba(201,165,92,0.05)" stroke-width="1"/>
+    </pattern>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="strongGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGradient)"/>
+  <rect width="800" height="600" fill="url(#crossPattern)"/>
+  
+  <!-- Light rays from top -->
+  <g opacity="0.3">
+    <path d="M400 0 L200 600 L300 600 L400 0" fill="url(#lightGradient)"/>
+    <path d="M400 0 L600 600 L500 600 L400 0" fill="url(#lightGradient)"/>
+    <path d="M400 0 L350 600 L450 600 L400 0" fill="url(#lightGradient)"/>
+  </g>
+  
+  <!-- Decorative border -->
+  <rect x="30" y="30" width="740" height="540" fill="none" stroke="url(#crossGradient)" stroke-width="2" opacity="0.3" rx="10"/>
+  
+  <!-- Central illuminated cross -->
+  <g transform="translate(400, 280)" filter="url(#strongGlow)">
+    <!-- Vertical beam -->
+    <rect x="-12" y="-100" width="24" height="200" rx="3" fill="url(#crossGradient)"/>
+    <!-- Horizontal beam -->
+    <rect x="-70" y="-35" width="140" height="24" rx="3" fill="url(#crossGradient)"/>
+    <!-- Inner highlight -->
+    <rect x="-6" y="-95" width="12" height="190" rx="2" fill="rgba(255,255,255,0.3)"/>
+    <rect x="-65" y="-32" width="130" height="18" rx="2" fill="rgba(255,255,255,0.3)"/>
+  </g>
+  
+  <!-- Halo effect -->
+  <circle cx="400" cy="245" r="120" fill="none" stroke="url(#crossGradient)" stroke-width="1" opacity="0.2" filter="url(#glow)"/>
+  <circle cx="400" cy="245" r="100" fill="none" stroke="url(#crossGradient)" stroke-width="1" opacity="0.15" filter="url(#glow)"/>
+  
+  <!-- Text elements -->
+  <text x="400" y="420" text-anchor="middle" font-family="'Playfair Display', 'Georgia', serif" font-size="44" font-weight="600" fill="url(#crossGradient)" filter="url(#glow)">
+    The Holy Bible
+  </text>
+  
+  <text x="400" y="465" text-anchor="middle" font-family="'Inter', sans-serif" font-size="20" fill="#c9a55c" opacity="0.9">
+    66 Books
+  </text>
+  
+  <!-- Bottom decorative elements -->
+  <g transform="translate(400, 520)">
+    <path d="M-80 0 L-20 0 L0 -10 L20 0 L80 0" fill="none" stroke="url(#crossGradient)" stroke-width="1.5" opacity="0.5"/>
+    <circle cx="0" cy="-5" r="4" fill="url(#crossGradient)" opacity="0.6"/>
+  </g>
+</svg>

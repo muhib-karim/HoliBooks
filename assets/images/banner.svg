@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 600" width="1920" height="600">
+  <defs>
+    <!-- Dark gradient background -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="50%" stop-color="#161b22"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+    
+    <!-- Aurora gradient -->
+    <radialGradient id="aurora1" cx="30%" cy="20%" r="50%">
+      <stop offset="0%" stop-color="rgba(201,165,92,0.3)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    
+    <radialGradient id="aurora2" cx="70%" cy="80%" r="50%">
+      <stop offset="0%" stop-color="rgba(27,138,90,0.2)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    
+    <radialGradient id="aurora3" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="rgba(123,104,238,0.15)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    
+    <!-- Text gradient -->
+    <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c9a55c"/>
+      <stop offset="50%" stop-color="#e8d5b5"/>
+      <stop offset="100%" stop-color="#c9a55c"/>
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1920" height="600" fill="url(#bgGradient)"/>
+  
+  <!-- Aurora effects -->
+  <ellipse cx="576" cy="120" rx="400" ry="300" fill="url(#aurora1)" opacity="0.6"/>
+  <ellipse cx="1344" cy="480" rx="350" ry="250" fill="url(#aurora2)" opacity="0.5"/>
+  <ellipse cx="960" cy="300" rx="500" ry="350" fill="url(#aurora3)" opacity="0.4"/>
+  
+  <!-- Floating geometric shapes -->
+  <g opacity="0.1">
+    <!-- Hexagons -->
+    <polygon points="200,100 230,85 260,100 260,130 230,145 200,130" fill="none" stroke="#c9a55c" stroke-width="2"/>
+    <polygon points="1700,450 1730,435 1760,450 1760,480 1730,495 1700,480" fill="none" stroke="#c9a55c" stroke-width="2"/>
+    
+    <!-- Circles -->
+    <circle cx="150" cy="500" r="40" fill="none" stroke="#1b8a5a" stroke-width="2"/>
+    <circle cx="1770" cy="150" r="50" fill="none" stroke="#7b68ee" stroke-width="2"/>
+    
+    <!-- Triangles -->
+    <polygon points="300,50 320,90 280,90" fill="none" stroke="#ff8c00" stroke-width="2"/>
+    <polygon points="1620,550 1640,510 1660,550" fill="none" stroke="#d4af37" stroke-width="2"/>
+    
+    <!-- Squares -->
+    <rect x="1800" y="300" width="60" height="60" fill="none" stroke="#c9a55c" stroke-width="2" transform="rotate(15 1830 330)"/>
+    <rect x="100" y="200" width="50" height="50" fill="none" stroke="#4a90e2" stroke-width="2" transform="rotate(-10 125 225)"/>
+  </g>
+  
+  <!-- Main content group -->
+  <g transform="translate(960, 250)">
+    <!-- Book icon -->
+    <g transform="translate(0, -60)" filter="url(#softGlow)">
+      <path d="M-30 -25 Q0 -35 30 -25 L30 35 Q0 45 -30 35 Z" fill="none" stroke="url(#titleGradient)" stroke-width="3"/>
+      <path d="M-30 -25 Q0 -15 30 -25" fill="none" stroke="url(#titleGradient)" stroke-width="2"/>
+      <line x1="0" y1="-30" x2="0" y2="40" stroke="url(#titleGradient)" stroke-width="2"/>
+    </g>
+    
+    <!-- Title -->
+    <text x="0" y="40" text-anchor="middle" font-family="'Playfair Display', 'Georgia', serif" font-size="72" font-weight="700" fill="url(#titleGradient)" filter="url(#glow)">
+      HoliBooks
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="0" y="90" text-anchor="middle" font-family="'Inter', sans-serif" font-size="24" fill="#8b949e" letter-spacing="2">
+      Sacred Texts from World Religions
+    </text>
+  </g>
+  
+  <!-- Religion icons at bottom -->
+  <g transform="translate(960, 480)">
+    <!-- Islam -->
+    <g transform="translate(-300, 0)">
+      <circle cx="0" cy="0" r="35" fill="rgba(27,138,90,0.2)" stroke="#1b8a5a" stroke-width="2"/>
+      <path d="M-10 -5 C-20 -5 -25 5 -25 15 C-25 30 -15 40 0 40 C-15 35 -20 20 -20 15 C-20 10 -15 -5 0 -5 Z" fill="#1b8a5a"/>
+      <polygon points="15,-15 17,-8 24,-8 18,-4 20,3 15,-1 10,3 12,-4 6,-8 13,-8" fill="#1b8a5a"/>
+    </g>
+    
+    <!-- Christianity -->
+    <g transform="translate(-180, 0)">
+      <circle cx="0" cy="0" r="35" fill="rgba(212,175,55,0.2)" stroke="#d4af37" stroke-width="2"/>
+      <line x1="0" y1="-20" x2="0" y2="20" stroke="#d4af37" stroke-width="4" stroke-linecap="round"/>
+      <line x1="-15" y1="-5" x2="15" y2="-5" stroke="#d4af37" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    
+    <!-- Hinduism -->
+    <g transform="translate(-60, 0)">
+      <circle cx="0" cy="0" r="35" fill="rgba(255,140,0,0.2)" stroke="#ff8c00" stroke-width="2"/>
+      <path d="M-12 15 C-16 15 -18 10 -18 5 C-18 0 -16 -5 -12 -5 C-8 -5 -6 0 -6 5 C-6 10 -8 15 -12 15" fill="none" stroke="#ff8c00" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M-6 5 L-3 5 C0 5 2 3 2 0 C2 -3 0 -5 -3 -5" fill="none" stroke="#ff8c00" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="2" cy="-10" r="2" fill="#ff8c00"/>
+    </g>
+    
+    <!-- Judaism -->
+    <g transform="translate(60, 0)">
+      <circle cx="0" cy="0" r="35" fill="rgba(123,104,238,0.2)" stroke="#7b68ee" stroke-width="2"/>
+      <polygon points="0,-20 12,-10 12,10 0,20 -12,10 -12,-10" fill="none" stroke="#7b68ee" stroke-width="2.5"/>
+      <polygon points="0,-12 8,-4 8,4 0,12 -8,4 -8,-4" fill="none" stroke="#7b68ee" stroke-width="1.5" opacity="0.6"/>
+    </g>
+    
+    <!-- Sikhism -->
+    <g transform="translate(180, 0)">
+      <circle cx="0" cy="0" r="35" fill="rgba(255,140,0,0.2)" stroke="#ff8c00" stroke-width="2"/>
+      <circle cx="0" cy="0" r="12" fill="none" stroke="#ff8c00" stroke-width="2"/>
+      <line x1="0" y1="-25" x2="0" y2="25" stroke="#ff8c00" stroke-width="3" stroke-linecap="round"/>
+      <line x1="-12" y1="12" x2="12" y2="12" stroke="#ff8c00" stroke-width="2" stroke-linecap="round"/>
+      <line x1="-8" y1="-5" x2="-15" y2="15" stroke="#ff8c00" stroke-width="2" stroke-linecap="round"/>
+      <line x1="8" y1="-5" x2="15" y2="15" stroke="#ff8c00" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    
+    <!-- Buddhism -->
+    <g transform="translate(300, 0)">
+      <circle cx="0" cy="0" r="35" fill="rgba(212,175,55,0.2)" stroke="#d4af37" stroke-width="2"/>
+      <circle cx="0" cy="0" r="20" fill="none" stroke="#d4af37" stroke-width="2.5"/>
+      <circle cx="0" cy="0" r="6" fill="#d4af37"/>
+      <line x1="0" y1="-20" x2="0" y2="-6" stroke="#d4af37" stroke-width="2"/>
+      <line x1="0" y1="6" x2="0" y2="20" stroke="#d4af37" stroke-width="2"/>
+      <line x1="-20" y1="0" x2="-6" y2="0" stroke="#d4af37" stroke-width="2"/>
+      <line x1="6" y1="0" x2="20" y2="0" stroke="#d4af37" stroke-width="2"/>
+      <line x1="-14" y1="-14" x2="-4" y2="-4" stroke="#d4af37" stroke-width="2"/>
+      <line x1="4" y1="4" x2="14" y2="14" stroke="#d4af37" stroke-width="2"/>
+      <line x1="14" y1="-14" x2="4" y2="-4" stroke="#d4af37" stroke-width="2"/>
+      <line x1="-4" y1="4" x2="-14" y2="14" stroke="#d4af37" stroke-width="2"/>
+    </g>
+  </g>
+  
+  <!-- Bottom border line -->
+  <line x1="660" y1="560" x2="1260" y2="560" stroke="#c9a55c" stroke-width="1" opacity="0.3"/>
+</svg>
