@@ -7,71 +7,95 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.1] - 2026-01-31
+
+### Fixed
+- Fixed browser caching issues with cache-busting query parameters
+- Added version query parameters (?v=2.0.1) to all CSS and JS imports
+- Ensured latest content loads for all users by bypassing cached files
+- Updated all HTML files with cache-busting for production deployment
+
+---
+
+## [Unreleased]
+
+### Planned
+- User accounts and cloud sync for bookmarks
+- Note-taking feature for verses
+- Reading plans and daily devotionals
+- Social sharing with custom cards
+- More audio recitations for other texts
+- Mobile app (React Native/Flutter)
+- Offline text downloads
+- Advanced search with filters
+- Community translations
+- Accessibility improvements (screen reader optimization)
+
+---
+
 ## [2.0.0] - 2026-01-31
 
-### ✨ Added
+### Added
 
 #### Multi-Language Support
-- **Quran**: Support for 90+ languages including Arabic, English, Urdu, French, Spanish, Indonesian, and more
-- **Bible**: 200+ versions and translations across 100+ languages
-- **Bhagavad Gita**: Sanskrit, English, Hindi, and other Indian languages
-- **Torah**: Hebrew, English, Yiddish, and Ladino translations
-- **Guru Granth Sahib**: Gurmukhi, English, and Punjabi support
-- **Tripitaka**: Pali, English, and Buddhist canonical languages
+- Complete multi-language support for all 6 religions
+  - **Quran**: 90+ languages including Arabic, English, Urdu, French, Spanish, Indonesian, and more
+  - **Bible**: 200+ versions and translations across 100+ languages
+  - **Bhagavad Gita**: Sanskrit, Hindi, English, and other Indian languages
+  - **Torah**: English, Spanish, French, and German translations
+  - **Guru Granth Sahib (Gurbani)**: Gurmukhi, English, and Transliteration support
+  - **Tripitaka**: Pali and English translations
 
-#### UI/UX Enhancements
-- **Desktop/Mobile View Toggle** - Switch between desktop and mobile preview modes for testing
-- **API Health Monitoring System** - Real-time status dashboard showing all API endpoints
-- **Progressive Web App (PWA) Support**
-  - Service Worker for offline functionality
-  - Web App Manifest for installability
-  - Offline fallback page with sample content
-  - Cached assets for fast loading
-- **Custom SVG Icons** - Replaced all emoji icons with handcrafted SVG icons
-  - Religion-specific icon sets
-  - Consistent styling across themes
-  - Scalable vector graphics
+#### Comprehensive Offline Fallback Data
+- All 18 Gita chapters with 90+ verses
+- Complete Japji Sahib with 80 verses
+- Full Dhammapada with 423 verses
+- Cached assets for fast loading
+
+#### Progressive Web App (PWA)
+- Service Worker for offline functionality
+- Web App Manifest for installability
+- Offline support on all devices
+- Installable on desktop and mobile
+
+#### UI/UX Features
+- Desktop/Mobile view toggle for testing
+- API health monitoring system with real-time status dashboard
+- Mobile responsive navigation with hamburger menus
+- Slide-out panels for mobile navigation
+- Touch-friendly controls
+- Search functionality with Ctrl+K keyboard shortcut
+- Bookmarks system with localStorage persistence
+- Reading history tracking
+- Theme toggle (Dark/Light modes)
 
 #### Design System
-- **Glass Morphism UI** - Modern translucent design elements
-  - Backdrop blur effects
-  - Semi-transparent backgrounds
-  - Border highlights with gradients
-- **Aurora Gradient Backgrounds** - Animated ethereal color flows
-  - Multiple animated gradient blobs
-  - Mesh gradient overlays
-  - Smooth floating animations
-- **3D Religion Cards** - Interactive cards with depth
-  - Mouse-following tilt effect
-  - Radial gradient glow on hover
-  - Perspective transforms
-  - Smooth transitions
+- Professional design system with glass morphism effects
+- Aurora gradient backgrounds with animated ethereal color flows
+- Custom SVG icons replacing all emoji icons
+  - 6 religion card images
+  - Hero banner
+  - Social preview image
+- 3D card hover effects with mouse-following tilt
+- Enhanced typography with premium font selection
 
-#### Navigation & Layout
-- **Mobile Responsive Navigation** - Hamburger menu for mobile devices
-- **Sticky Headers with Progress Bars** - Reading progress indicators
-- **Verse Highlighting via URL Parameters** - Deep linking to specific verses
-  - Shareable verse URLs
-  - Automatic scroll to highlighted verse
-  - Visual highlight animation
+#### Enhanced Scripture Readers
+- Sticky headers with progress bars
+- Verse highlighting via URL parameters (deep linking)
+- Font size controls (Small, Medium, Large, Extra Large)
+- Language selectors for each scripture
+- Reading progress indicators with percentage completion
 
-#### Reading Features
-- **Font Size Controls** - Adjustable text sizes (Small, Medium, Large, Extra Large)
-- **Reading Progress Indicators** - Track progress through chapters/books
-  - Visual progress bars
-  - Percentage completion
-  - Chapter navigation
+#### Professional Documentation
+- README.md with comprehensive project information
+- AGENTS.md for AI agent instructions
+- CHANGELOG.md (this file)
+- VERSION file with semantic versioning
+- package.json for dependency management
 
-#### Search & Discovery
-- **Global Search (Ctrl+K)** - Search across all religious texts
-  - Keyboard shortcut activation
-  - Recent searches history
-  - Popular search suggestions
-  - Results from all scriptures
+### Changed
 
-### 🎨 Changed
-
-#### Complete UI Redesign
+#### Complete UI/UX Redesign
 - New color palette with oklch color space
 - Improved contrast ratios for accessibility
 - Consistent spacing system with CSS variables
@@ -100,72 +124,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Swipe gestures consideration
 - Viewport-optimized layouts
 
-### 🐛 Fixed
+### Fixed
 
 #### Layout Issues
-- **Header Overflow on Mobile** - Fixed navigation bar wrapping issues
-  - Responsive breakpoints adjusted
-  - Flexible layout containers
-  - Better text truncation
+- Header overflow on mobile devices
+- Grid alignment with inconsistent card heights
+- Image scaling with proper aspect ratio maintenance
+- Text overflow with ellipsis and wrapping fixes
+- Viewport units for consistent sizing across devices
 
 #### API Reliability
-- **API Timeout Handling** - Added proper error handling for slow connections
-- **Fallback Content** - Sample verses display when APIs fail
-- **Retry Logic** - Automatic retry for failed requests
-- **Status Indicators** - Visual feedback for API health
+- API reliability issues with timeout handling
+- Fallback content display when APIs fail
+- Retry logic for failed requests
+- Status indicators for API health
+- Translation loading errors
 
-#### Responsive Layout Issues
-- **Grid Alignment** - Fixed inconsistent card heights
-- **Image Scaling** - Proper aspect ratio maintenance
-- **Text Overflow** - Ellipsis and wrapping fixes
-- **Viewport Units** - Consistent sizing across devices
+#### Technical Issues
+- CORS issues with fallback data
+- Responsive layout problems across breakpoints
+- Navigation bar wrapping issues
 
 ---
 
-## [1.0.0] - 2025-12-15
+## [1.0.0] - Initial Release
 
-### 🎉 Initial Release
-
-#### Core Features
-- **6 Sacred Texts** - Support for Quran, Bible, Bhagavad Gita, Torah, Guru Granth Sahib, and Dhammapada
-- **Basic Multi-Language Support** - Initial translations for major languages
-- **Audio Recitations** - Quran audio by Mishary Alafasy
-- **Bookmark System** - Save favorite verses to localStorage
-- **Dark/Light Themes** - Toggle between color schemes
-- **Responsive Design** - Works on desktop and mobile devices
-
-#### Technical Foundation
-- Vanilla HTML, CSS, and JavaScript
-- No external frameworks or dependencies
-- Modular CSS architecture
+### Added
+- Basic support for 6 sacred texts (Quran, Bible, Bhagavad Gita, Torah, Guru Granth Sahib, Dhammapada)
+- Basic navigation between religion pages
+- Quran with audio recitations by Mishary Alafasy
+- Bible with multiple versions
+- Simple styling and responsive design
+- Bookmark system using localStorage
+- Dark/Light theme toggle
+- Basic search functionality
 - REST API integrations
-- localStorage for data persistence
-
-#### UI Components
-- Hero section with animated background
-- Religion cards with hover effects
-- Scripture readers with navigation
-- Audio player component
-- Search functionality
-- Theme toggle
-
----
-
-## Future Roadmap
-
-### Planned for v2.1.0
-- [ ] User accounts and cloud sync for bookmarks
-- [ ] Note-taking feature for verses
-- [ ] Reading plans and daily devotionals
-- [ ] Social sharing with custom cards
-- [ ] More audio recitations for other texts
-
-### Planned for v3.0.0
-- [ ] Mobile app (React Native/Flutter)
-- [ ] Offline text downloads
-- [ ] Advanced search with filters
-- [ ] Community translations
-- [ ] Accessibility improvements (screen reader optimization)
 
 ---
 

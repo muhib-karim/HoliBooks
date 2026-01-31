@@ -1,6 +1,6 @@
 {
   "name": "holibooks",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Universal access to sacred texts from world religions - Quran, Bible, Bhagavad Gita, Torah, Guru Granth Sahib, and Buddhist scriptures in 90+ languages",
   "main": "serve.js",
   "type": "module",
