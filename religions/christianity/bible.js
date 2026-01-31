@@ -379,6 +379,69 @@ function setupEventListeners() {
     themeToggle.addEventListener('click', () => {
         HoliBooks.theme.toggle();
     });
+
+    // Mobile Menu
+    setupMobileMenu();
+}
+
+function setupMobileMenu() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    const mobileVersionBtn = document.getElementById('mobile-version-btn');
+    const mobileThemeBtn = document.getElementById('mobile-theme-btn');
+
+    function openMobileMenu() {
+        mobileMenu.classList.add('active');
+        mobileMenuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        mobileMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    mobileMenuClose.addEventListener('click', closeMobileMenu);
+    mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+
+    // Mobile version selector
+    mobileVersionBtn.addEventListener('click', () => {
+        closeMobileMenu();
+        setTimeout(() => {
+            window.languageSelector.open('christianity', (newVersion) => {
+                currentVersion = 'en-' + newVersion;
+                HoliBooks.storage.set('bible_version', currentVersion);
+                currentVersionSpan.textContent = newVersion.toUpperCase();
+                document.getElementById('mobile-current-version').textContent = newVersion.toUpperCase();
+                loadChapter();
+            });
+        }, 300);
+    });
+
+    // Mobile theme toggle
+    mobileThemeBtn.addEventListener('click', () => {
+        HoliBooks.theme.toggle();
+        updateMobileThemeText();
+    });
+
+    function updateMobileThemeText() {
+        const isDark = document.documentElement.classList.contains('dark');
+        document.getElementById('mobile-theme-text').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+    }
+
+    // Initial theme text update
+    updateMobileThemeText();
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
 }
 
 // Initialize when DOM is ready

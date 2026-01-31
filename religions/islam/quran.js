@@ -85,6 +85,11 @@ async function init() {
         // Setup sticky header
         setupStickyHeader();
 
+        // Initialize mobile UI
+        updateMobileViewToggle();
+        updateMobileLanguageButton();
+        updateMobileThemeButton();
+
     } catch (error) {
         console.error('Failed to initialize:', error);
         // Use fallback data
@@ -408,6 +413,7 @@ function setupEventListeners() {
             currentEdition = newEdition;
             savePreferences();
             updateLanguageButton();
+            updateMobileLanguageButton();
             loadSurah(currentSurahId);
         });
     });
@@ -439,9 +445,10 @@ function setupEventListeners() {
     themeToggle.addEventListener('click', () => {
         HoliBooks.theme.toggle();
         updateThemeIcon();
+        updateMobileThemeButton();
     });
 
-    // Font size controls
+    // Font size controls (desktop)
     document.getElementById('font-increase').addEventListener('click', () => {
         currentFontSize = Math.min(currentFontSize + 0.1, 1.5);
         applyFontSize();
@@ -454,15 +461,19 @@ function setupEventListeners() {
         savePreferences();
     });
 
-    // View mode toggle
+    // View mode toggle (desktop)
     document.querySelectorAll('.view-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentViewMode = btn.dataset.view;
             updateViewToggle();
+            updateMobileViewToggle();
             renderVerses(currentSurahData);
             savePreferences();
         });
     });
+
+    // Mobile menu
+    setupMobileMenu();
 
     // Track audio progress
     if (window.audioPlayer) {
@@ -473,6 +484,122 @@ function setupEventListeners() {
     }
 
     updateThemeIcon();
+}
+
+// Setup mobile menu
+function setupMobileMenu() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+    function openMobileMenu() {
+        mobileMenu.classList.add('active');
+        mobileMenuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        mobileMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    mobileMenuClose.addEventListener('click', closeMobileMenu);
+    mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+
+    // Mobile view toggle
+    document.querySelectorAll('.mobile-view-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentViewMode = btn.dataset.view;
+            updateViewToggle();
+            updateMobileViewToggle();
+            renderVerses(currentSurahData);
+            savePreferences();
+        });
+    });
+
+    // Mobile font controls
+    const mobileFontIncrease = document.getElementById('mobile-font-increase');
+    const mobileFontDecrease = document.getElementById('mobile-font-decrease');
+
+    if (mobileFontIncrease) {
+        mobileFontIncrease.addEventListener('click', () => {
+            currentFontSize = Math.min(currentFontSize + 0.1, 1.5);
+            applyFontSize();
+            savePreferences();
+        });
+    }
+
+    if (mobileFontDecrease) {
+        mobileFontDecrease.addEventListener('click', () => {
+            currentFontSize = Math.max(currentFontSize - 0.1, 0.8);
+            applyFontSize();
+            savePreferences();
+        });
+    }
+
+    // Mobile language selector
+    const mobileLanguageBtn = document.getElementById('mobile-language-btn');
+    if (mobileLanguageBtn) {
+        mobileLanguageBtn.addEventListener('click', () => {
+            window.languageSelector.open('islam', (newEdition) => {
+                currentEdition = newEdition;
+                savePreferences();
+                updateLanguageButton();
+                updateMobileLanguageButton();
+                loadSurah(currentSurahId);
+            });
+        });
+    }
+
+    // Mobile theme toggle
+    const mobileThemeBtn = document.getElementById('mobile-theme-btn');
+    if (mobileThemeBtn) {
+        mobileThemeBtn.addEventListener('click', () => {
+            HoliBooks.theme.toggle();
+            updateThemeIcon();
+            updateMobileThemeButton();
+        });
+    }
+}
+
+// Update mobile view toggle UI
+function updateMobileViewToggle() {
+    document.querySelectorAll('.mobile-view-option').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === currentViewMode);
+    });
+}
+
+// Update mobile language button
+function updateMobileLanguageButton() {
+    const mobileCurrentLanguage = document.getElementById('mobile-current-language');
+    if (mobileCurrentLanguage) {
+        const config = window.languageSelector?.getLanguageConfig().islam;
+        if (config) {
+            const lang = config.languages.find(l => l.code === currentEdition);
+            if (lang) {
+                mobileCurrentLanguage.textContent = lang.translator;
+            }
+        }
+    }
+}
+
+// Update mobile theme button
+function updateMobileThemeButton() {
+    const mobileThemeText = document.getElementById('mobile-theme-text');
+    const mobileThemeIcon = document.getElementById('mobile-theme-icon');
+    if (mobileThemeText) {
+        const isDark = HoliBooks.theme.current === 'dark';
+        mobileThemeText.textContent = isDark ? 'Dark Mode' : 'Light Mode';
+    }
+    if (mobileThemeIcon) {
+        const isDark = HoliBooks.theme.current === 'dark';
+        mobileThemeIcon.innerHTML = isDark 
+            ? '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>'
+            : '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>';
+    }
 }
 
 // Navigate to previous/next surah
