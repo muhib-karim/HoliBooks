@@ -2,12 +2,12 @@
  * HoliBooks Service Worker
  * Provides offline support and caching for the PWA
  * 
- * @version 1.0.0
+ * @version 2.0.1
  */
 
-const CACHE_NAME = 'holibooks-v1';
-const STATIC_CACHE = 'holibooks-static-v1';
-const DYNAMIC_CACHE = 'holibooks-dynamic-v1';
+const CACHE_NAME = 'holibooks-v2';
+const STATIC_CACHE = 'holibooks-static-v2-0-1';
+const DYNAMIC_CACHE = 'holibooks-dynamic-v2-0-1';
 
 // Core static assets to cache on install
 const CORE_ASSETS = [
@@ -28,23 +28,23 @@ const CORE_ASSETS = [
 // Religion-specific pages and assets
 const RELIGION_ASSETS = [
   '/religions/islam/quran.html',
-  '/religions/islam/quran.css',
-  '/religions/islam/quran.js',
+  '/religions/islam/quran.css?v=2.0.1',
+  '/religions/islam/quran.js?v=2.0.1',
   '/religions/christianity/bible.html',
-  '/religions/christianity/bible.css',
-  '/religions/christianity/bible.js',
+  '/religions/christianity/bible.css?v=2.0.1',
+  '/religions/christianity/bible.js?v=2.0.1',
   '/religions/hinduism/gita.html',
-  '/religions/hinduism/gita.css',
-  '/religions/hinduism/gita.js',
+  '/religions/hinduism/gita.css?v=2.0.1',
+  '/religions/hinduism/gita.js?v=2.0.1',
   '/religions/judaism/torah.html',
-  '/religions/judaism/torah.css',
-  '/religions/judaism/torah.js',
+  '/religions/judaism/torah.css?v=2.0.1',
+  '/religions/judaism/torah.js?v=2.0.1',
   '/religions/sikhism/gurbani.html',
-  '/religions/sikhism/gurbani.css',
-  '/religions/sikhism/gurbani.js',
+  '/religions/sikhism/gurbani.css?v=2.0.1',
+  '/religions/sikhism/gurbani.js?v=2.0.1',
   '/religions/buddhism/tripitaka.html',
-  '/religions/buddhism/tripitaka.css',
-  '/religions/buddhism/tripitaka.js'
+  '/religions/buddhism/tripitaka.css?v=2.0.1',
+  '/religions/buddhism/tripitaka.js?v=2.0.1'
 ];
 
 // External resources to cache
@@ -87,7 +87,7 @@ self.addEventListener('activate', (event) => {
       .then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            // Delete old versioned caches
+            // Delete ALL caches that don't match current version
             if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
               console.log('[SW] Deleting old cache:', cacheName);
               return caches.delete(cacheName);
@@ -97,7 +97,13 @@ self.addEventListener('activate', (event) => {
       })
       .then(() => {
         console.log('[SW] Service Worker activated');
-        return self.clients.claim();
+        // Force all clients to reload with new version
+        return self.clients.matchAll({ type: 'window' }).then((clients) => {
+          clients.forEach((client) => {
+            client.navigate(client.url);
+          });
+          return self.clients.claim();
+        });
       })
   );
 });
