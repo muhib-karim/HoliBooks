@@ -1,10 +1,11 @@
 /**
  * HoliBooks - Torah Module
- * Using Free Bible API for Torah/Pentateuch
+ * Using Free Bible API for Torah/Pentateuch with multi-language support
  */
 
-const API_BASE = 'https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/en-kjv/books';
+const API_BASE = 'https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles';
 
+// Torah Books Data
 const TORAH_BOOKS = [
     { id: 'genesis', hebrew: 'בְּרֵאשִׁית', name: 'Genesis', meaning: 'In the Beginning', chapters: 50 },
     { id: 'exodus', hebrew: 'שְׁמוֹת', name: 'Exodus', meaning: 'Names', chapters: 40 },
@@ -13,8 +14,17 @@ const TORAH_BOOKS = [
     { id: 'deuteronomy', hebrew: 'דְּבָרִים', name: 'Deuteronomy', meaning: 'Words', chapters: 34 }
 ];
 
+// Language configurations
+const LANGUAGES = {
+    'en-kjv': { code: 'en-kjv', name: 'English', translator: 'King James Version' },
+    'es-rvr1960': { code: 'es-rvr1960', name: 'Español', translator: 'Reina Valera 1960' },
+    'fr-lsg': { code: 'fr-lsg', name: 'Français', translator: 'Louis Segond' },
+    'de-lut': { code: 'de-lut', name: 'Deutsch', translator: 'Luther Bible' }
+};
+
 let currentBook = 'genesis';
 let currentChapter = 1;
+let currentLanguage = 'en-kjv';
 
 const bookSelect = document.getElementById('book-select');
 const chapterSelect = document.getElementById('chapter-select');
@@ -24,13 +34,18 @@ const chapterTitle = document.getElementById('chapter-title');
 const verseCount = document.getElementById('verse-count');
 const versesContainer = document.getElementById('verses-container');
 const themeToggle = document.getElementById('theme-toggle');
+const languageBtn = document.getElementById('language-btn');
+const currentLanguageSpan = document.getElementById('current-language');
 
 async function init() {
+    // Load saved preferences
     const savedBook = HoliBooks.storage.get('torah_book');
     const savedChapter = HoliBooks.storage.get('torah_chapter');
+    const savedLanguage = HoliBooks.storage.get('torah_language');
 
     if (savedBook) currentBook = savedBook;
     if (savedChapter) currentChapter = savedChapter;
+    if (savedLanguage && LANGUAGES[savedLanguage]) currentLanguage = savedLanguage;
 
     // Check URL params
     const params = HoliBooks.getQueryParams();
@@ -51,6 +66,8 @@ async function init() {
 
     populateBookDropdown();
     updateChapterDropdown();
+    updateLanguageButton();
+    updateMobileLanguageButtons();
     await loadChapter();
     setupEventListeners();
 }
@@ -75,7 +92,7 @@ async function loadChapter() {
 
     try {
         const book = TORAH_BOOKS.find(b => b.id === currentBook);
-        const url = `${API_BASE}/${currentBook}/chapters/${currentChapter}.json`;
+        const url = `${API_BASE}/${currentLanguage}/books/${currentBook}/chapters/${currentChapter}.json`;
         const response = await HoliBooks.fetchWithRetry(url, {}, 2);
 
         // API returns {data: [...]} not {verses: [...]}
@@ -88,8 +105,11 @@ async function loadChapter() {
         renderVerses(data);
         updateNavigation();
 
+        // Save state
         HoliBooks.storage.set('torah_book', currentBook);
         HoliBooks.storage.set('torah_chapter', currentChapter);
+        HoliBooks.storage.set('torah_language', currentLanguage);
+        
         HoliBooks.scrollToTop();
 
     } catch (error) {
@@ -199,6 +219,29 @@ function goToNext() {
     loadChapter();
 }
 
+function changeLanguage(langCode) {
+    if (LANGUAGES[langCode]) {
+        currentLanguage = langCode;
+        HoliBooks.storage.set('torah_language', currentLanguage);
+        updateLanguageButton();
+        updateMobileLanguageButtons();
+        loadChapter();
+    }
+}
+
+function updateLanguageButton() {
+    const lang = LANGUAGES[currentLanguage];
+    if (lang) {
+        currentLanguageSpan.textContent = lang.name;
+    }
+}
+
+function updateMobileLanguageButtons() {
+    document.querySelectorAll('.mobile-language-option').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLanguage);
+    });
+}
+
 function setupEventListeners() {
     bookSelect.addEventListener('change', (e) => {
         currentBook = e.target.value;
@@ -224,6 +267,15 @@ function setupEventListeners() {
     themeToggle.addEventListener('click', () => {
         HoliBooks.theme.toggle();
         updateThemeIcons();
+    });
+
+    // Language selector button
+    languageBtn.addEventListener('click', () => {
+        // Cycle through languages
+        const langCodes = Object.keys(LANGUAGES);
+        const currentIndex = langCodes.indexOf(currentLanguage);
+        const nextIndex = (currentIndex + 1) % langCodes.length;
+        changeLanguage(langCodes[nextIndex]);
     });
 
     // Mobile menu
@@ -253,6 +305,14 @@ function setupMobileMenu() {
     if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openMobileMenu);
     if (mobileMenuClose) mobileMenuClose.addEventListener('click', closeMobileMenu);
     if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+
+    // Mobile language options
+    document.querySelectorAll('.mobile-language-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+            changeLanguage(btn.dataset.lang);
+            closeMobileMenu();
+        });
+    });
 
     // Mobile theme toggle
     const mobileThemeBtn = document.getElementById('mobile-theme-btn');

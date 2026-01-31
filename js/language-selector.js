@@ -86,27 +86,28 @@ class LanguageSelector {
             judaism: {
                 title: 'Torah Translations',
                 languages: [
+                    { code: 'en-kjv', name: 'English', native: 'English', translator: 'King James Version' },
+                    { code: 'es-rvr1960', name: 'Spanish', native: 'Español', translator: 'Reina Valera 1960' },
+                    { code: 'fr-lsg', name: 'French', native: 'Français', translator: 'Louis Segond' },
+                    { code: 'de-lut', name: 'German', native: 'Deutsch', translator: 'Luther Bible' },
                     { code: 'he', name: 'Hebrew', native: 'עברית', translator: 'Masoretic Text' },
-                    { code: 'en', name: 'English', native: 'English', translator: 'JPS' },
-                    { code: 'en.alter', name: 'English', native: 'English', translator: 'Robert Alter' },
                 ]
             },
             sikhism: {
                 title: 'Guru Granth Sahib Translations',
                 languages: [
-                    { code: 'gurmukhi', name: 'Gurmukhi', native: 'ਗੁਰਮੁਖੀ', translator: 'Original' },
-                    { code: 'pa', name: 'Punjabi', native: 'ਪੰਜਾਬੀ', translator: 'Prof. Sahib Singh' },
-                    { code: 'en', name: 'English', native: 'English', translator: 'Sant Singh Khalsa' },
-                    { code: 'hi', name: 'Hindi', native: 'हिन्दी', translator: 'Various' },
+                    { code: 'all', name: 'All', native: 'All', translator: 'Gurmukhi + Transliteration + English' },
+                    { code: 'gurmukhi', name: 'Gurmukhi', native: 'ਗੁਰਮੁਖੀ', translator: 'Original Only' },
+                    { code: 'transliteration', name: 'Transliteration', native: 'Transliteration', translator: 'Romanized Punjabi' },
+                    { code: 'translation', name: 'English', native: 'English', translator: 'English Translation Only' },
                 ]
             },
             buddhism: {
                 title: 'Dhammapada Translations',
                 languages: [
-                    { code: 'pali', name: 'Pali', native: 'Pāli', translator: 'Original' },
-                    { code: 'en', name: 'English', native: 'English', translator: 'Buddharakkhita' },
-                    { code: 'en.thanissaro', name: 'English', native: 'English', translator: 'Thanissaro Bhikkhu' },
-                    { code: 'en.muller', name: 'English', native: 'English', translator: 'Max Müller' },
+                    { code: 'both', name: 'Both', native: 'Both', translator: 'Pali + English' },
+                    { code: 'pali', name: 'Pali', native: 'Pāli', translator: 'Original Only' },
+                    { code: 'english', name: 'English', native: 'English', translator: 'English Translation Only' },
                 ]
             }
         };
