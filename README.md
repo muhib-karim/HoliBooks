@@ -16,6 +16,7 @@
 [![PWA](https://img.shields.io/badge/PWA-ready-5A0FC8?style=for-the-badge&logo=pwa)](https://holibooks.vercel.app)
 [![Languages](https://img.shields.io/badge/languages-300+-blue?style=for-the-badge&logo=googletranslate)](https://holibooks.vercel.app)
 [![Last Updated](https://img.shields.io/badge/last%20updated-January%202026-orange?style=for-the-badge&logo=clockify)](https://github.com/ai-dev-2024/HoliBooks/commits/main)
+[![ZAI Community](https://img.shields.io/badge/Part%20of-ZAI%20Start--up%20Community-8b5cf6?style=for-the-badge)](https://startup.z.ai/)
 
 <a href="https://holibooks.vercel.app" target="_blank">
   <img src="https://img.shields.io/badge/🚀_Visit_Live_Site-FF6B35?style=for-the-badge&logoColor=white" alt="Visit Live Site" height="40">
