@@ -1,63 +1,46 @@
-/**
- * HoliBooks - API Test Script
- * Run with: node test-apis.js
- * Tests all API endpoints used by the application
- */
+/** Optional network smoke checks. The CLI is separate from offline CI. */
+import https from 'node:https';
+import { pathToFileURL } from 'node:url';
 
-const https = require('https');
-
-const APIS = [
-    { name: 'Quran API (AlQuran Cloud)', url: 'https://api.alquran.cloud/v1/surah/1' },
-    { name: 'Bible API (JSDelivr)', url: 'https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/en-kjv/books/genesis/chapters/1.json' },
-    { name: 'Bhagavad Gita API', url: 'https://vedicscriptures.github.io/slok/1/1' },
-    { name: 'GurbaniNow API', url: 'https://api.gurbaninow.com/v2/ang/1' }
+export const APIS = [
+  {name:'Quran API (AlQuran Cloud)',url:'https://api.alquran.cloud/v1/surah/1'},
+  {name:'Bible API (JSDelivr)',url:'https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/en-kjv/books/genesis/chapters/1.json'},
+  {name:'Bhagavad Gita API',url:'https://vedicscriptures.github.io/slok/1/1'},
+  {name:'GurbaniNow API',url:'https://api.gurbaninow.com/v2/ang/1'}
 ];
 
-async function testAPI(api) {
-    return new Promise((resolve) => {
-        const startTime = Date.now();
-
-        https.get(api.url, (res) => {
-            const duration = Date.now() - startTime;
-            let data = '';
-
-            res.on('data', chunk => data += chunk);
-            res.on('end', () => {
-                const success = res.statusCode === 200;
-                resolve({
-                    name: api.name,
-                    status: success ? '✅ OK' : `❌ ${res.statusCode}`,
-                    time: `${duration}ms`,
-                    hasData: data.length > 0
-                });
-            });
-        }).on('error', (err) => {
-            resolve({
-                name: api.name,
-                status: `❌ Error`,
-                error: err.message
-            });
-        });
-    });
+export function testAPI(api, {get=https.get, timeoutMs=15000}={}) {
+  return new Promise(resolve => {
+    const started=Date.now(); let request; let settled=false;
+    const finish=result => {if(settled)return;settled=true;clearTimeout(timer);resolve({name:api.name,success:false,...result});};
+    // A wall-clock deadline bounds DNS, connect, TLS, and the complete response,
+    // including a peer that keeps the socket active by sending partial data.
+    const timer=setTimeout(() => {
+      finish({status:'timeout',error:`Request exceeded ${timeoutMs} ms`});
+      request?.destroy();
+    },timeoutMs);
+    try {
+      request=get(api.url,res => {
+        let bytes=0;
+        res.on('data',chunk => {bytes+=chunk.length;});
+        res.on('error',err => finish({status:'error',error:err.message}));
+        res.on('aborted',() => finish({status:'error',error:'Response aborted'}));
+        res.on('end',() => finish({status:res.statusCode,success:res.statusCode===200 && bytes>0,hasData:bytes>0,timeMs:Date.now()-started}));
+      });
+      request.on('error',err => finish({status:'error',error:err.message}));
+    } catch(err) {finish({status:'error',error:err.message});}
+  });
 }
 
-async function runTests() {
-    console.log('');
-    console.log('  📖 HoliBooks API Test');
-    console.log('  ─────────────────────');
-    console.log('');
-
-    for (const api of APIS) {
-        const result = await testAPI(api);
-        console.log(`  ${result.status} ${result.name}`);
-        if (result.time) console.log(`     ⏱️  ${result.time}`);
-        if (result.error) console.log(`     ⚠️  ${result.error}`);
-    }
-
-    console.log('');
-    console.log('  Note: APIs may be blocked by CORS when opened');
-    console.log('  from file://. Use serve.js for proper testing.');
-    console.log('');
+export async function runTests(apis=APIS, options={}) {
+  let failures=0;
+  for(const api of apis) {
+    const result=await testAPI(api, options);
+    console.log(`${result.success?'OK':'FAIL'} ${result.name}: ${result.status}${result.error?' ('+result.error+')':''}`);
+    if(!result.success)failures++;
+  }
+  return failures;
 }
-
-runTests();
+if(process.argv[1] && import.meta.url===pathToFileURL(process.argv[1]).href) {
+  process.exitCode=(await runTests()) ? 1 : 0;
+}
