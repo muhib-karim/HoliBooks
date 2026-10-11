@@ -1,446 +1,62 @@
-<div align="center">
+<p align="center"><img src="docs/assets/showcase-banner.png" alt="HoliBooks: sacred texts in one reading interface" width="100%"></p>
 
-![HoliBooks Banner](./assets/images/banner.png)
+# HoliBooks
 
-# 📖 HoliBooks
+A browser reader for the Quran, Bible, Bhagavad Gita, Torah, Guru Granth Sahib and Dhammapada. The interface links to religious-text readers, translations and audio where supported by the selected source.
 
-> **Universal Access to Spiritual Wisdom**
+[Open the site](https://holibooks.vercel.app/) · [Report an issue](https://github.com/muhib-karim/HoliBooks/issues) · [MIT license](LICENSE)
 
-<div align="center">
+## See the interface
 
-## 🚀 **Live Site: https://holibooks.vercel.app**
+![HoliBooks homepage, captured 11 October 2026](docs/assets/homepage-20261011.png)
 
-[![Version](https://img.shields.io/badge/version-2.0.1-gold?style=for-the-badge&logo=semver)](https://github.com/ai-dev-2024/HoliBooks/releases)
-[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge&logo=opensourceinitiative)](LICENSE)
-[![Vercel](https://img.shields.io/badge/vercel-deployed-black?style=for-the-badge&logo=vercel&logoColor=white)](https://holibooks.vercel.app)
-[![PWA](https://img.shields.io/badge/PWA-ready-5A0FC8?style=for-the-badge&logo=pwa)](https://holibooks.vercel.app)
-[![Languages](https://img.shields.io/badge/languages-300+-blue?style=for-the-badge&logo=googletranslate)](https://holibooks.vercel.app)
-[![Last Updated](https://img.shields.io/badge/last%20updated-January%202026-orange?style=for-the-badge&logo=clockify)](https://github.com/ai-dev-2024/HoliBooks/commits/main)
-[![ZAI Community](https://img.shields.io/badge/Part%20of-ZAI%20Start--up%20Community-8b5cf6?style=for-the-badge)](https://startup.z.ai/)
-[![Ko-fi](https://img.shields.io/badge/☕_Support_on_Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi)](https://ko-fi.com/ai_dev_2024)
+This screenshot is the live homepage captured on 11 October 2026. Its "100+ Languages" badge is an unverified coverage count, not a measured claim endorsed by this README. The dated browser check on 11 October 2026 loaded Al-Faatiha in the Quran reader with Arabic text and an English translation. This is a point-in-time check, not an ongoing guarantee. Other readers, all translations, audio playback and offline operation were not fully verified in that session.
 
-<a href="https://holibooks.vercel.app" target="_blank">
-  <img src="https://img.shields.io/badge/🚀_Visit_Live_Site-FF6B35?style=for-the-badge&logoColor=white" alt="Visit Live Site" height="40">
-</a>
+## Run locally
 
-</div>
-
-**[🌐 Live Demo](https://holibooks.vercel.app)** • **[📚 Documentation](#documentation)** • **[🚀 Getting Started](#getting-started)** • **[🤝 Contributing](#contributing)**
-
-</div>
-
----
-
-## 🌟 About
-
-**HoliBooks** is a modern, beautifully designed web application that provides universal access to sacred texts from the world's major religions. Our mission is to make spiritual wisdom accessible to everyone, everywhere, in their preferred language.
-
-Experience timeless teachings from Islam, Christianity, Hinduism, Judaism, Sikhism, and Buddhism through an elegant, distraction-free interface designed for contemplative reading.
-
-### ✨ Key Highlights
-
-- 🌍 **300+ Languages** - Read in your native tongue
-- 📱 **Progressive Web App** - Install on any device
-- 🎨 **Stunning Design** - Glass morphism UI with aurora gradients
-- 🔍 **Smart Search** - Find verses instantly with `Ctrl+K`
-- 🔖 **Bookmarks** - Save and organize your favorite passages
-- 🌙 **Dark/Light Themes** - Comfortable reading day or night
-- ⚡ **Lightning Fast** - Optimized vanilla JavaScript
-- 🔊 **Audio Recitations** - Listen to sacred verses
-- 📱 **Desktop/Mobile Toggle** - Switch between optimized layouts
-- 📊 **API Monitoring** - Real-time health status of all data sources
-
----
-
-## 🚀 Features
-
-### 🌍 Universal Language Support (300+ Languages)
-
-Access sacred texts in your preferred language with comprehensive multi-language support:
-
-| Religion | Sacred Text | Languages Available |
-|----------|-------------|---------------------|
-| ☪️ **Islam** | Holy Quran | **90+ languages** including Arabic, English, Urdu, French, Spanish, Indonesian, and more |
-| ✝️ **Christianity** | Holy Bible | **200+ versions** including KJV, NIV, ESV, and translations in 100+ languages |
-| 🕉️ **Hinduism** | Bhagavad Gita | Sanskrit, English, Hindi, and other Indian languages |
-| ✡️ **Judaism** | Torah | Hebrew, English, Yiddish, and Ladino |
-| 🪯 **Sikhism** | Guru Granth Sahib | Gurmukhi, English, and Punjabi |
-| ☸️ **Buddhism** | Tripitaka/Dhammapada | Pali, English, and other Buddhist canonical languages |
-
-### 📱 Progressive Web App
-
-HoliBooks works seamlessly across all devices with full PWA capabilities:
-
-- ✅ **Works Offline** - Complete offline fallback data for uninterrupted reading
-- ✅ **Installable** - Add to home screen on iOS, Android, and Desktop
-- ✅ **Fast Loading** - Optimized assets and lazy loading
-- ✅ **Native Experience** - Feels like a native app
-- ✅ **Automatic Updates** - Always get the latest version
-
-### 🔍 Smart Search & Deep Linking
-
-Powerful discovery tools for deeper engagement:
-
-- **Global Search** (`Ctrl+K`) - Search across all texts instantly
-- **Deep Linking** - Share specific verses with URL parameters
-- **Smart Suggestions** - Intelligent search with autocomplete
-
-### 📖 Complete Offline Access
-
-Never lose access to spiritual wisdom:
-
-- **Fallback Data** - All 6 religions have complete offline data
-- **Cached Content** - Previously viewed content available offline
-- **No Internet Required** - Core functionality works without connection
-
-### 🎨 Beautiful Design System
-
-Every pixel crafted for spiritual contemplation:
-
-- **Glass Morphism UI** - Modern translucent elements with backdrop blur
-- **Aurora Gradient Backgrounds** - Ethereal animated color flows
-- **Custom SVG Icons** - Beautiful handcrafted icons (no emojis)
-- **3D Card Effects** - Interactive hover animations with depth
-- **Smooth Transitions** - 60fps animations throughout
-
-### 🌓 Dark/Light Themes
-
-Comfortable reading in any environment:
-
-- **Automatic Detection** - Respects system preferences
-- **Manual Override** - Toggle anytime with one click
-- **Persistent Preference** - Remembers your choice across sessions
-
-### 📊 Reading Progress Tracking
-
-Track your spiritual journey:
-
-- **Progress Indicators** - Visual progress bars for each text
-- **Resume Reading** - Pick up where you left off
-- **Completion Stats** - Track your reading achievements
-
-### 🔖 Bookmarks & History
-
-Organize your spiritual exploration:
-
-- **One-Click Bookmarking** - Save verses instantly
-- **Organized Collections** - Categorize by religion or theme
-- **Reading History** - Recently viewed passages
-- **Export/Import** - Backup your bookmarks
-
-### 📱 Desktop/Mobile View Toggle
-
-Optimized experience for every screen:
-
-- **Responsive Layouts** - Adaptive design for all devices
-- **View Toggle** - Switch between desktop and mobile layouts
-- **Touch Optimized** - Gesture support for mobile devices
-- **Keyboard Navigation** - Full keyboard support for desktop
-
-### 🔌 API Health Monitoring
-
-Stay informed about data sources:
-
-- **Real-Time Status** - Live monitoring of all APIs
-- **Visual Indicators** - Color-coded health status
-- **Automatic Fallbacks** - Seamless switching to offline data
-- **Uptime Statistics** - Track API reliability
-
----
-
-## 🌐 Language Support Matrix
-
-Detailed breakdown of language support by religion:
-
-| Religion | Primary Languages | Translation Coverage |
-|----------|------------------|---------------------|
-| **Islam (Quran)** | Arabic, English, Urdu, French, Spanish, Indonesian, Turkish, Bengali, Russian, Chinese | 90+ translations with audio recitations |
-| **Christianity (Bible)** | English, Spanish, Portuguese, French, German, Chinese, Korean, Japanese, Arabic, Hindi | 200+ versions across 100+ languages |
-| **Hinduism (Bhagavad Gita)** | Sanskrit, English, Hindi, Tamil, Telugu, Kannada, Malayalam, Gujarati, Bengali | Original Sanskrit with multiple translations |
-| **Judaism (Torah)** | Hebrew, English, Yiddish, Ladino, Spanish, French, Russian, German | Traditional and modern translations |
-| **Sikhism (Guru Granth Sahib)** | Gurmukhi, English, Punjabi, Hindi, Spanish, French | Original Gurmukhi with transliterations |
-| **Buddhism (Dhammapada)** | Pali, English, Spanish, French, German, Chinese, Japanese, Thai, Sinhala | Canonical Pali texts with translations |
-
----
-
-## 📸 Screenshots
-
-<div align="center">
-
-| Home Page | Quran Reader | Mobile View | Dark Mode |
-|:---------:|:------------:|:-----------:|:---------:|
-| ![Home](./assets/images/screenshots/home.png) | ![Quran](./assets/images/screenshots/quran.png) | ![Mobile](./assets/images/screenshots/mobile.png) | ![Dark](./assets/images/screenshots/dark-mode.png) |
-| *Elegant landing with 3D cards* | *Immersive reading experience* | *Perfect on all devices* | *Easy on the eyes* |
-
-</div>
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 16+ (for local development server)
-- Modern web browser (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
-- Internet connection (for initial API data)
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/ai-dev-2024/HoliBooks.git
-   cd HoliBooks
-   ```
-
-2. **Start development server**
-   ```bash
-   node serve.js
-   ```
-
-3. **Open in browser**
-   Navigate to `http://localhost:3000`
-
-### Development
+Use Node.js 18 or newer. The static preview binds to localhost, not the public network.
 
 ```bash
-# Run local development server
-node serve.js
-
-# Test API endpoints
-node test-apis.js
-
-# Open browser at http://localhost:3000
+git clone https://github.com/muhib-karim/HoliBooks.git
+cd HoliBooks
+npm run dev
 ```
 
-### Deployment
+Open `http://127.0.0.1:3000`. No install step is needed for this preview: it uses Node's built-in modules. External text APIs still need network access. Do not open reader pages through `file://`, where browser origin restrictions may block requests.
 
-#### Deploy to Vercel
+## Checks
 
 ```bash
-# Install Vercel CLI (if not already installed)
-npm i -g vercel
-
-# Deploy to production
-npx vercel --prod
+npm test                # Offline local-server regression tests
+npm run test:apis       # Optional network smoke check of four external APIs
 ```
 
-Or connect your GitHub repository to Vercel for automatic deployments on every push.
+Offline tests also check the API smoke helper with deterministic responses, network errors and an active-but-unfinished response deadline.
 
-#### Manual Deployment
+The local test checks startup, HTML serving, query strings, missing files, malformed paths, traversal rejection, unsupported methods and HEAD responses. The CI workflow runs these server checks on Node 18, 20 and 22. A passing server check does not prove the external reader APIs, audio or browser interactions work.
 
-```bash
-# Build for production (if build step exists)
-npm run build
+The API smoke check calls the Quran, Bible, Gita and Gurbani source endpoints. It has a request timeout and exits nonzero on failed responses. It is separate from offline CI because third-party downtime or throttling is not a local-server regression. It is not a complete reader or language-coverage test.
 
-# Deploy static files to any static hosting
-# (Vercel, Netlify, GitHub Pages, etc.)
-```
+## Architecture
 
----
+- Static HTML, CSS and JavaScript reader pages.
+- `index.html` provides the homepage and links to the reader pages.
+- `serve.js` is a local preview server. It is not a production hosting server.
+- `test-apis.js` checks selected external API responses.
+- `tests/server.test.mjs` tests the local preview without paid services or secrets.
 
-## 🏗️ Architecture
+## Operating limits
 
-### Technology Stack
+- Language coverage differs by text and upstream provider. No single verified language count is claimed here.
+- Network availability, API policy, CORS and source changes can affect reading and audio.
+- Cached or installed PWA behavior does not guarantee complete offline access to every text and translation. Verify your required content before relying on it offline.
+- Text and translation rights belong to their respective sources. The code's MIT license does not grant rights to third-party content.
+- Treat this as a reading tool, not an authoritative substitute for checking editions and translations.
 
-HoliBooks is built with modern web technologies while maintaining zero dependencies:
+## Contributing
 
-<p align="center">
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
-  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
-  <img src="https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA">
-  <img src="https://img.shields.io/badge/Vanilla_JS-✓-success?style=for-the-badge" alt="Vanilla JS">
-</p>
+Reproduce an issue with the reader URL, browser, selected text and language. Do not include API keys or private reading history in a public issue. Run the offline server tests before a PR. Reader behavior changes should include browser evidence and a note about the affected external source.
 
-### Why Vanilla JavaScript?
+## License
 
-- **Zero Dependencies** - No framework bloat
-- **Lightning Fast** - No build step required
-- **Future Proof** - Uses native Web APIs
-- **Easy to Contribute** - No framework knowledge needed
-- **Small Bundle Size** - Optimal performance
-
-### API Integrations
-
-HoliBooks integrates with multiple APIs to provide comprehensive religious text data:
-
-#### Quran API
-- **Provider**: [AlQuran Cloud](https://alquran.cloud)
-- **Documentation**: https://alquran.cloud/api
-- **Features**: 90+ translations, audio recitations
-
-#### Bible API
-- **Provider**: [Bible API](https://github.com/wldeh/bible-api)
-- **Source**: JSDelivr CDN
-- **Features**: 200+ versions, multiple languages
-
-#### Bhagavad Gita API
-- **Provider**: [Vedic Scriptures](https://vedicscriptures.github.io)
-- **Documentation**: https://vedicscriptures.github.io
-- **Features**: Sanskrit verses with translations
-
-#### Torah API
-- **Provider**: [Bible API](https://github.com/wldeh/bible-api)
-- **Source**: JSDelivr CDN
-- **Features**: Hebrew and English texts
-
-#### Guru Granth Sahib API
-- **Provider**: [GurbaniNow](https://gurbaninow.com)
-- **Documentation**: https://gurbaninow.com/api
-- **Features**: Gurmukhi, transliteration, translations
-
-#### Tripitaka/Dhammapada
-- **Source**: Embedded JSON data with complete offline fallback
-- **Features**: Pali canon with English translations
-
-### File Structure
-
-```
-HoliBooks/
-├── index.html              # Landing page with religion selector
-├── serve.js                # Local development server (Node.js)
-├── test-apis.js            # API endpoint testing
-├── css/
-│   ├── global.css          # Global styles, CSS variables, themes
-│   └── animations.css      # Animation keyframes and effects
-├── js/
-│   ├── utils.js            # Shared utilities, theme management
-│   ├── audio-player.js     # Audio player component
-│   ├── language-selector.js # Language selection component
-│   ├── bookmarks.js        # Bookmark management system
-│   └── search.js           # Global search functionality
-├── religions/              # Individual religion readers
-│   ├── islam/              # Quran reader (quran.html, quran.css, quran.js)
-│   ├── christianity/       # Bible reader (bible.html, bible.css, bible.js)
-│   ├── hinduism/           # Gita reader (gita.html, gita.css, gita.js)
-│   ├── judaism/            # Torah reader (torah.html, torah.css, torah.js)
-│   ├── sikhism/            # Gurbani reader (gurbani.html, gurbani.css, gurbani.js)
-│   └── buddhism/           # Tripitaka reader (tripitaka.html, tripitaka.css, tripitaka.js)
-├── assets/
-│   ├── images/             # Images and screenshots
-│   └── icons/              # Custom SVG icons
-└── data/                   # Offline fallback data
-```
-
----
-
-## 🌐 Browser Support
-
-HoliBooks supports all modern browsers:
-
-| Browser | Version | Support |
-|---------|---------|---------|
-| Chrome | 90+ | ✅ Full Support |
-| Firefox | 88+ | ✅ Full Support |
-| Safari | 14+ | ✅ Full Support |
-| Edge | 90+ | ✅ Full Support |
-| Opera | 76+ | ✅ Full Support |
-| Samsung Internet | 15+ | ✅ Full Support |
-
-**Note**: Internet Explorer is not supported.
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Here's how you can help:
-
-### Getting Started
-
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Make your changes**
-4. **Commit your changes**
-   ```bash
-   git commit -m "Add amazing feature"
-   ```
-5. **Push to your fork**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-6. **Open a Pull Request**
-
-### Contribution Guidelines
-
-- Follow the existing code style
-- Write clear commit messages
-- Test your changes across browsers
-- Update documentation if needed
-- Be respectful and inclusive
-
-### Areas for Contribution
-
-- 🌍 **Translations** - Help translate the UI into more languages
-- 🎨 **Design** - Improve UI/UX with new ideas
-- 🐛 **Bug Fixes** - Report and fix issues
-- ✨ **Features** - Suggest and implement new features
-- 📖 **Documentation** - Improve docs and guides
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2026 HoliBooks Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
----
-
-## 🙏 Acknowledgments
-
-HoliBooks would not be possible without the following amazing resources and contributors:
-
-### API Providers
-- **[AlQuran Cloud](https://alquran.cloud)** - For comprehensive Quran data and audio
-- **[Bible API](https://github.com/wldeh/bible-api)** - For extensive Bible translations
-- **[Vedic Scriptures](https://vedicscriptures.github.io)** - For Bhagavad Gita content
-- **[GurbaniNow](https://gurbaninow.com)** - For Guru Granth Sahib data
-
-### Open Source Libraries
-- [Google Fonts](https://fonts.google.com) - Beautiful typography (Amiri, Inter, Noto Sans)
-- [Vercel](https://vercel.com) - Hosting and deployment platform
-
-### Special Thanks
-- All contributors who have helped improve HoliBooks
-- The open source community for inspiration and support
-- Users around the world who use HoliBooks for their spiritual practice
-- Religious scholars who have preserved and translated these sacred texts
-
----
-
-<div align="center">
-
-**[⬆ Back to Top](#--holibooks)**
-
-Made with ❤️ for spiritual seekers everywhere
-
-[![GitHub stars](https://img.shields.io/github/stars/ai-dev-2024/HoliBooks?style=social)](https://github.com/ai-dev-2024/HoliBooks/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/ai-dev-2024/HoliBooks?style=social)](https://github.com/ai-dev-2024/HoliBooks/network)
-
-</div>
+The application code is MIT-licensed. See [LICENSE](LICENSE). Check the upstream text or translation source for its own terms.
