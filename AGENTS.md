@@ -13,7 +13,7 @@
 |-------|-------|
 | **Version** | 2.0.0 |
 | **Last Updated** | January 2026 |
-| **GitHub Repository** | https://github.com/ai-dev-2024/HoliBooks |
+| **GitHub Repository** | https://github.com/muhib-karim/HoliBooks |
 | **Vercel Deployment** | https://holibooks.vercel.app |
 | **License** | MIT |
 | **Node.js Required** | >=16.0.0 |
@@ -543,7 +543,7 @@ async function fetchJSON(url, options = {}) {
 HoliBooks is configured for automatic deployment via Vercel:
 
 1. **GitHub Integration**
-   - Repository: `ai-dev-2024/HoliBooks`
+   - Repository: `muhib-karim/HoliBooks`
    - Branch: `master`
    - Auto-deploy on push: Enabled
 
@@ -807,7 +807,7 @@ This project is licensed under the MIT License. See [LICENSE](./LICENSE) for det
 
 ## Contact & Support
 
-- **GitHub Issues**: https://github.com/ai-dev-2024/HoliBooks/issues
+- **GitHub Issues**: https://github.com/muhib-karim/HoliBooks/issues
 - **Live Site**: https://holibooks.vercel.app
 - **Email**: See repository for contact info
 
