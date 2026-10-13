@@ -3,7 +3,7 @@
 ## 🎉 FINAL STATUS: PRODUCTION READY
 
 **Live Site:** https://holibooks.vercel.app  
-**GitHub:** https://github.com/ai-dev-2024/HoliBooks  
+**GitHub:** https://github.com/muhib-karim/HoliBooks  
 **Version:** 2.0.1  
 **Status:** ✅ All Features Complete
 
@@ -12,7 +12,7 @@
 ## 📋 What Has Been Completed
 
 ### ✅ 1. GitHub Repository Setup
-- **Repository:** https://github.com/ai-dev-2024/HoliBooks
+- **Repository:** https://github.com/muhib-karim/HoliBooks
 - **Auto-deployment:** Configured with Vercel
 - **All documentation:** README, CHANGELOG, AGENTS.md updated
 - **Semantic versioning:** v2.0.1
@@ -126,7 +126,7 @@ git push origin master
 
 ## 📊 GitHub Repository Homepage
 
-Visit: https://github.com/ai-dev-2024/HoliBooks
+Visit: https://github.com/muhib-karim/HoliBooks
 
 ### You'll See:
 - 🚀 **Big green button:** "Visit Live Site"
@@ -215,9 +215,9 @@ aa5aa4d Trigger Vercel redeploy - test auto-deployment
 | Resource | URL |
 |----------|-----|
 | **Live Site** | https://holibooks.vercel.app |
-| **GitHub Repo** | https://github.com/ai-dev-2024/HoliBooks |
-| **README** | https://github.com/ai-dev-2024/HoliBooks/blob/master/README.md |
-| **CHANGELOG** | https://github.com/ai-dev-2024/HoliBooks/blob/master/CHANGELOG.md |
+| **GitHub Repo** | https://github.com/muhib-karim/HoliBooks |
+| **README** | https://github.com/muhib-karim/HoliBooks/blob/master/README.md |
+| **CHANGELOG** | https://github.com/muhib-karim/HoliBooks/blob/master/CHANGELOG.md |
 
 ---
 

@@ -166,12 +166,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 A huge thank you to all contributors who have helped make HoliBooks better:
 
-- [@ai-dev-2024](https://github.com/ai-dev-2024) - Project creator and maintainer
+- [@muhib-karim](https://github.com/muhib-karim) - Project creator and maintainer
 
 Want to contribute? Check out our [Contributing Guide](./README.md#contributing)!
 
 ---
 
-[Unreleased]: https://github.com/ai-dev-2024/HoliBooks/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/ai-dev-2024/HoliBooks/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/ai-dev-2024/HoliBooks/releases/tag/v1.0.0
+[Unreleased]: https://github.com/muhib-karim/HoliBooks/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/muhib-karim/HoliBooks/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/muhib-karim/HoliBooks/releases/tag/v1.0.0

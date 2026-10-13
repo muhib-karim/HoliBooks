@@ -6,7 +6,7 @@
 **Release Date:** January 31, 2026  
 **Status:** Production Ready ✅  
 **Live URL:** https://holibooks.vercel.app  
-**GitHub:** https://github.com/ai-dev-2024/HoliBooks
+**GitHub:** https://github.com/muhib-karim/HoliBooks
 
 ---
 
@@ -210,7 +210,7 @@ HoliBooks/
 
 ## 🚀 Deployment Status
 
-✅ **GitHub Repository:** https://github.com/ai-dev-2024/HoliBooks  
+✅ **GitHub Repository:** https://github.com/muhib-karim/HoliBooks  
 ✅ **Vercel Production:** https://holibooks.vercel.app  
 ✅ **Auto-Deploy:** Enabled (deploys on every push to master)  
 ✅ **PWA:** Installable on all devices  
