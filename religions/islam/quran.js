@@ -6,6 +6,13 @@
 // API Configuration
 const API_BASE = 'https://api.alquran.cloud/v1';
 const AUDIO_RECITER = 'ar.alafasy';
+const TOTAL_SURAHS = 114;
+const MAX_AYAHS = 286;
+const VIEW_MODES = ['both', 'arabic', 'translation'];
+const BISMILLAH_BANNER = 'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ';
+// The Bismillah reduced to bare letters, for comparison across editions
+// that spell it with different diacritics.
+const BISMILLAH_LETTERS = 'بسماللهالرحمنالرحيم';
 
 // State
 let surahs = [];
@@ -16,6 +23,7 @@ let audioPlaylist = [];
 let currentFontSize = 1;
 let currentViewMode = 'both'; // 'both', 'arabic', 'translation'
 let highlightedVerse = null;
+const surahRequests = HoliBooks.latestOnly();
 
 // DOM Elements
 const surahSelect = document.getElementById('surah-select');
@@ -45,92 +53,65 @@ const stickyHeader = document.getElementById('sticky-header');
 
 // Initialize
 async function init() {
+    // Load saved preferences
+    loadPreferences();
+
+    // URL params override the saved position; both are range-checked
+    const params = HoliBooks.getQueryParams();
+    currentSurahId = HoliBooks.clampInt(params.surah, 1, TOTAL_SURAHS, currentSurahId);
+    highlightedVerse = HoliBooks.clampInt(params.verse, 1, MAX_AYAHS, null);
+
+    HoliBooks.showLoading(versesContainer, 'Loading Quran...');
+
+    // Surah list for the dropdown. If it cannot be fetched, a numbered list
+    // keeps navigation working; the surah itself is loaded separately below.
     try {
-        // Load saved preferences
-        loadPreferences();
-
-        // Check URL params
-        const params = HoliBooks.getQueryParams();
-        if (params.surah) {
-            currentSurahId = parseInt(params.surah);
-        }
-        if (params.verse) {
-            highlightedVerse = parseInt(params.verse);
-        }
-
-        // Show loading
-        HoliBooks.showLoading(versesContainer, 'Loading Quran...');
-
-        // Fetch surah list
         const response = await HoliBooks.fetchJSON(`${API_BASE}/surah`);
+        if (!Array.isArray(response.data) || response.data.length === 0) throw new Error('Empty surah list');
         surahs = response.data;
-
-        // Populate dropdown
-        populateSurahDropdown();
-
-        // Load current surah
-        await loadSurah(currentSurahId);
-
-        // Handle verse highlighting after load
-        if (highlightedVerse) {
-            setTimeout(() => highlightAndScrollToVerse(highlightedVerse), 500);
-        }
-
-        // Setup event listeners
-        setupEventListeners();
-
-        // Setup scroll progress
-        setupScrollProgress();
-
-        // Setup sticky header
-        setupStickyHeader();
-
-        // Initialize mobile UI
-        updateMobileViewToggle();
-        updateMobileLanguageButton();
-        updateMobileThemeButton();
-
     } catch (error) {
-        console.error('Failed to initialize:', error);
-        // Use fallback data
-        surahs = getFallbackSurahList();
-        populateSurahDropdown();
-        
-        const fallbackData = getFallbackSurah(1);
-        currentSurahId = 1;
-        currentSurahData = fallbackData;
-        updateSurahInfo(fallbackData);
-        renderVerses(fallbackData);
-        updateNavigationState();
-        
-        showFallbackNotice();
-        setupEventListeners();
-        setupScrollProgress();
-        setupStickyHeader();
+        console.error('Failed to load the surah list:', error);
+        surahs = getNumberedSurahList();
+    }
+    populateSurahDropdown();
+
+    // Setup event listeners
+    setupEventListeners();
+    setupScrollProgress();
+    setupStickyHeader();
+
+    // Initialize mobile UI
+    updateMobileViewToggle();
+    updateMobileLanguageButton();
+    updateMobileThemeButton();
+
+    // Load current surah (opening the page must not add a history entry)
+    await loadSurah(currentSurahId, { history: 'replace' });
+
+    // Handle verse highlighting after load
+    if (highlightedVerse && currentSurahData) {
+        setTimeout(() => highlightAndScrollToVerse(highlightedVerse), 500);
     }
 }
 
-// Load user preferences
+// Load user preferences (storage can hold anything, so every value is checked)
 function loadPreferences() {
     const savedEdition = HoliBooks.storage.get('quran_edition');
-    if (savedEdition) {
+    if (typeof savedEdition === 'string' && /^[a-z]{2,3}\.[a-z0-9_-]+$/i.test(savedEdition)) {
         currentEdition = savedEdition;
         updateLanguageButton();
     }
 
-    const savedSurah = HoliBooks.storage.get('quran_surah');
-    if (savedSurah) {
-        currentSurahId = savedSurah;
-    }
+    currentSurahId = HoliBooks.clampInt(HoliBooks.storage.get('quran_surah'), 1, TOTAL_SURAHS, 1);
 
     const savedFontSize = HoliBooks.storage.get('quran_font_size');
-    if (savedFontSize) {
+    if (typeof savedFontSize === 'number' && savedFontSize >= 0.8 && savedFontSize <= 1.5) {
         currentFontSize = savedFontSize;
         applyFontSize();
     }
 
     const savedViewMode = HoliBooks.storage.get('quran_view_mode');
-    if (savedViewMode) {
+    if (VIEW_MODES.includes(savedViewMode)) {
         currentViewMode = savedViewMode;
         updateViewToggle();
     }
@@ -144,26 +125,91 @@ function savePreferences() {
     HoliBooks.storage.set('quran_view_mode', currentViewMode);
 }
 
+// Stand-in surah list used when the list endpoint is unreachable
+function getNumberedSurahList() {
+    return Array.from({ length: TOTAL_SURAHS }, (_, i) => ({
+        number: i + 1,
+        name: '',
+        englishName: `Surah ${i + 1}`
+    }));
+}
+
 // Populate surah dropdown
 function populateSurahDropdown() {
-    surahSelect.innerHTML = surahs.map(surah =>
-        `<option value="${surah.number}">${surah.number}. ${surah.englishName} (${surah.name})</option>`
-    ).join('');
+    const esc = HoliBooks.escapeHTML;
+    surahSelect.innerHTML = surahs.map(surah => {
+        const number = HoliBooks.clampInt(surah.number, 1, TOTAL_SURAHS, null);
+        if (number === null) return '';
+        const arabic = surah.name ? ` (${esc(surah.name)})` : '';
+        return `<option value="${number}">${number}. ${esc(surah.englishName)}${arabic}</option>`;
+    }).join('');
 
     surahSelect.value = currentSurahId;
 }
 
-// Load a surah
-async function loadSurah(surahId) {
-    currentSurahId = surahId;
+// Reduce Arabic text to bare letters: no vowel marks, no tatweel, one alef, one yeh
+function arabicLetters(text) {
+    return String(text).normalize('NFD')
+        .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, '')
+        .replace(/[\u0671\u0622\u0623\u0625]/g, '\u0627')
+        .replace(/\u06CC/g, '\u064A')
+        .replace(/\s+/g, '');
+}
+
+/**
+ * AlQuran Cloud prefixes the Bismillah to ayah 1 of every surah except 1 and 9.
+ * The page shows it as a banner, so drop it from the ayah to avoid showing it twice.
+ * @param {string} text - ayah 1 as served
+ * @param {number} surahNumber
+ * @returns {string}
+ */
+function stripBismillah(text, surahNumber) {
+    if (surahNumber === 1 || surahNumber === 9) return text;
+    const words = String(text).trim().split(/\s+/);
+    if (words.length > 4 && arabicLetters(words.slice(0, 4).join('')) === BISMILLAH_LETTERS) {
+        return words.slice(4).join(' ');
+    }
+    return text;
+}
+
+// Keep the address bar in step with the surah on screen
+function syncUrl(surahId, mode) {
+    if (mode !== 'push' && mode !== 'replace') return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('surah', surahId);
+    if (mode === 'push') {
+        // A verse number belongs to the surah it was shared with.
+        url.searchParams.delete('verse');
+        window.history.pushState({}, '', url);
+    } else {
+        window.history.replaceState({}, '', url);
+    }
+}
+
+/**
+ * Load a surah.
+ * @param {number|string} surahId
+ * @param {{history?: 'push'|'replace'|'none'}} [options] how to record it in browser history
+ */
+async function loadSurah(surahId, { history = 'push' } = {}) {
+    const id = HoliBooks.clampInt(surahId, 1, TOTAL_SURAHS, null);
+    if (id === null) return;
+
+    const token = surahRequests.next();
+    currentSurahId = id;
+    surahSelect.value = id;
+    updateNavigationState();
     HoliBooks.showLoading(versesContainer, 'Loading verses...');
 
     try {
         // Fetch Arabic text and translation in parallel
         const [arabicResponse, translationResponse] = await Promise.all([
-            HoliBooks.fetchWithRetry(`${API_BASE}/surah/${surahId}`, {}, 2),
-            HoliBooks.fetchWithRetry(`${API_BASE}/surah/${surahId}/${currentEdition}`, {}, 2)
+            HoliBooks.fetchWithRetry(`${API_BASE}/surah/${id}`, {}, 2),
+            HoliBooks.fetchWithRetry(`${API_BASE}/surah/${id}/${currentEdition}`, {}, 2)
         ]);
+
+        // A newer request has started; this response is stale.
+        if (!surahRequests.isCurrent(token)) return;
 
         const arabicData = arabicResponse.data;
         const translationData = translationResponse.data;
@@ -173,6 +219,7 @@ async function loadSurah(surahId) {
             ...arabicData,
             ayahs: arabicData.ayahs.map((ayah, index) => ({
                 ...ayah,
+                text: index === 0 ? stripBismillah(ayah.text, id) : ayah.text,
                 translation: translationData.ayahs[index]?.text || ''
             }))
         };
@@ -188,88 +235,43 @@ async function loadSurah(surahId) {
         // Update UI
         updateSurahInfo(currentSurahData);
         renderVerses(currentSurahData);
-        updateNavigationState();
         updateBookmarkButton();
         updateStickyHeader();
 
         // Update URL and save state
-        HoliBooks.setQueryParams({ surah: surahId });
+        syncUrl(id, history);
         savePreferences();
-
-        // Update dropdown
-        surahSelect.value = surahId;
 
         // Scroll to top with smooth animation
         HoliBooks.scrollToTop();
 
     } catch (error) {
-        console.error(`Failed to load surah ${surahId}:`, error);
-        useFallbackData(surahId);
+        if (!surahRequests.isCurrent(token)) return;
+        console.error(`Failed to load surah ${id}:`, error);
+        showSurahLoadError(id, history);
     }
 }
 
-// Use fallback data when API fails
-function useFallbackData(surahId) {
-    const fallbackData = getFallbackSurah(surahId);
-    if (fallbackData) {
-        currentSurahData = fallbackData;
-        updateSurahInfo(fallbackData);
-        renderVerses(fallbackData);
-        updateNavigationState();
-        updateBookmarkButton();
-        updateStickyHeader();
-        
-        versesContainer.innerHTML = `
-            <div class="fallback-notice" style="margin-bottom: var(--space-lg);">
-                ⚠️ Live API unavailable. Showing sample data.
-            </div>
-        ` + versesContainer.innerHTML;
-    } else {
-        HoliBooks.showError(versesContainer, 'Failed to load surah. Please try again.', () => loadSurah(surahId));
-    }
-}
+// The API could not be reached: say so for the surah that was asked for.
+// (Earlier builds showed Al-Fatihah here whatever surah was requested.)
+function showSurahLoadError(surahId, history) {
+    currentSurahData = null;
+    audioPlaylist = [];
 
-// Show fallback notice
-function showFallbackNotice() {
-    versesContainer.innerHTML = `
-        <div class="fallback-notice" style="margin-bottom: var(--space-lg);">
-            ⚠️ Live API unavailable. Showing sample data (Al-Fatihah).<br>
-            <small>The full Quran will load when API is accessible.</small>
-        </div>
-    ` + versesContainer.innerHTML;
-}
+    const known = surahs.find(surah => surah.number === surahId) || {};
+    surahName.textContent = known.name || '';
+    surahTransliteration.textContent = known.englishName || `Surah ${surahId}`;
+    surahTranslation.textContent = known.englishNameTranslation || '';
+    surahVerses.textContent = known.numberOfAyahs ? `${known.numberOfAyahs} Verses` : '';
+    surahType.textContent = known.revelationType || '';
+    updateBookmarkButton();
+    syncUrl(surahId, history);
 
-// Fallback surah list
-function getFallbackSurahList() {
-    return [
-        { number: 1, name: 'الفاتحة', englishName: 'Al-Fatihah', englishNameTranslation: 'The Opener', numberOfAyahs: 7, revelationType: 'Meccan' },
-        { number: 2, name: 'البقرة', englishName: 'Al-Baqarah', englishNameTranslation: 'The Cow', numberOfAyahs: 286, revelationType: 'Medinan' },
-        { number: 3, name: 'آل عمران', englishName: 'Ali Imran', englishNameTranslation: 'Family of Imran', numberOfAyahs: 200, revelationType: 'Medinan' }
-    ];
-}
-
-// Fallback surah data
-function getFallbackSurah(surahId) {
-    const SAMPLE_SURAHS = {
-        1: {
-            number: 1,
-            name: 'الفاتحة',
-            englishName: 'Al-Fatihah',
-            englishNameTranslation: 'The Opener',
-            numberOfAyahs: 7,
-            revelationType: 'Meccan',
-            ayahs: [
-                { numberInSurah: 1, number: 1, text: 'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ', translation: 'In the name of Allah, the Entirely Merciful, the Especially Merciful.' },
-                { numberInSurah: 2, number: 2, text: 'ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ', translation: 'All praise is due to Allah, Lord of the worlds.' },
-                { numberInSurah: 3, number: 3, text: 'ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ', translation: 'The Entirely Merciful, the Especially Merciful.' },
-                { numberInSurah: 4, number: 4, text: 'مَٰلِكِ يَوۡمِ ٱلدِّينِ', translation: 'Sovereign of the Day of Recompense.' },
-                { numberInSurah: 5, number: 5, text: 'إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ', translation: 'It is You we worship and You we ask for help.' },
-                { numberInSurah: 6, number: 6, text: 'ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ', translation: 'Guide us to the straight path.' },
-                { numberInSurah: 7, number: 7, text: 'صِرَٰطَ ٱلَّذِينَ أَنۡعَمۡتَ عَلَيۡهِمۡ غَيۡرِ ٱلۡمَغۡضُوبِ عَلَيۡهِمۡ وَلَا ٱلضَّآلِّينَ', translation: 'The path of those upon whom You have bestowed favor, not of those who have evoked anger or of those who are astray.' }
-            ]
-        }
-    };
-    return SAMPLE_SURAHS[surahId] || SAMPLE_SURAHS[1];
+    HoliBooks.showError(
+        versesContainer,
+        `Could not load Surah ${surahId}. Check your connection and try again.`,
+        () => loadSurah(surahId, { history: 'replace' })
+    );
 }
 
 // Update surah info header
@@ -298,23 +300,25 @@ function renderVerses(surah) {
         const bismillahStyle = currentViewMode === 'translation' ? 'display: none;' : '';
         html += `
             <div class="bismillah-banner" style="${bismillahStyle}">
-                بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ
+                ${BISMILLAH_BANNER}
             </div>
         `;
     }
 
-    // Render each verse
+    // Render each verse. Text from the API is escaped before it becomes HTML.
+    const esc = HoliBooks.escapeHTML;
     surah.ayahs.forEach((ayah, index) => {
-        const isBookmarked = bookmarkManager.isBookmarked('islam', `Quran ${surah.number}:${ayah.numberInSurah}`);
+        const verseNumber = HoliBooks.clampInt(ayah.numberInSurah, 1, MAX_AYAHS, index + 1);
+        const isBookmarked = bookmarkManager.isBookmarked('islam', `Quran ${surah.number}:${verseNumber}`);
         const arabicStyle = currentViewMode === 'translation' ? 'display: none;' : '';
         const translationStyle = currentViewMode === 'arabic' ? 'display: none;' : '';
         
         html += `
-            <article class="verse-card" id="verse-${ayah.numberInSurah}" data-index="${index}" data-verse="${ayah.numberInSurah}">
-                <div class="verse-number">${ayah.numberInSurah}</div>
+            <article class="verse-card" id="verse-${verseNumber}" data-index="${index}" data-verse="${verseNumber}">
+                <div class="verse-number">${verseNumber}</div>
                 <div class="verse-content" style="font-size: ${currentFontSize}rem;">
-                    <p class="arabic-text" style="${arabicStyle}">${ayah.text}</p>
-                    <p class="translation-text" style="${translationStyle}">${ayah.translation}</p>
+                    <p class="arabic-text" style="${arabicStyle}">${esc(ayah.text)}</p>
+                    <p class="translation-text" style="${translationStyle}">${esc(ayah.translation)}</p>
                 </div>
                 <div class="verse-actions">
                     <button class="verse-action-btn ${isBookmarked ? 'active' : ''}" 
@@ -350,7 +354,7 @@ function renderVerses(surah) {
 // Update navigation state
 function updateNavigationState() {
     const canGoPrev = currentSurahId > 1;
-    const canGoNext = currentSurahId < 114;
+    const canGoNext = currentSurahId < TOTAL_SURAHS;
 
     prevBtn.disabled = !canGoPrev;
     nextBtn.disabled = !canGoNext;
@@ -365,7 +369,13 @@ function updateNavigationState() {
 function setupEventListeners() {
     // Surah selection
     surahSelect.addEventListener('change', (e) => {
-        loadSurah(parseInt(e.target.value));
+        loadSurah(e.target.value);
+    });
+
+    // Back/Forward: show the surah the address bar now points at
+    window.addEventListener('popstate', () => {
+        const id = HoliBooks.clampInt(HoliBooks.getQueryParams().surah, 1, TOTAL_SURAHS, 1);
+        if (id !== currentSurahId || !currentSurahData) loadSurah(id, { history: 'none' });
     });
 
     // Navigation buttons
@@ -383,8 +393,8 @@ function setupEventListeners() {
     const quickNavBtn = document.getElementById('quick-nav-btn');
     
     quickNavBtn.addEventListener('click', () => {
-        const num = parseInt(quickNavInput.value);
-        if (num >= 1 && num <= 114) {
+        const num = HoliBooks.clampInt(quickNavInput.value, 1, TOTAL_SURAHS, null);
+        if (num !== null) {
             loadSurah(num);
             quickNavInput.value = '';
         }
@@ -399,10 +409,12 @@ function setupEventListeners() {
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+        // While the audio player is open the arrow keys seek the recitation.
+        if (window.audioPlayer?.playerEl?.classList.contains('visible')) return;
 
         if (e.key === 'ArrowLeft' && currentSurahId > 1) {
             navigateSurah(-1);
-        } else if (e.key === 'ArrowRight' && currentSurahId < 114) {
+        } else if (e.key === 'ArrowRight' && currentSurahId < TOTAL_SURAHS) {
             navigateSurah(1);
         }
     });
@@ -428,6 +440,7 @@ function setupEventListeners() {
 
     // Bookmark entire surah
     bookmarkSurahBtn.addEventListener('click', () => {
+        if (!currentSurahData) return;
         const firstAyah = currentSurahData.ayahs[0];
         const bookmark = {
             religion: 'islam',
@@ -467,7 +480,7 @@ function setupEventListeners() {
             currentViewMode = btn.dataset.view;
             updateViewToggle();
             updateMobileViewToggle();
-            renderVerses(currentSurahData);
+            if (currentSurahData) renderVerses(currentSurahData);
             savePreferences();
         });
     });
@@ -515,7 +528,7 @@ function setupMobileMenu() {
             currentViewMode = btn.dataset.view;
             updateViewToggle();
             updateMobileViewToggle();
-            renderVerses(currentSurahData);
+            if (currentSurahData) renderVerses(currentSurahData);
             savePreferences();
         });
     });
@@ -605,7 +618,7 @@ function updateMobileThemeButton() {
 // Navigate to previous/next surah
 function navigateSurah(direction) {
     const newId = currentSurahId + direction;
-    if (newId >= 1 && newId <= 114) {
+    if (newId >= 1 && newId <= TOTAL_SURAHS) {
         loadSurah(newId);
     }
 }
@@ -656,7 +669,8 @@ function updateBookmarkButton() {
 
 // Toggle verse bookmark
 function toggleVerseBookmark(index) {
-    const ayah = currentSurahData.ayahs[index];
+    const ayah = currentSurahData?.ayahs[index];
+    if (!ayah) return;
     const bookmark = {
         religion: 'islam',
         religionName: 'Islam',
@@ -683,17 +697,26 @@ function toggleVerseBookmark(index) {
 
 // Copy verse
 function copyVerse(index) {
-    const ayah = currentSurahData.ayahs[index];
+    const ayah = currentSurahData?.ayahs[index];
+    if (!ayah) return;
     const text = `"${ayah.translation}" — Quran ${currentSurahData.number}:${ayah.numberInSurah}`;
-    
+
+    // The Clipboard API only exists on secure origins.
+    if (!navigator.clipboard) {
+        showToast('Copying is not available in this browser', 'error');
+        return;
+    }
     navigator.clipboard.writeText(text).then(() => {
         showToast('Verse copied to clipboard!', 'success');
+    }).catch(() => {
+        showToast('Failed to copy verse', 'error');
     });
 }
 
 // Share verse
 function shareVerse(index) {
-    const ayah = currentSurahData.ayahs[index];
+    const ayah = currentSurahData?.ayahs[index];
+    if (!ayah) return;
     const text = `"${ayah.translation}" — Quran ${currentSurahData.number}:${ayah.numberInSurah}`;
     
     if (navigator.share) {
@@ -819,7 +842,7 @@ function showToast(message, type = 'info') {
     
     toast.innerHTML = `
         <span style="font-size: 1.2rem;">${icon}</span>
-        <span>${message}</span>
+        <span>${HoliBooks.escapeHTML(message)}</span>
     `;
     
     container.appendChild(toast);

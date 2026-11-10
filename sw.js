@@ -1,228 +1,174 @@
 /**
  * HoliBooks Service Worker
  * Provides offline support and caching for the PWA
- * 
- * @version 2.0.1
+ *
+ * @version 2.0.2
  */
 
-const CACHE_NAME = 'holibooks-v2';
-const STATIC_CACHE = 'holibooks-static-v2-0-1';
-const DYNAMIC_CACHE = 'holibooks-dynamic-v2-0-1';
+const STATIC_CACHE = 'holibooks-static-v2.0.2';
+const DYNAMIC_CACHE = 'holibooks-dynamic-v2.0.2';
+const OFFLINE_URL = '/offline.html';
 
-// Core static assets to cache on install
-const CORE_ASSETS = [
+// Everything a page needs to render, listed under the exact URL the pages
+// request (including the ?v= cache-buster): a cache lookup does not ignore
+// the query string, so a bare path here would never be found.
+// tests/sw.test.mjs fails if a page asks for an asset that is missing here.
+const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/offline.html',
-  '/css/global.css',
-  '/css/animations.css',
-  '/style.css',
-  '/app.js',
-  '/js/utils.js',
-  '/js/search.js',
-  '/js/bookmarks.js',
-  '/js/audio-player.js',
-  '/js/language-selector.js'
-];
-
-// Religion-specific pages and assets
-const RELIGION_ASSETS = [
+  '/manifest.json',
+  '/css/global.css?v=2.0.2',
+  '/css/animations.css?v=2.0.2',
+  '/js/utils.js?v=2.0.2',
+  '/js/api-monitor.js?v=2.0.2',
+  '/js/search.js?v=2.0.2',
+  '/js/bookmarks.js?v=2.0.2',
+  '/js/audio-player.js?v=2.0.2',
+  '/js/language-selector.js?v=2.0.2',
   '/religions/islam/quran.html',
-  '/religions/islam/quran.css?v=2.0.1',
-  '/religions/islam/quran.js?v=2.0.1',
+  '/religions/islam/quran.css?v=2.0.2',
+  '/religions/islam/quran.js?v=2.0.2',
   '/religions/christianity/bible.html',
-  '/religions/christianity/bible.css?v=2.0.1',
-  '/religions/christianity/bible.js?v=2.0.1',
+  '/religions/christianity/bible.css?v=2.0.2',
+  '/religions/christianity/bible.js?v=2.0.2',
   '/religions/hinduism/gita.html',
-  '/religions/hinduism/gita.css?v=2.0.1',
-  '/religions/hinduism/gita.js?v=2.0.1',
+  '/religions/hinduism/gita.css?v=2.0.2',
+  '/religions/hinduism/gita.js?v=2.0.2',
   '/religions/judaism/torah.html',
-  '/religions/judaism/torah.css?v=2.0.1',
-  '/religions/judaism/torah.js?v=2.0.1',
+  '/religions/judaism/torah.css?v=2.0.2',
+  '/religions/judaism/torah.js?v=2.0.2',
   '/religions/sikhism/gurbani.html',
-  '/religions/sikhism/gurbani.css?v=2.0.1',
-  '/religions/sikhism/gurbani.js?v=2.0.1',
+  '/religions/sikhism/gurbani.css?v=2.0.2',
+  '/religions/sikhism/gurbani.js?v=2.0.2',
   '/religions/buddhism/tripitaka.html',
-  '/religions/buddhism/tripitaka.css?v=2.0.1',
-  '/religions/buddhism/tripitaka.js?v=2.0.1'
+  '/religions/buddhism/tripitaka.css?v=2.0.2',
+  '/religions/buddhism/dhammapada-data.js?v=2.0.2',
+  '/religions/buddhism/tripitaka.js?v=2.0.2'
 ];
 
-// External resources to cache
-const EXTERNAL_ASSETS = [
-  'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Frank+Ruhl+Libre:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Gurmukhi:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap',
-  'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap'
+// Scripture APIs whose responses are kept for offline re-reading.
+// vedicscriptures.github.io is left out on purpose: its responses are 16-100 KB
+// per verse and the Gita reader keeps its own compact per-chapter cache.
+const API_HOSTS = [
+  'api.alquran.cloud',
+  'cdn.jsdelivr.net',
+  'api.gurbaninow.com'
 ];
 
-// Combine all static assets
-const STATIC_ASSETS = [...CORE_ASSETS, ...RELIGION_ASSETS];
-
-// Install event - cache core assets
+// Install event - cache the app shell
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing HoliBooks Service Worker...');
-  
+  // No catch here: if any file cannot be cached the install fails and the
+  // browser retries later, instead of activating a half-cached worker.
   event.waitUntil(
     caches.open(STATIC_CACHE)
-      .then((cache) => {
-        console.log('[SW] Caching static assets...');
-        return cache.addAll(STATIC_ASSETS);
-      })
-      .then(() => {
-        console.log('[SW] Static assets cached successfully');
-        return self.skipWaiting();
-      })
-      .catch((error) => {
-        console.error('[SW] Failed to cache static assets:', error);
-      })
+      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then(() => self.skipWaiting())
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating HoliBooks Service Worker...');
-  
   event.waitUntil(
     caches.keys()
-      .then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            // Delete ALL caches that don't match current version
-            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-              console.log('[SW] Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
-      .then(() => {
-        console.log('[SW] Service Worker activated');
-        // Force all clients to reload with new version
-        return self.clients.matchAll({ type: 'window' }).then((clients) => {
-          clients.forEach((client) => {
-            client.navigate(client.url);
-          });
-          return self.clients.claim();
-        });
-      })
+      .then((cacheNames) => Promise.all(
+        cacheNames
+          .filter((cacheName) => cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE)
+          .map((cacheName) => caches.delete(cacheName))
+      ))
+      // Open tabs are taken over but not reloaded: pages are fetched
+      // network-first, so the next navigation picks up a new deployment
+      // without discarding the reader's place or stopping audio.
+      .then(() => self.clients.claim())
   );
 });
 
 // Fetch event - serve from cache or network
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
-  
+
   // Skip non-GET requests
   if (request.method !== 'GET') {
     return;
   }
-  
+
+  const url = new URL(request.url);
+
   // Skip chrome-extension and other non-http(s) requests
   if (!url.protocol.startsWith('http')) {
     return;
   }
 
-  // Handle different types of requests
-  if (isAPIRequest(url)) {
-    // Network-first strategy for API calls
-    event.respondWith(networkFirstStrategy(request));
-  } else if (isStaticAsset(url)) {
-    // Cache-first strategy for static assets
-    event.respondWith(cacheFirstStrategy(request));
-  } else {
-    // Stale-while-revalidate for everything else
-    event.respondWith(staleWhileRevalidateStrategy(request));
+  if (request.mode === 'navigate') {
+    event.respondWith(handleNavigation(request));
+  } else if (API_HOSTS.includes(url.hostname)) {
+    event.respondWith(networkFirst(request));
+  } else if (url.origin === self.location.origin) {
+    event.respondWith(cacheFirst(request));
   }
+  // Anything else (fonts, audio, the Gita API) goes straight to the network.
 });
 
 /**
- * Check if request is for an API endpoint
- * @param {URL} url
- * @returns {boolean}
- */
-function isAPIRequest(url) {
-  const apiHosts = [
-    'api.alquran.cloud',
-    'cdn.jsdelivr.net',
-    'vedicscriptures.github.io',
-    'gurbaninow.com',
-    'api.bible'
-  ];
-  
-  return apiHosts.some(host => url.hostname.includes(host));
-}
-
-/**
- * Check if request is for a static asset
- * @param {URL} url
- * @returns {boolean}
- */
-function isStaticAsset(url) {
-  const staticExtensions = [
-    '.css',
-    '.js',
-    '.html',
-    '.json',
-    '.png',
-    '.jpg',
-    '.jpeg',
-    '.gif',
-    '.svg',
-    '.woff',
-    '.woff2',
-    '.ttf',
-    '.eot'
-  ];
-  
-  return staticExtensions.some(ext => url.pathname.endsWith(ext));
-}
-
-/**
- * Cache-first strategy: Try cache first, fall back to network
+ * Pages: network first, so a new deployment is seen as soon as the device is
+ * online. Offline, fall back to the cached page - ignoring the query string,
+ * because readers are opened as quran.html?surah=2 but cached as quran.html -
+ * and finally to the offline page.
  * @param {Request} request
  * @returns {Promise<Response>}
  */
-async function cacheFirstStrategy(request) {
-  const cache = await caches.open(STATIC_CACHE);
-  const cached = await cache.match(request);
-  
+async function handleNavigation(request) {
+  try {
+    return await fetch(request);
+  } catch (error) {
+    return (await caches.match(request))
+      || (await caches.match(request, { ignoreSearch: true }))
+      || (await caches.match(OFFLINE_URL))
+      || Response.error();
+  }
+}
+
+/**
+ * Same-origin assets: serve the cached copy and refresh it in the background;
+ * fetch and cache on a miss.
+ * @param {Request} request
+ * @returns {Promise<Response>}
+ */
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+
   if (cached) {
-    // Return cached version and update in background
     fetch(request)
       .then((response) => {
         if (response.ok) {
-          cache.put(request, response.clone());
+          return caches.open(STATIC_CACHE).then((cache) => cache.put(request, response));
         }
       })
       .catch(() => {});
-    
+
     return cached;
   }
-  
+
   try {
     const response = await fetch(request);
     if (response.ok) {
+      const cache = await caches.open(STATIC_CACHE);
       cache.put(request, response.clone());
     }
     return response;
   } catch (error) {
-    // Return offline page for navigation requests
-    if (request.mode === 'navigate') {
-      return cache.match('/offline.html');
-    }
-    throw error;
+    return Response.error();
   }
 }
 
 /**
- * Network-first strategy: Try network first, fall back to cache
+ * API calls: network first, fall back to the last cached answer.
  * @param {Request} request
  * @returns {Promise<Response>}
  */
-async function networkFirstStrategy(request) {
+async function networkFirst(request) {
   const cache = await caches.open(DYNAMIC_CACHE);
-  
+
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
@@ -230,33 +176,8 @@ async function networkFirstStrategy(request) {
     }
     return networkResponse;
   } catch (error) {
-    const cached = await cache.match(request);
-    if (cached) {
-      return cached;
-    }
-    throw error;
+    return (await cache.match(request)) || Response.error();
   }
-}
-
-/**
- * Stale-while-revalidate strategy: Return cached version immediately, update in background
- * @param {Request} request
- * @returns {Promise<Response>}
- */
-async function staleWhileRevalidateStrategy(request) {
-  const cache = await caches.open(DYNAMIC_CACHE);
-  const cached = await cache.match(request);
-  
-  const fetchPromise = fetch(request)
-    .then((response) => {
-      if (response.ok) {
-        cache.put(request, response.clone());
-      }
-      return response;
-    })
-    .catch(() => cached);
-  
-  return cached || fetchPromise;
 }
 
 // Handle messages from the main thread
@@ -285,8 +206,8 @@ self.addEventListener('push', (event) => {
     event.waitUntil(
       self.registration.showNotification(data.title, {
         body: data.body,
-        icon: '/screenshots/home.png',
-        badge: '/screenshots/home.png',
+        icon: '/assets/icons/icon-192.png',
+        badge: '/assets/icons/icon-192.png',
         data: data.data
       })
     );

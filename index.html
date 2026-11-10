@@ -23,8 +23,8 @@
         rel="stylesheet">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/global.css?v=2.0.1">
-    <link rel="stylesheet" href="css/animations.css?v=2.0.1">
+    <link rel="stylesheet" href="css/global.css?v=2.0.2">
+    <link rel="stylesheet" href="css/animations.css?v=2.0.2">
 
     <style>
         /* ===== Glass Morphism Variables ===== */
@@ -1778,11 +1778,11 @@
                     Verse of the Day
                 </div>
                 <blockquote class="featured-verse" id="featured-verse">
-                    "Guide us to the straight path. The path of those upon whom You have bestowed favor, 
-                    not of those who have evoked anger or of those who are astray."
+                    "Show us the straight path, The path of those whom Thou hast favoured; 
+                    Not the (path) of those who earn Thine anger nor of those who go astray."
                 </blockquote>
                 <div class="featured-source" id="featured-source">
-                    — The Holy Quran, Al-Fatihah (1:6-7)
+                    — The Holy Quran, Al-Fatihah 1:6-7 (Pickthall)
                 </div>
                 <div class="featured-actions">
                     <button class="btn btn-secondary btn-icon" onclick="copyVerse()" title="Copy verse">
@@ -1835,9 +1835,9 @@
             <div class="footer-column reveal">
                 <h4 class="footer-title">Connect</h4>
                 <ul class="footer-links">
-                    <li><a href="https://github.com/muhib-karim/HoliBooks" target="_blank">GitHub</a></li>
-                    <li><a href="https://ko-fi.com/ai_dev_2024" target="_blank">Support</a></li>
-                    <li><a href="https://holibooks.vercel.app" target="_blank">Live Site</a></li>
+                    <li><a href="https://github.com/muhib-karim/HoliBooks" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    <li><a href="https://ko-fi.com/ai_dev_2024" target="_blank" rel="noopener noreferrer">Support</a></li>
+                    <li><a href="https://holibooks.vercel.app" target="_blank" rel="noopener noreferrer">Live Site</a></li>
                 </ul>
             </div>
         </div>
@@ -1850,8 +1850,8 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- Scripts -->
-    <script src="js/utils.js?v=2.0.1"></script>
-    <script src="js/api-monitor.js?v=2.0.1"></script>
+    <script src="js/utils.js?v=2.0.2"></script>
+    <script src="js/api-monitor.js?v=2.0.2"></script>
     
     <!-- Service Worker Registration -->
     <script>
@@ -2109,20 +2109,22 @@
         }
 
         // ===== Daily Verse Rotation =====
+        // Each quote names its verse and translation; see "Data sources and
+        // licences" in README.md before adding or changing one.
         const dailyVerses = [
             {
-                text: "Guide us to the straight path. The path of those upon whom You have bestowed favor, not of those who have evoked anger or of those who are astray.",
-                source: "— The Holy Quran, Al-Fatihah (1:6-7)",
+                text: "Show us the straight path, The path of those whom Thou hast favoured; Not the (path) of those who earn Thine anger nor of those who go astray.",
+                source: "— The Holy Quran, Al-Fatihah 1:6-7 (Pickthall)",
                 url: "religions/islam/quran.html?surah=1"
             },
             {
-                text: "Love is patient, love is kind. It does not envy, it does not boast, it is not proud.",
-                source: "— The Bible, 1 Corinthians 13:4",
+                text: "Love is patient and is kind. Love doesn’t envy. Love doesn’t brag, is not proud,",
+                source: "— The Bible, 1 Corinthians 13:4 (World English Bible)",
                 url: "religions/christianity/bible.html?book=1corinthians&chapter=13"
             },
             {
-                text: "The soul is neither born, nor does it die. It is not that having been non-existent, it came into existence. It is unborn, eternal, everlasting, and primeval.",
-                source: "— Bhagavad Gita, Chapter 2",
+                text: "Never the spirit was born; the spirit shall cease to be never; Never was time it was not; End and Beginning are dreams! Birthless and deathless and changeless remaineth the spirit for ever; Death hath not touched it at all, dead though the house of it seems!",
+                source: "— Bhagavad Gita 2:20 (Sir Edwin Arnold, The Song Celestial, 1885)",
                 url: "religions/hinduism/gita.html?chapter=2"
             },
             {
@@ -2131,14 +2133,14 @@
                 url: "religions/judaism/torah.html?book=leviticus&chapter=19"
             },
             {
-                text: "Recognize the whole human race as one. There is only one God and one humanity.",
-                source: "— Guru Granth Sahib",
-                url: "religions/sikhism/gurbani.html?page=6"
+                text: "True in the beginning, true through the ages, true even now; O Nanak, true He shall ever be.",
+                source: "— Guru Granth Sahib, Ang 1 (Japji Sahib; tr. HoliBooks)",
+                url: "religions/sikhism/gurbani.html?page=1"
             },
             {
-                text: "Better than a thousand useless words is one useful word, hearing which one attains peace.",
-                source: "— Dhammapada, Verse 8",
-                url: "religions/buddhism/tripitaka.html?verse=8"
+                text: "Better than a thousand meaningless sayings is a single meaningful saying, hearing which brings you peace.",
+                source: "— Dhammapada, verse 100 (Bhikkhu Sujato)",
+                url: "religions/buddhism/tripitaka.html?verse=100"
             }
         ];
 

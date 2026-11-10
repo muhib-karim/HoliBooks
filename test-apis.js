@@ -2,11 +2,23 @@
 import https from 'node:https';
 import { pathToFileURL } from 'node:url';
 
+// One URL for every endpoint shape and every edition the readers offer, so a
+// renamed upstream ID shows up here instead of as a broken reader.
+const BIBLE = 'https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles';
 export const APIS = [
-  {name:'Quran API (AlQuran Cloud)',url:'https://api.alquran.cloud/v1/surah/1'},
-  {name:'Bible API (JSDelivr)',url:'https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/en-kjv/books/genesis/chapters/1.json'},
-  {name:'Bhagavad Gita API',url:'https://vedicscriptures.github.io/slok/1/1'},
-  {name:'GurbaniNow API',url:'https://api.gurbaninow.com/v2/ang/1'}
+  {name:'Quran: surah list (AlQuran Cloud)',url:'https://api.alquran.cloud/v1/surah'},
+  {name:'Quran: Arabic surah',url:'https://api.alquran.cloud/v1/surah/1'},
+  {name:'Quran: default translation en.sahih',url:'https://api.alquran.cloud/v1/surah/1/en.sahih'},
+  {name:'Quran: Swahili edition sw.barwani',url:'https://api.alquran.cloud/v1/surah/1/sw.barwani'},
+  {name:'Bible: en-kjv (wldeh via jsDelivr)',url:`${BIBLE}/en-kjv/books/genesis/chapters/1.json`},
+  {name:'Bible: en-web',url:`${BIBLE}/en-web/books/genesis/chapters/1.json`},
+  {name:'Bible: en-asv',url:`${BIBLE}/en-asv/books/genesis/chapters/1.json`},
+  {name:'Bible: numbered book ID 1samuel',url:`${BIBLE}/en-kjv/books/1samuel/chapters/1.json`},
+  {name:'Bible: songofsolomon',url:`${BIBLE}/en-kjv/books/songofsolomon/chapters/1.json`},
+  {name:'Torah: en-ojps (JPS 1917)',url:`${BIBLE}/en-ojps/books/genesis/chapters/1.json`},
+  {name:'Torah: he-wlc (Hebrew)',url:`${BIBLE}/he-wlc/books/deuteronomy/chapters/34.json`},
+  {name:'Bhagavad Gita: one verse',url:'https://vedicscriptures.github.io/slok/1/1/'},
+  {name:'GurbaniNow: one Ang',url:'https://api.gurbaninow.com/v2/ang/1'}
 ];
 
 export function testAPI(api, {get=https.get, timeoutMs=15000}={}) {

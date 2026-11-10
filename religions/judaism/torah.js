@@ -1,6 +1,6 @@
 /**
  * HoliBooks - Torah Module
- * Using Free Bible API for Torah/Pentateuch with multi-language support
+ * Reads the Pentateuch from wldeh/bible-api (served by jsDelivr)
  */
 
 const API_BASE = 'https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles';
@@ -14,17 +14,29 @@ const TORAH_BOOKS = [
     { id: 'deuteronomy', hebrew: 'דְּבָרִים', name: 'Deuteronomy', meaning: 'Words', chapters: 34 }
 ];
 
-// Language configurations
+// Editions offered. Every code is a folder that exists upstream; the list is
+// mirrored in torah.html and checked by tests/bible-torah.test.mjs.
 const LANGUAGES = {
-    'en-kjv': { code: 'en-kjv', name: 'English', translator: 'King James Version' },
-    'es-rvr1960': { code: 'es-rvr1960', name: 'Español', translator: 'Reina Valera 1960' },
-    'fr-lsg': { code: 'fr-lsg', name: 'Français', translator: 'Louis Segond' },
-    'de-lut': { code: 'de-lut', name: 'Deutsch', translator: 'Luther Bible' }
+    'en-ojps': { code: 'en-ojps', name: 'English (JPS 1917)', translator: 'Jewish Publication Society, 1917', dir: 'ltr', lang: 'en' },
+    'he-wlc': { code: 'he-wlc', name: 'עברית (Hebrew)', translator: 'Westminster Leningrad Codex', dir: 'rtl', lang: 'he' },
+    'en-kjv': { code: 'en-kjv', name: 'English (KJV)', translator: 'King James Version', dir: 'ltr', lang: 'en' }
 };
+const DEFAULT_LANGUAGE = 'en-ojps';
 
 let currentBook = 'genesis';
 let currentChapter = 1;
-let currentLanguage = 'en-kjv';
+let currentLanguage = DEFAULT_LANGUAGE;
+const chapterRequests = HoliBooks.latestOnly();
+
+function getBook(bookId) {
+    return TORAH_BOOKS.find(b => b.id === bookId);
+}
+
+function normalizeBookId(value) {
+    if (typeof value !== 'string') return null;
+    const id = value.toLowerCase().replace(/[^a-z]/g, '');
+    return getBook(id) ? id : null;
+}
 
 const bookSelect = document.getElementById('book-select');
 const chapterSelect = document.getElementById('chapter-select');
@@ -38,38 +50,32 @@ const languageBtn = document.getElementById('language-btn');
 const currentLanguageSpan = document.getElementById('current-language');
 
 async function init() {
-    // Load saved preferences
-    const savedBook = HoliBooks.storage.get('torah_book');
-    const savedChapter = HoliBooks.storage.get('torah_chapter');
+    // Saved position, then URL parameters on top of it
+    let book = normalizeBookId(HoliBooks.storage.get('torah_book')) || 'genesis';
+    let chapter = HoliBooks.storage.get('torah_chapter');
     const savedLanguage = HoliBooks.storage.get('torah_language');
 
-    if (savedBook) currentBook = savedBook;
-    if (savedChapter) currentChapter = savedChapter;
-    if (savedLanguage && LANGUAGES[savedLanguage]) currentLanguage = savedLanguage;
+    // Older builds saved languages that never existed upstream (es-rvr1960, fr-lsg, de-lut).
+    if (typeof savedLanguage === 'string' && LANGUAGES[savedLanguage]) currentLanguage = savedLanguage;
 
-    // Check URL params
     const params = HoliBooks.getQueryParams();
-    if (params.book) {
-        const bookId = params.book.toLowerCase();
-        const bookExists = TORAH_BOOKS.some(b => b.id === bookId);
-        if (bookExists) {
-            currentBook = bookId;
-        }
+    const urlBook = normalizeBookId(params.book);
+    if (urlBook && urlBook !== book) {
+        // A saved chapter belongs to the saved book, not to this one.
+        book = urlBook;
+        chapter = 1;
     }
-    if (params.chapter) {
-        const chapterNum = parseInt(params.chapter);
-        const book = TORAH_BOOKS.find(b => b.id === currentBook);
-        if (book && chapterNum >= 1 && chapterNum <= book.chapters) {
-            currentChapter = chapterNum;
-        }
-    }
+    if (params.chapter) chapter = params.chapter;
+
+    currentBook = book;
+    currentChapter = HoliBooks.clampInt(chapter, 1, getBook(book).chapters, 1);
 
     populateBookDropdown();
     updateChapterDropdown();
     updateLanguageButton();
     updateMobileLanguageButtons();
-    await loadChapter();
     setupEventListeners();
+    await loadChapter();
 }
 
 function populateBookDropdown() {
@@ -88,85 +94,66 @@ function updateChapterDropdown() {
 }
 
 async function loadChapter() {
+    const token = chapterRequests.next();
+    const book = getBook(currentBook);
+    const chapter = currentChapter;
+    const language = currentLanguage;
+
+    chapterTitle.textContent = `${book.hebrew} - ${book.name} Chapter ${chapter}`;
+    updateNavigation();
     HoliBooks.showLoading(versesContainer, 'Loading chapter...');
 
     try {
-        const book = TORAH_BOOKS.find(b => b.id === currentBook);
-        const url = `${API_BASE}/${currentLanguage}/books/${currentBook}/chapters/${currentChapter}.json`;
+        const url = `${API_BASE}/${language}/books/${book.id}/chapters/${chapter}.json`;
         const response = await HoliBooks.fetchWithRetry(url, {}, 2);
 
-        // API returns {data: [...]} not {verses: [...]}
-        const verses = response.data || response.verses || [];
-        const data = { verses: verses };
+        // A newer request has started; this response is stale.
+        if (!chapterRequests.isCurrent(token)) return;
 
-        chapterTitle.textContent = `${book.hebrew} - ${book.name} Chapter ${currentChapter}`;
+        // API returns {data: [...]}; upstream repeats verses in some editions.
+        const verses = HoliBooks.dedupeVerses(response.data || response.verses || []);
+
         verseCount.textContent = `${verses.length} Verses`;
-
-        renderVerses(data);
-        updateNavigation();
+        renderVerses(verses, LANGUAGES[language]);
 
         // Save state
-        HoliBooks.storage.set('torah_book', currentBook);
-        HoliBooks.storage.set('torah_chapter', currentChapter);
-        HoliBooks.storage.set('torah_language', currentLanguage);
-        
+        HoliBooks.storage.set('torah_book', book.id);
+        HoliBooks.storage.set('torah_chapter', chapter);
+        HoliBooks.storage.set('torah_language', language);
+
         HoliBooks.scrollToTop();
 
     } catch (error) {
+        if (!chapterRequests.isCurrent(token)) return;
         console.error('Failed to load:', error);
-        // Use fallback sample data
-        const book = TORAH_BOOKS.find(b => b.id === currentBook);
-        const fallbackData = getFallbackVerses(currentBook, currentChapter);
-        if (fallbackData) {
-            chapterTitle.textContent = `${book.hebrew} - ${book.name} Chapter ${currentChapter}`;
-            verseCount.textContent = `${fallbackData.verses.length} Verses`;
-            renderVerses(fallbackData);
-            updateNavigation();
-            versesContainer.innerHTML = `
-                <div style="color: var(--text-muted); padding: 20px; text-align: center; font-size: 0.9rem; border-radius: 12px; background: var(--bg-card); margin-bottom: 20px;">
-                    ⚠️ Live API unavailable. Showing sample data.<br>
-                    <small>The full Torah will load when API is accessible.</small>
-                </div>
-            ` + versesContainer.innerHTML;
-        } else {
-            HoliBooks.showError(versesContainer, 'Failed to load chapter. Please try again.', loadChapter);
-        }
+        verseCount.textContent = '';
+        HoliBooks.showError(
+            versesContainer,
+            `Could not load ${book.name} ${chapter}. Check your connection and try again.`,
+            loadChapter
+        );
     }
 }
 
-// Fallback sample data for when API is blocked
-function getFallbackVerses(bookId, chapter) {
-    if (bookId === 'genesis' && chapter === 1) {
-        return {
-            verses: [
-                { verse: 1, text: 'In the beginning God created the heaven and the earth.' },
-                { verse: 2, text: 'And the earth was without form, and void; and darkness was upon the face of the deep.' },
-                { verse: 3, text: 'And God said, Let there be light: and there was light.' },
-                { verse: 4, text: 'And God saw the light, that it was good: and God divided the light from the darkness.' },
-                { verse: 5, text: 'And God called the light Day, and the darkness he called Night.' }
-            ]
-        };
-    }
-    return null;
-}
-
-function renderVerses(data) {
-    const verses = data.verses || data.data || [];
-
+function renderVerses(verses, edition) {
     if (verses.length === 0) {
         versesContainer.innerHTML = '<p class="loading">No verses found</p>';
         return;
     }
 
+    // Hebrew is set right-to-left in the Hebrew face; verse text is always escaped.
+    const rtl = edition && edition.dir === 'rtl';
+    const textClass = rtl ? 'translation-text text-hebrew' : 'translation-text';
+    const textAttrs = rtl ? ` dir="rtl" lang="${edition.lang}"` : '';
+
     let html = '';
     verses.forEach(v => {
         const verseNum = v.verse || v.number || '';
-        const verseText = v.text || '';
         html += `
             <article class="verse-card">
-                <div class="verse-number">${verseNum}</div>
+                <div class="verse-number">${HoliBooks.escapeHTML(verseNum)}</div>
                 <div class="verse-content">
-                    <p class="translation-text">${verseText}</p>
+                    <p class="${textClass}"${textAttrs}>${HoliBooks.escapeHTML(v.text || '')}</p>
                 </div>
             </article>
         `;
@@ -184,17 +171,17 @@ function updateNavigation() {
 }
 
 function goToPrev() {
+    const bookIndex = TORAH_BOOKS.findIndex(b => b.id === currentBook);
     if (currentChapter > 1) {
         currentChapter--;
+    } else if (bookIndex > 0) {
+        const prevBook = TORAH_BOOKS[bookIndex - 1];
+        currentBook = prevBook.id;
+        currentChapter = prevBook.chapters;
+        bookSelect.value = currentBook;
+        updateChapterDropdown();
     } else {
-        const bookIndex = TORAH_BOOKS.findIndex(b => b.id === currentBook);
-        if (bookIndex > 0) {
-            const prevBook = TORAH_BOOKS[bookIndex - 1];
-            currentBook = prevBook.id;
-            currentChapter = prevBook.chapters;
-            bookSelect.value = currentBook;
-            updateChapterDropdown();
-        }
+        return; // already at Genesis 1
     }
     chapterSelect.value = currentChapter;
     loadChapter();
@@ -203,17 +190,17 @@ function goToPrev() {
 function goToNext() {
     const book = TORAH_BOOKS.find(b => b.id === currentBook);
 
+    const bookIndex = TORAH_BOOKS.findIndex(b => b.id === currentBook);
     if (currentChapter < book.chapters) {
         currentChapter++;
+    } else if (bookIndex < TORAH_BOOKS.length - 1) {
+        const nextBook = TORAH_BOOKS[bookIndex + 1];
+        currentBook = nextBook.id;
+        currentChapter = 1;
+        bookSelect.value = currentBook;
+        updateChapterDropdown();
     } else {
-        const bookIndex = TORAH_BOOKS.findIndex(b => b.id === currentBook);
-        if (bookIndex < TORAH_BOOKS.length - 1) {
-            const nextBook = TORAH_BOOKS[bookIndex + 1];
-            currentBook = nextBook.id;
-            currentChapter = 1;
-            bookSelect.value = currentBook;
-            updateChapterDropdown();
-        }
+        return; // already at Deuteronomy 34
     }
     chapterSelect.value = currentChapter;
     loadChapter();
@@ -244,14 +231,16 @@ function updateMobileLanguageButtons() {
 
 function setupEventListeners() {
     bookSelect.addEventListener('change', (e) => {
-        currentBook = e.target.value;
+        const bookId = normalizeBookId(e.target.value);
+        if (!bookId) return;
+        currentBook = bookId;
         currentChapter = 1;
         updateChapterDropdown();
         loadChapter();
     });
 
     chapterSelect.addEventListener('change', (e) => {
-        currentChapter = parseInt(e.target.value);
+        currentChapter = HoliBooks.clampInt(e.target.value, 1, getBook(currentBook).chapters, 1);
         loadChapter();
     });
 
@@ -259,7 +248,7 @@ function setupEventListeners() {
     nextBtn.addEventListener('click', goToNext);
 
     document.addEventListener('keydown', (e) => {
-        if (e.target.tagName === 'SELECT') return;
+        if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
         if (e.key === 'ArrowLeft') goToPrev();
         if (e.key === 'ArrowRight') goToNext();
     });

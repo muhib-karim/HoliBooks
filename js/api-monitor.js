@@ -1,6 +1,6 @@
 /**
  * HoliBooks - API Health Monitor
- * Monitors API status and provides offline fallback support
+ * Checks, once per page load, whether the endpoints the readers use answer.
  */
 
 class APIMonitor {
@@ -15,31 +15,30 @@ class APIMonitor {
             },
             bible: {
                 name: 'Bible API',
-                url: 'https://cdn.jsdelivr.net/gh/wldeh/bible-api@master/books/en.json',
+                url: 'https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/en-kjv/books/genesis/chapters/1.json',
                 status: 'unknown',
                 responseTime: null,
                 lastChecked: null
             },
             gita: {
                 name: 'Vedic Scriptures',
-                url: 'https://vedicscriptures.github.io/gita/chapters/1',
+                url: 'https://vedicscriptures.github.io/slok/1/1/',
                 status: 'unknown',
                 responseTime: null,
                 lastChecked: null
             },
             gurbani: {
                 name: 'GurbaniNow',
-                url: 'https://gurbaninow.com/gurbani/1',
+                url: 'https://api.gurbaninow.com/v2/ang/1',
                 status: 'unknown',
                 responseTime: null,
                 lastChecked: null
             }
         };
         
+        // Each URL is an endpoint a reader really requests (see the API_BASE
+        // constant in each religions/*/ script); tests keep them in step.
         this.cache = new Map();
-        this.retryAttempts = new Map();
-        this.maxRetries = 3;
-        this.retryDelay = 2000;
         this.statusIndicator = null;
         this.tooltip = null;
         
@@ -51,11 +50,10 @@ class APIMonitor {
         this.createTooltip();
         this.bindEvents();
         
-        // Check API status on page load
+        // Check once per page load. Clicking the indicator or coming back
+        // online checks again; there is no background polling of other
+        // people's servers.
         await this.checkAllAPIs();
-        
-        // Periodic health check every 5 minutes
-        setInterval(() => this.checkAllAPIs(), 5 * 60 * 1000);
     }
     
     createStatusIndicator() {
@@ -199,57 +197,40 @@ class APIMonitor {
     async checkAPI(apiKey) {
         const api = this.apis[apiKey];
         const startTime = performance.now();
-        
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+
         try {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 10000);
-            
+            // A normal CORS request, so the status code is readable. (A no-cors
+            // probe yields an opaque response: a 404 or 500 looked "online".)
             const response = await fetch(api.url, {
-                method: 'HEAD',
-                mode: 'no-cors',
+                method: 'GET',
+                cache: 'no-store',
                 signal: controller.signal
             });
-            
-            clearTimeout(timeout);
-            
-            const endTime = performance.now();
-            api.responseTime = Math.round(endTime - startTime);
-            api.lastChecked = new Date().toISOString();
-            
-            // Determine status based on response time
-            if (api.responseTime < 1000) {
+
+            api.responseTime = Math.round(performance.now() - startTime);
+            api.httpStatus = response.status;
+
+            if (!response.ok) {
+                api.status = 'offline';
+            } else if (api.responseTime < 1000) {
                 api.status = 'online';
             } else if (api.responseTime < 5000) {
                 api.status = 'degraded';
             } else {
                 api.status = 'offline';
             }
-            
-            // Reset retry attempts on success
-            this.retryAttempts.set(apiKey, 0);
-            
         } catch (error) {
             api.status = 'offline';
             api.responseTime = null;
+            api.httpStatus = null;
+        } finally {
+            clearTimeout(timeout);
             api.lastChecked = new Date().toISOString();
-            
-            // Attempt retry with exponential backoff
-            await this.retryAPI(apiKey);
         }
     }
-    
-    async retryAPI(apiKey) {
-        const attempts = this.retryAttempts.get(apiKey) || 0;
-        
-        if (attempts < this.maxRetries) {
-            this.retryAttempts.set(apiKey, attempts + 1);
-            const delay = this.retryDelay * Math.pow(2, attempts);
-            
-            await this.sleep(delay);
-            await this.checkAPI(apiKey);
-        }
-    }
-    
+
     getOverallStatus() {
         if (!navigator.onLine) return 'offline';
         
@@ -274,7 +255,7 @@ class APIMonitor {
                 text.textContent = 'All systems operational';
                 break;
             case 'degraded':
-                text.textContent = 'Some services slow';
+                text.textContent = 'Some services slow or unavailable';
                 break;
             case 'offline':
                 text.textContent = 'Offline mode';
@@ -519,16 +500,18 @@ const styleSheet = document.createElement('style');
 styleSheet.textContent = apiMonitorStyles;
 document.head.appendChild(styleSheet);
 
-// Initialize API Monitor when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        window.apiMonitor = new APIMonitor();
-    });
-} else {
-    window.apiMonitor = new APIMonitor();
-}
-
 // Export for use in other scripts
 window.HoliBooks = window.HoliBooks || {};
 window.HoliBooks.APIMonitor = APIMonitor;
-window.HoliBooks.apiMonitor = window.apiMonitor;
+
+function startAPIMonitor() {
+    window.apiMonitor = new APIMonitor();
+    window.HoliBooks.apiMonitor = window.apiMonitor;
+}
+
+// Initialize API Monitor when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startAPIMonitor);
+} else {
+    startAPIMonitor();
+}

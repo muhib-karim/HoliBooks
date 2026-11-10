@@ -43,7 +43,7 @@ class LanguageSelector {
                     { code: 'ml.abdulhameed', name: 'Malayalam', native: 'മലയാളം', translator: 'Abdul Hameed' },
                     { code: 'ta.tamil', name: 'Tamil', native: 'தமிழ்', translator: 'Jan Trust' },
                     { code: 'th.thai', name: 'Thai', native: 'ไทย', translator: 'King Fahad Complex' },
-                    { code: 'sw.swahili', name: 'Swahili', native: 'Kiswahili', translator: 'Al-Barwani' },
+                    { code: 'sw.barwani', name: 'Swahili', native: 'Kiswahili', translator: 'Al-Barwani' },
                     { code: 'pt.elhayek', name: 'Portuguese', native: 'Português', translator: 'El-Hayek' },
                     { code: 'it.piccardo', name: 'Italian', native: 'Italiano', translator: 'Piccardo' },
                     { code: 'nl.keyzer', name: 'Dutch', native: 'Nederlands', translator: 'Keyzer' },
@@ -59,18 +59,11 @@ class LanguageSelector {
             christianity: {
                 title: 'Bible Versions',
                 languages: [
-                    { code: 'kjv', name: 'English', native: 'English', translator: 'King James Version' },
-                    { code: 'web', name: 'English', native: 'English', translator: 'World English Bible' },
-                    { code: 'asv', name: 'English', native: 'English', translator: 'American Standard Version' },
-                    { code: 'bbe', name: 'English', native: 'English', translator: 'Bible in Basic English' },
-                    { code: 'rv1909', name: 'Spanish', native: 'Español', translator: 'Reina Valera 1909' },
-                    { code: 'lsg', name: 'French', native: 'Français', translator: 'Louis Segond' },
-                    { code: 'luth1912', name: 'German', native: 'Deutsch', translator: 'Luther 1912' },
-                    { code: 'synodal', name: 'Russian', native: 'Русский', translator: 'Synodal' },
-                    { code: 'nvi', name: 'Portuguese', native: 'Português', translator: 'Nova Versão' },
-                    { code: 'cuv', name: 'Chinese', native: '中文', translator: 'Chinese Union Version' },
-                    { code: 'ko', name: 'Korean', native: '한국어', translator: 'Korean Revised' },
-                    { code: 'ar', name: 'Arabic', native: 'العربية', translator: 'Smith & Van Dyck' },
+                    // Codes are wldeh/bible-api folder names. Only versions verified to
+                    // exist upstream with the reader's book IDs are listed.
+                    { code: 'en-kjv', name: 'English', native: 'English', translator: 'King James Version' },
+                    { code: 'en-web', name: 'English', native: 'English', translator: 'World English Bible' },
+                    { code: 'en-asv', name: 'English', native: 'English', translator: 'American Standard Version' },
                 ]
             },
             hinduism: {
@@ -86,11 +79,9 @@ class LanguageSelector {
             judaism: {
                 title: 'Torah Translations',
                 languages: [
+                    { code: 'en-ojps', name: 'English', native: 'English', translator: 'JPS 1917' },
+                    { code: 'he-wlc', name: 'Hebrew', native: 'עברית', translator: 'Westminster Leningrad Codex' },
                     { code: 'en-kjv', name: 'English', native: 'English', translator: 'King James Version' },
-                    { code: 'es-rvr1960', name: 'Spanish', native: 'Español', translator: 'Reina Valera 1960' },
-                    { code: 'fr-lsg', name: 'French', native: 'Français', translator: 'Louis Segond' },
-                    { code: 'de-lut', name: 'German', native: 'Deutsch', translator: 'Luther Bible' },
-                    { code: 'he', name: 'Hebrew', native: 'עברית', translator: 'Masoretic Text' },
                 ]
             },
             sikhism: {
@@ -374,9 +365,9 @@ class LanguageSelector {
     getDefaultLanguage(religion) {
         const defaults = {
             islam: 'en.sahih',
-            christianity: 'kjv',
+            christianity: 'en-kjv',
             hinduism: 'en',
-            judaism: 'en',
+            judaism: 'en-ojps',
             sikhism: 'en',
             buddhism: 'en'
         };
@@ -384,14 +375,26 @@ class LanguageSelector {
     }
 
     loadFromStorage() {
-        const saved = localStorage.getItem('holibooks_languages');
-        if (saved) {
-            this.languages = JSON.parse(saved);
+        // Stored data may be missing, corrupt or not an object; keep string choices only.
+        this.languages = {};
+        try {
+            const parsed = JSON.parse(localStorage.getItem('holibooks_languages'));
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                Object.entries(parsed).forEach(([religion, code]) => {
+                    if (typeof code === 'string') this.languages[religion] = code;
+                });
+            }
+        } catch (e) {
+            console.warn('Ignoring unreadable language settings:', e);
         }
     }
 
     saveToStorage() {
-        localStorage.setItem('holibooks_languages', JSON.stringify(this.languages));
+        try {
+            localStorage.setItem('holibooks_languages', JSON.stringify(this.languages));
+        } catch (e) {
+            console.warn('Could not save language settings:', e);
+        }
     }
 }
 

@@ -1,0 +1,45 @@
+{
+  "code": 200,
+  "status": "OK",
+  "data": {
+    "number": 2,
+    "name": "سُورَةُ البَقَرَةِ",
+    "englishName": "Al-Baqara",
+    "englishNameTranslation": "The Cow",
+    "revelationType": "Medinan",
+    "numberOfAyahs": 286,
+    "ayahs": [
+      {
+        "number": 8,
+        "text": "FIXTURE TRANSLATION OF AYAH 1",
+        "numberInSurah": 1,
+        "juz": 1,
+        "manzil": 1,
+        "page": 2,
+        "ruku": 2,
+        "hizbQuarter": 1,
+        "sajda": false
+      },
+      {
+        "number": 9,
+        "text": "FIXTURE TRANSLATION OF AYAH 2",
+        "numberInSurah": 2,
+        "juz": 1,
+        "manzil": 1,
+        "page": 2,
+        "ruku": 2,
+        "hizbQuarter": 1,
+        "sajda": false
+      }
+    ],
+    "edition": {
+      "identifier": "en.sahih",
+      "language": "en",
+      "name": "Saheeh International",
+      "englishName": "Saheeh International",
+      "format": "text",
+      "type": "translation",
+      "direction": "ltr"
+    }
+  }
+}

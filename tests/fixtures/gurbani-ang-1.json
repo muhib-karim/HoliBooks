@@ -1,0 +1,193 @@
+{
+  "pageno": 1,
+  "source": {
+    "id": 1,
+    "akhar": "SRI gurU gRMQ swihb jI",
+    "unicode": "ਸ਼੍ਰੀ ਗੁਰੂ ਗ੍ਰੰਥ ਸਾਹਿਬ ਜੀ",
+    "english": "Sri Guru Granth Sahib Ji",
+    "length": 1430,
+    "pageName": {
+      "akhar": "AMg",
+      "unicode": "ਅੰਗ",
+      "english": "Ang"
+    }
+  },
+  "count": 3,
+  "page": [
+    {
+      "line": {
+        "id": "0NVY",
+        "type": 1,
+        "shabadid": "DMP",
+        "gurmukhi": {
+          "akhar": "<> siq nwmu krqw purKu inrBau inrvYru Akwl mUriq AjUnI sYBM gur pRswid ]",
+          "unicode": "ੴ ਸਤਿ ਨਾਮੁ ਕਰਤਾ ਪੁਰਖੁ ਨਿਰਭਉ ਨਿਰਵੈਰੁ ਅਕਾਲ ਮੂਰਤਿ ਅਜੂਨੀ ਸੈਭੰ ਗੁਰ ਪ੍ਰਸਾਦਿ ॥"
+        },
+        "larivaar": {
+          "akhar": "<>​siq​nwmu​krqw​purKu​inrBau​inrvYru​Akwl​mUriq​AjUnI​sYBM​gur​pRswid​]",
+          "unicode": "ੴ​ਸਤਿ​ਨਾਮੁ​ਕਰਤਾ​ਪੁਰਖੁ​ਨਿਰਭਉ​ਨਿਰਵੈਰੁ​ਅਕਾਲ​ਮੂਰਤਿ​ਅਜੂਨੀ​ਸੈਭੰ​ਗੁਰ​ਪ੍ਰਸਾਦਿ​॥"
+        },
+        "translation": {
+          "english": {
+            "default": "FIXTURE ENGLISH TRANSLATION 1"
+          },
+          "punjabi": {
+            "default": {
+              "akhar": "FIXTURE PUNJABI TRANSLATION 1",
+              "unicode": "FIXTURE PUNJABI TRANSLATION 1"
+            }
+          },
+          "spanish": "FIXTURE SPANISH TRANSLATION 1"
+        },
+        "transliteration": {
+          "english": {
+            "text": "ik oankaar sat naam karataa purakh nirbhau niravair akaal moorat ajoonee saibhan gur prasaad |",
+            "larivaar": "ik​oankaar​sat​naam​karataa​purakh​nirbhau​niravair​akaal​moorat​ajoonee​saibhan​gur​prasaad​|"
+          },
+          "devanagari": {
+            "text": "ੴ सति नामु करता पुरखु निरभउ निरवैरु अकाल मूरति अजूनी सैभं गुर प्रसादि ॥",
+            "larivaar": "ੴ​सति​नामु​करता​पुरखु​निरभउ​निरवैरु​अकाल​मूरति​अजूनी​सैभं​गुर​प्रसादि​॥"
+          }
+        },
+        "writer": {
+          "id": 1,
+          "akhar": "gurU nwnk dyv jI",
+          "unicode": "ਗੁਰੂ ਨਾਨਕ ਦੇਵ ਜੀ",
+          "english": "Guru Nanak Dev Ji"
+        },
+        "raag": {
+          "id": 1,
+          "akhar": "jpu",
+          "unicode": "ਜਪੁ",
+          "english": "Jap",
+          "startang": 1,
+          "endang": 8,
+          "raagwithpage": "Jap (1-8)"
+        },
+        "pageno": 1,
+        "lineno": 1,
+        "firstletters": {
+          "akhar": "<>snkpnnAmAsgp",
+          "unicode": "ੴਸਨਕਪਨਨਅਮਅਸਗਪ"
+        }
+      }
+    },
+    {
+      "line": {
+        "id": "RBP6",
+        "type": 2,
+        "shabadid": "DMP",
+        "gurmukhi": {
+          "akhar": "] jpu ]",
+          "unicode": "॥ ਜਪੁ ॥"
+        },
+        "larivaar": {
+          "akhar": "]​jpu​]",
+          "unicode": "॥​ਜਪੁ​॥"
+        },
+        "translation": {
+          "english": {
+            "default": "FIXTURE ENGLISH TRANSLATION 2"
+          },
+          "punjabi": {
+            "default": {
+              "akhar": "FIXTURE PUNJABI TRANSLATION 2",
+              "unicode": "FIXTURE PUNJABI TRANSLATION 2"
+            }
+          },
+          "spanish": "FIXTURE SPANISH TRANSLATION 2"
+        },
+        "transliteration": {
+          "english": {
+            "text": "| jap |",
+            "larivaar": "|​jap​|"
+          },
+          "devanagari": {
+            "text": "॥ जपु ॥",
+            "larivaar": "॥​जपु​॥"
+          }
+        },
+        "writer": {
+          "id": 1,
+          "akhar": "gurU nwnk dyv jI",
+          "unicode": "ਗੁਰੂ ਨਾਨਕ ਦੇਵ ਜੀ",
+          "english": "Guru Nanak Dev Ji"
+        },
+        "raag": {
+          "id": 1,
+          "akhar": "jpu",
+          "unicode": "ਜਪੁ",
+          "english": "Jap",
+          "startang": 1,
+          "endang": 8,
+          "raagwithpage": "Jap (1-8)"
+        },
+        "pageno": 1,
+        "lineno": 3,
+        "firstletters": {
+          "akhar": "]j]",
+          "unicode": "॥ਜ॥"
+        }
+      }
+    },
+    {
+      "line": {
+        "id": "J92N",
+        "type": 4,
+        "shabadid": "DMP",
+        "gurmukhi": {
+          "akhar": "Awid scu jugwid scu ]",
+          "unicode": "ਆਦਿ ਸਚੁ ਜੁਗਾਦਿ ਸਚੁ ॥"
+        },
+        "larivaar": {
+          "akhar": "Awid​scu​jugwid​scu​]",
+          "unicode": "ਆਦਿ​ਸਚੁ​ਜੁਗਾਦਿ​ਸਚੁ​॥"
+        },
+        "translation": {
+          "english": {
+            "default": "FIXTURE ENGLISH TRANSLATION 3"
+          },
+          "punjabi": {
+            "default": {
+              "akhar": "FIXTURE PUNJABI TRANSLATION 3",
+              "unicode": "FIXTURE PUNJABI TRANSLATION 3"
+            }
+          },
+          "spanish": "FIXTURE SPANISH TRANSLATION 3"
+        },
+        "transliteration": {
+          "english": {
+            "text": "aad sach jugaad sach |",
+            "larivaar": "aad​sach​jugaad​sach​|"
+          },
+          "devanagari": {
+            "text": "आदि सचु जुगादि सचु ॥",
+            "larivaar": "आदि​सचु​जुगादि​सचु​॥"
+          }
+        },
+        "writer": {
+          "id": 1,
+          "akhar": "gurU nwnk dyv jI",
+          "unicode": "ਗੁਰੂ ਨਾਨਕ ਦੇਵ ਜੀ",
+          "english": "Guru Nanak Dev Ji"
+        },
+        "raag": {
+          "id": 1,
+          "akhar": "jpu",
+          "unicode": "ਜਪੁ",
+          "english": "Jap",
+          "startang": 1,
+          "endang": 8,
+          "raagwithpage": "Jap (1-8)"
+        },
+        "pageno": 1,
+        "lineno": 4,
+        "firstletters": {
+          "akhar": "Asjs",
+          "unicode": "ਅਸਜਸ"
+        }
+      }
+    }
+  ],
+  "error": false
+}

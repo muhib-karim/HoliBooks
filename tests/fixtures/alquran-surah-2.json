@@ -1,0 +1,45 @@
+{
+  "code": 200,
+  "status": "OK",
+  "data": {
+    "number": 2,
+    "name": "سُورَةُ البَقَرَةِ",
+    "englishName": "Al-Baqara",
+    "englishNameTranslation": "The Cow",
+    "revelationType": "Medinan",
+    "numberOfAyahs": 286,
+    "ayahs": [
+      {
+        "number": 8,
+        "text": "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ الۤمۤ\n",
+        "numberInSurah": 1,
+        "juz": 1,
+        "manzil": 1,
+        "page": 2,
+        "ruku": 2,
+        "hizbQuarter": 1,
+        "sajda": false
+      },
+      {
+        "number": 9,
+        "text": "ذَ ٰ⁠لِكَ ٱلۡكِتَـٰبُ لَا رَیۡبَۛ فِیهِۛ هُدࣰى لِّلۡمُتَّقِینَ\n",
+        "numberInSurah": 2,
+        "juz": 1,
+        "manzil": 1,
+        "page": 2,
+        "ruku": 2,
+        "hizbQuarter": 1,
+        "sajda": false
+      }
+    ],
+    "edition": {
+      "identifier": "quran-uthmani-quran-academy",
+      "language": "ar",
+      "name": "القرآن الكريم برسم العثماني (quran-academy)",
+      "englishName": "Modified Quran Uthmani Text from the Quran Academy to work with the Kitab font",
+      "format": "text",
+      "type": "quran",
+      "direction": "rtl"
+    }
+  }
+}
