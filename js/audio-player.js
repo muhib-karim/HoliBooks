@@ -12,6 +12,8 @@ class AudioPlayer {
         this.currentIndex = 0;
         this.playbackRate = 1;
         this.isLooping = false;
+        this.consecutiveErrors = 0;
+        this.errorTimer = null;
 
         this.init();
     }
@@ -132,6 +134,8 @@ class AudioPlayer {
     loadTrack(track) {
         this.currentTrack = track;
         this.audio.src = track.url;
+        // Changing src resets the element's speed; re-apply the chosen one.
+        this.applyPlaybackRate();
         this.titleEl.textContent = track.title || 'Unknown';
         this.subtitleEl.textContent = track.subtitle || '';
         this.show();
@@ -149,6 +153,7 @@ class AudioPlayer {
     play() {
         this.audio.play().then(() => {
             this.isPlaying = true;
+            this.consecutiveErrors = 0;
             this.updatePlayButton();
         }).catch(err => {
             console.error('Playback failed:', err);
@@ -169,30 +174,42 @@ class AudioPlayer {
         }
     }
 
+    hasNext() {
+        return this.currentIndex < this.playlist.length - 1;
+    }
+
+    // The playlist is one surah: it stops at either end instead of wrapping.
     playPrevious() {
-        if (this.playlist.length === 0) return;
-        this.currentIndex = (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
+        if (this.currentIndex <= 0 || this.playlist.length === 0) return;
+        this.currentIndex -= 1;
         this.loadTrack(this.playlist[this.currentIndex]);
     }
 
     playNext() {
-        if (this.playlist.length === 0) return;
-        this.currentIndex = (this.currentIndex + 1) % this.playlist.length;
+        if (!this.hasNext()) return;
+        this.currentIndex += 1;
         this.loadTrack(this.playlist[this.currentIndex]);
     }
 
     seek(e) {
+        // duration is NaN until metadata has loaded
+        if (!Number.isFinite(this.audio.duration)) return;
         const rect = this.progressBar.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
+        const percent = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
         this.audio.currentTime = percent * this.audio.duration;
     }
 
-    cycleSpeed() {
-        const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
-        const currentIdx = speeds.indexOf(this.playbackRate);
-        this.playbackRate = speeds[(currentIdx + 1) % speeds.length];
+    applyPlaybackRate() {
+        this.audio.defaultPlaybackRate = this.playbackRate;
         this.audio.playbackRate = this.playbackRate;
         this.speedBtn.textContent = this.playbackRate + 'x';
+    }
+
+    cycleSpeed() {
+        const currentIdx = AudioPlayer.SPEEDS.indexOf(this.playbackRate);
+        this.playbackRate = AudioPlayer.SPEEDS[(currentIdx + 1) % AudioPlayer.SPEEDS.length];
+        this.applyPlaybackRate();
+        this.saveToStorage();
     }
 
     toggleLoop() {
@@ -227,9 +244,10 @@ class AudioPlayer {
     }
 
     onTrackEnd() {
-        if (!this.isLooping && this.playlist.length > 1) {
+        if (this.isLooping) return;
+        if (this.hasNext()) {
             this.playNext();
-        } else if (!this.isLooping) {
+        } else {
             this.pause();
         }
     }
@@ -243,9 +261,14 @@ class AudioPlayer {
         this.titleEl.textContent = 'Audio unavailable';
         this.subtitleEl.textContent = 'Try playing another verse or check your connection';
 
-        // Auto-advance to next track after short delay if in playlist
-        if (this.playlist.length > 1) {
-            setTimeout(() => {
+        // Skip one bad track, but stop after a few in a row: when the device is
+        // offline every track fails and this used to cycle the playlist forever.
+        this.consecutiveErrors += 1;
+        clearTimeout(this.errorTimer);
+        this.errorTimer = null;
+        if (this.hasNext() && this.consecutiveErrors < AudioPlayer.MAX_CONSECUTIVE_ERRORS) {
+            this.errorTimer = setTimeout(() => {
+                this.errorTimer = null;
                 this.playNext();
             }, 2000);
         }
@@ -263,9 +286,11 @@ class AudioPlayer {
                 }
                 break;
             case 'ArrowLeft':
+                if (!Number.isFinite(this.audio.duration)) break;
                 this.audio.currentTime = Math.max(0, this.audio.currentTime - 10);
                 break;
             case 'ArrowRight':
+                if (!Number.isFinite(this.audio.duration)) break;
                 this.audio.currentTime = Math.min(this.audio.duration, this.audio.currentTime + 10);
                 break;
         }
@@ -277,27 +302,39 @@ class AudioPlayer {
     }
 
     hide() {
+        clearTimeout(this.errorTimer);
+        this.errorTimer = null;
         this.pause();
         this.playerEl.classList.remove('visible');
         document.body.style.paddingBottom = '';
     }
 
     loadFromStorage() {
-        const saved = localStorage.getItem('holibooks_audio');
-        if (saved) {
-            const data = JSON.parse(saved);
-            this.playbackRate = data.playbackRate || 1;
-            this.audio.playbackRate = this.playbackRate;
-            this.speedBtn.textContent = this.playbackRate + 'x';
+        // Stored data may be missing, corrupt or from another version.
+        try {
+            const data = JSON.parse(localStorage.getItem('holibooks_audio'));
+            if (data && AudioPlayer.SPEEDS.includes(data.playbackRate)) {
+                this.playbackRate = data.playbackRate;
+            }
+        } catch (e) {
+            console.warn('Ignoring unreadable audio settings:', e);
         }
+        this.applyPlaybackRate();
     }
 
     saveToStorage() {
-        localStorage.setItem('holibooks_audio', JSON.stringify({
-            playbackRate: this.playbackRate
-        }));
+        try {
+            localStorage.setItem('holibooks_audio', JSON.stringify({
+                playbackRate: this.playbackRate
+            }));
+        } catch (e) {
+            console.warn('Could not save audio settings:', e);
+        }
     }
 }
+
+AudioPlayer.SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+AudioPlayer.MAX_CONSECUTIVE_ERRORS = 3;
 
 // Initialize and export
 window.audioPlayer = new AudioPlayer();

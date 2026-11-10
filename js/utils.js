@@ -7,9 +7,28 @@
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => document.querySelectorAll(selector);
 
+// ===== Safe storage access =====
+// localStorage throws when storage is blocked (private modes, strict cookie
+// settings). Nothing here may throw at load time, or every reader breaks.
+function readRaw(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch {
+        return null;
+    }
+}
+
+function writeRaw(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (e) {
+        console.warn('LocalStorage write failed:', e);
+    }
+}
+
 // ===== Theme Management =====
 const theme = {
-    current: localStorage.getItem('holibooks_theme') || 'dark',
+    current: readRaw('holibooks_theme') === 'light' ? 'light' : 'dark',
 
     init() {
         document.documentElement.setAttribute('data-theme', this.current);
@@ -18,51 +37,63 @@ const theme = {
     toggle() {
         this.current = this.current === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', this.current);
-        localStorage.setItem('holibooks_theme', this.current);
+        writeRaw('holibooks_theme', this.current);
     },
 
     set(themeName) {
-        this.current = themeName;
+        this.current = themeName === 'light' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', this.current);
-        localStorage.setItem('holibooks_theme', this.current);
+        writeRaw('holibooks_theme', this.current);
     }
 };
 
 // ===== API Helpers =====
+const FETCH_TIMEOUT_MS = 15000;
+
+/**
+ * Fetch JSON with a timeout. Rejects with an Error carrying `status` on a
+ * non-2xx response.
+ * @param {string} url - API endpoint
+ * @param {Object} options - Fetch options
+ * @returns {Promise<Object>} JSON response
+ */
 async function fetchJSON(url, options = {}) {
-    try {
-        // Don't add Content-Type for GET requests (causes CORS preflight)
-        const fetchOptions = {
-            ...options,
-            mode: 'cors'
+    // Don't add Content-Type for GET requests (causes CORS preflight)
+    const fetchOptions = {
+        ...options,
+        mode: 'cors'
+    };
+
+    // Only add Content-Type for non-GET requests
+    if (options.method && options.method !== 'GET') {
+        fetchOptions.headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
         };
+    }
 
-        // Only add Content-Type for non-GET requests
-        if (options.method && options.method !== 'GET') {
-            fetchOptions.headers = {
-                'Content-Type': 'application/json',
-                ...options.headers
-            };
-        }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
-
+    try {
         const response = await fetch(url, {
             ...fetchOptions,
             signal: controller.signal
         });
 
-        clearTimeout(timeout);
-
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const error = new Error(`HTTP error! status: ${response.status}`);
+            error.status = response.status;
+            throw error;
         }
 
+        // The abort signal stays armed while the body is read.
         return await response.json();
     } catch (error) {
         console.error('Fetch error:', error);
         throw error;
+    } finally {
+        clearTimeout(timeout);
     }
 }
 
@@ -72,10 +103,66 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3) {
         try {
             return await fetchJSON(url, options);
         } catch (error) {
-            if (i === maxRetries - 1) throw error;
+            // A 4xx means the request itself is wrong; repeating it cannot help.
+            const permanent = error.status >= 400 && error.status < 500 &&
+                error.status !== 408 && error.status !== 429;
+            if (permanent || i === maxRetries - 1) throw error;
             await sleep(Math.pow(2, i) * 1000);
         }
     }
+}
+
+// ===== Value Guards =====
+const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+/**
+ * Escape text for use inside HTML. Everything that comes from an API,
+ * the URL or localStorage must pass through this before innerHTML.
+ * @param {*} value
+ * @returns {string}
+ */
+function escapeHTML(value) {
+    if (value === null || value === undefined) return '';
+    return String(value).replace(/[&<>"']/g, ch => HTML_ESCAPES[ch]);
+}
+
+/**
+ * Parse an integer and accept it only inside [min, max].
+ * @returns {number|*} the integer, or `fallback`
+ */
+function clampInt(value, min, max, fallback) {
+    const n = typeof value === 'number' ? value
+        : (typeof value === 'string' && /^\s*-?\d+\s*$/.test(value)) ? parseInt(value, 10)
+        : NaN;
+    return Number.isInteger(n) && n >= min && n <= max ? n : fallback;
+}
+
+/**
+ * Token source for "latest request wins": a slow earlier response must not
+ * overwrite a newer one.
+ */
+function latestOnly() {
+    let current = 0;
+    return {
+        next() { return ++current; },
+        isCurrent(token) { return token === current; }
+    };
+}
+
+/**
+ * Drop repeated verse numbers. The upstream Bible JSON repeats every verse
+ * (twice in KJV, four times in WEB).
+ */
+function dedupeVerses(verses, key = 'verse') {
+    if (!Array.isArray(verses)) return [];
+    const seen = new Set();
+    return verses.filter(v => {
+        const id = v && v[key] !== undefined && v[key] !== null ? String(v[key]) : '';
+        if (id === '') return true;
+        if (seen.has(id)) return false;
+        seen.add(id);
+        return true;
+    });
 }
 
 // ===== Number Utilities =====
@@ -157,7 +244,11 @@ const storage = {
     },
 
     remove(key) {
-        localStorage.removeItem(key);
+        try {
+            localStorage.removeItem(key);
+        } catch (e) {
+            console.warn('LocalStorage remove failed:', e);
+        }
     }
 };
 
@@ -190,22 +281,43 @@ function showLoading(container, message = 'Loading...') {
     container.innerHTML = `
         <div class="loading">
             <div class="spinner"></div>
-            <p>${message}</p>
+            <p>${escapeHTML(message)}</p>
         </div>
     `;
 }
 
+/**
+ * Show an error state with an optional working "Try Again" button.
+ * The callback is attached as a listener, never serialised into markup,
+ * so closures keep working and nothing is injected into the page.
+ * @param {HTMLElement} container
+ * @param {string} message
+ * @param {Function|null} retryCallback
+ */
 function showError(container, message, retryCallback = null) {
-    container.innerHTML = `
-        <div class="loading" style="color: #ff6b6b;">
-            <p style="font-size: 1.2rem; margin-bottom: 15px;">⚠️ ${message}</p>
-            ${retryCallback ? `
-                <button class="btn btn-primary" onclick="(${retryCallback.toString()})()">
-                    Try Again
-                </button>
-            ` : ''}
-        </div>
-    `;
+    container.innerHTML = '';
+
+    const box = document.createElement('div');
+    box.className = 'loading error-state';
+    box.setAttribute('role', 'alert');
+    box.style.color = '#ff6b6b';
+
+    const text = document.createElement('p');
+    text.style.fontSize = '1.2rem';
+    text.style.marginBottom = '15px';
+    text.textContent = `⚠️ ${message}`;
+    box.appendChild(text);
+
+    if (typeof retryCallback === 'function') {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'btn btn-primary';
+        button.textContent = 'Try Again';
+        button.addEventListener('click', () => retryCallback());
+        box.appendChild(button);
+    }
+
+    container.appendChild(box);
 }
 
 // ===== Scroll Management =====
@@ -243,6 +355,10 @@ window.HoliBooks = {
     theme,
     fetchJSON,
     fetchWithRetry,
+    escapeHTML,
+    clampInt,
+    latestOnly,
+    dedupeVerses,
     toArabicNumerals,
     toDevanagariNumerals,
     toGurmukhiNumerals,

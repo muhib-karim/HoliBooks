@@ -1,6 +1,6 @@
 {
   "name": "holibooks",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Browser reader for sacred texts with source-dependent translations and audio",
   "main": "serve.js",
   "type": "module",
@@ -8,9 +8,10 @@
     "dev": "node serve.js",
     "start": "node serve.js",
     "build": "echo 'No build step required - vanilla JS project'",
+    "check": "git ls-files -z '*.js' '*.mjs' | xargs -0 -n1 node --check",
     "test": "node --test tests/*.test.mjs",
-    "deploy": "vercel --prod",
-    "preview": "vercel",
+    "deploy": "npx vercel --prod",
+    "preview": "npx vercel",
     "test:server": "node --test tests/server.test.mjs",
     "test:apis": "node test-apis.js"
   },
@@ -52,8 +53,5 @@
   "homepage": "https://holibooks.vercel.app",
   "engines": {
     "node": ">=18.0.0"
-  },
-  "devDependencies": {
-    "vercel": "^33.0.0"
   }
 }

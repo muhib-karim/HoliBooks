@@ -18,19 +18,25 @@ class GlobalSearch {
     }
 
     loadFromStorage() {
-        const saved = localStorage.getItem('holibooks_search_history');
-        if (saved) {
-            try {
-                this.searchHistory = JSON.parse(saved);
-                this.recentSearches = this.searchHistory.slice(0, 5);
-            } catch (e) {
-                console.error('Failed to load search history:', e);
+        // Stored data may be missing, corrupt or not a list; keep strings only.
+        this.searchHistory = [];
+        try {
+            const parsed = JSON.parse(localStorage.getItem('holibooks_search_history'));
+            if (Array.isArray(parsed)) {
+                this.searchHistory = parsed.filter(q => typeof q === 'string').slice(0, 20);
             }
+        } catch (e) {
+            console.error('Failed to load search history:', e);
         }
+        this.recentSearches = this.searchHistory.slice(0, 5);
     }
 
     saveToStorage() {
-        localStorage.setItem('holibooks_search_history', JSON.stringify(this.searchHistory.slice(0, 20)));
+        try {
+            localStorage.setItem('holibooks_search_history', JSON.stringify(this.searchHistory.slice(0, 20)));
+        } catch (e) {
+            console.warn('Could not save search history:', e);
+        }
     }
 
     createModalUI() {
@@ -576,7 +582,7 @@ class GlobalSearch {
     }
 
     async performSearch(query) {
-        // This is a simplified search - in production, you'd search actual API data
+        // This searches a small built-in sample, not the full texts.
         const results = this.getSampleResults(query);
         
         this.resultsCount.textContent = `${results.length} results found`;
@@ -592,30 +598,37 @@ class GlobalSearch {
         }
 
         this.resultsList.innerHTML = results.map((result, index) => `
-            <div class="search-result-item" data-index="${index}" onclick="globalSearch.navigateToResult('${result.religion}', '${result.reference}')">
+            <div class="search-result-item" data-index="${index}">
                 <div class="search-result-meta">
                     <span class="search-result-religion">
                         <span>${this.getReligionIcon(result.religion)}</span>
-                        <span>${result.religionName}</span>
+                        <span>${this.escapeHtml(result.religionName)}</span>
                     </span>
-                    <span class="search-result-reference">${result.reference}</span>
+                    <span class="search-result-reference">${this.escapeHtml(result.reference)} · ${this.escapeHtml(result.edition)}</span>
                 </div>
-                <div class="search-result-text">${this.highlightText(this.escapeHtml(result.text), query)}</div>
+                <div class="search-result-text">${this.highlightText(result.text, query)}</div>
             </div>
         `).join('');
 
-        this.addToHistory(query);
+        // Listeners instead of inline onclick. The query is saved to history
+        // when a result is chosen (or Enter is pressed), not on every keystroke.
+        this.resultsList.querySelectorAll('.search-result-item').forEach((item, index) => {
+            item.addEventListener('click', () => this.navigateToResult(results[index], query));
+        });
     }
 
     getSampleResults(query) {
         const lowerQuery = query.toLowerCase();
+        // Sample verses, each naming its translation (see "Data sources and
+        // licences" in README.md). URLs are root-relative so they resolve from
+        // the homepage and from a reader page alike.
         const sampleData = [
-            { religion: 'islam', religionName: 'Islam', reference: 'Quran 2:255', text: 'Allah - there is no deity except Him, the Ever-Living, the Sustainer of existence...' },
-            { religion: 'islam', religionName: 'Islam', reference: 'Quran 1:1', text: 'In the name of Allah, the Entirely Merciful, the Especially Merciful...' },
-            { religion: 'christianity', religionName: 'Christianity', reference: 'John 3:16', text: 'For God so loved the world that he gave his one and only Son...' },
-            { religion: 'christianity', religionName: 'Christianity', reference: '1 Corinthians 13:4-8', text: 'Love is patient, love is kind. It does not envy, it does not boast...' },
-            { religion: 'hinduism', religionName: 'Hinduism', reference: 'Bhagavad Gita 2:20', text: 'For the soul there is neither birth nor death at any time...' },
-            { religion: 'buddhism', religionName: 'Buddhism', reference: 'Dhammapada 50', text: 'Let none find fault with others; let none see the omissions and commissions of others...' },
+            { religion: 'islam', religionName: 'Islam', reference: 'Quran 2:255', edition: 'Pickthall', url: '/religions/islam/quran.html?surah=2&verse=255', text: 'Allah! There is no deity save Him, the Alive, the Eternal. Neither slumber nor sleep overtaketh Him...' },
+            { religion: 'islam', religionName: 'Islam', reference: 'Quran 1:1', edition: 'Pickthall', url: '/religions/islam/quran.html?surah=1&verse=1', text: 'In the name of Allah, the Beneficent, the Merciful.' },
+            { religion: 'christianity', religionName: 'Christianity', reference: 'John 3:16', edition: 'World English Bible', url: '/religions/christianity/bible.html?book=john&chapter=3', text: 'For God so loved the world, that he gave his only born Son, that whoever believes in him should not perish, but have eternal life.' },
+            { religion: 'christianity', religionName: 'Christianity', reference: '1 Corinthians 13:4', edition: 'World English Bible', url: '/religions/christianity/bible.html?book=1corinthians&chapter=13', text: 'Love is patient and is kind. Love doesn’t envy. Love doesn’t brag, is not proud,' },
+            { religion: 'hinduism', religionName: 'Hinduism', reference: 'Bhagavad Gita 2:20', edition: 'Sir Edwin Arnold, The Song Celestial (1885)', url: '/religions/hinduism/gita.html?chapter=2', text: 'Never the spirit was born; the spirit shall cease to be never; Never was time it was not; End and Beginning are dreams! Birthless and deathless and changeless remaineth the spirit for ever; Death hath not touched it at all, dead though the house of it seems!' },
+            { religion: 'buddhism', religionName: 'Buddhism', reference: 'Dhammapada 50', edition: 'Bhikkhu Sujato', url: '/religions/buddhism/tripitaka.html?verse=50', text: 'Don’t find fault with others, with what they’ve done or left undone. You should only watch yourself, what you’ve done or left undone.' },
         ];
 
         return sampleData.filter(item => 
@@ -625,8 +638,12 @@ class GlobalSearch {
     }
 
     highlightText(text, query) {
+        // Split on the match first, then escape each piece, so highlighting
+        // can never cut through an HTML entity.
         const regex = new RegExp(`(${this.escapeRegex(query)})`, 'gi');
-        return text.replace(regex, '<span class="search-result-highlight">$1</span>');
+        return String(text).split(regex).map((part, i) =>
+            i % 2 === 1 ? `<span class="search-result-highlight">${this.escapeHtml(part)}</span>` : this.escapeHtml(part)
+        ).join('');
     }
 
     escapeRegex(string) {
@@ -634,9 +651,7 @@ class GlobalSearch {
     }
 
     escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        return window.HoliBooks.escapeHTML(text);
     }
 
     getReligionIcon(religion) {
@@ -651,19 +666,12 @@ class GlobalSearch {
         return icons[religion] || '📖';
     }
 
-    navigateToResult(religion, reference) {
-        // In production, this would navigate to the specific verse
-        const urls = {
-            islam: 'religions/islam/quran.html',
-            christianity: 'religions/christianity/bible.html',
-            hinduism: 'religions/hinduism/gita.html',
-            judaism: 'religions/judaism/torah.html',
-            sikhism: 'religions/sikhism/gurbani.html',
-            buddhism: 'religions/buddhism/tripitaka.html'
-        };
-
+    navigateToResult(result, query = '') {
+        if (!result || typeof result.url !== 'string') return;
+        const typed = String(query || this.input.value || '').trim();
+        if (typed) this.addToHistory(typed);
         this.close();
-        window.location.href = urls[religion] || 'index.html';
+        window.location.href = result.url;
     }
 }
 

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="HoliBooks">
+  <!-- App icon: an open book under six points, one for each text. Full-bleed
+       background with the artwork inside the central 60%, so the same image
+       is safe to use as a maskable icon. -->
+  <rect width="512" height="512" fill="#0a0a0f"/>
+  <g fill="#c9a55c">
+    <circle cx="176" cy="170" r="8"/>
+    <circle cx="208" cy="152" r="8"/>
+    <circle cx="240" cy="142" r="8"/>
+    <circle cx="272" cy="142" r="8"/>
+    <circle cx="304" cy="152" r="8"/>
+    <circle cx="336" cy="170" r="8"/>
+  </g>
+  <path d="M256 214 C222 192 180 188 150 198 L150 346 C180 336 222 340 256 362 Z" fill="#c9a55c"/>
+  <path d="M256 214 C290 192 332 188 362 198 L362 346 C332 336 290 340 256 362 Z" fill="#e2c88a"/>
+  <path d="M256 214 L256 362" stroke="#0a0a0f" stroke-width="6" stroke-linecap="round"/>
+</svg>

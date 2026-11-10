@@ -18,20 +18,36 @@ class BookmarkManager {
 
     // Load bookmarks from localStorage
     loadFromStorage() {
-        const saved = localStorage.getItem('holibooks_bookmarks');
-        if (saved) {
-            try {
-                this.bookmarks = JSON.parse(saved);
-            } catch (e) {
-                console.error('Failed to load bookmarks:', e);
-                this.bookmarks = [];
+        // Stored data may be missing, corrupt or not a list at all; keep only
+        // entries that look like bookmarks so nothing downstream can throw.
+        this.bookmarks = [];
+        try {
+            const parsed = JSON.parse(localStorage.getItem('holibooks_bookmarks'));
+            if (Array.isArray(parsed)) {
+                this.bookmarks = parsed
+                    .filter(b => b && typeof b === 'object' && typeof b.religion === 'string' && typeof b.reference === 'string')
+                    .map(b => ({
+                        id: String(b.id),
+                        religion: b.religion,
+                        religionName: String(b.religionName || ''),
+                        text: String(b.text || ''),
+                        reference: b.reference,
+                        translation: String(b.translation || ''),
+                        timestamp: String(b.timestamp || '')
+                    }));
             }
+        } catch (e) {
+            console.error('Failed to load bookmarks:', e);
         }
     }
 
-    // Save bookmarks to localStorage
+    // Save bookmarks to localStorage (storage may be full or blocked)
     saveToStorage() {
-        localStorage.setItem('holibooks_bookmarks', JSON.stringify(this.bookmarks));
+        try {
+            localStorage.setItem('holibooks_bookmarks', JSON.stringify(this.bookmarks));
+        } catch (e) {
+            console.warn('Could not save bookmarks:', e);
+        }
     }
 
     // Add a bookmark
@@ -450,6 +466,17 @@ class BookmarkManager {
             }
         });
 
+        // Copy / Share / Remove buttons inside the list (delegated, so no
+        // handler is ever built from stored text)
+        this.listContainer.addEventListener('click', (e) => {
+            const button = e.target.closest('[data-action]');
+            if (!button) return;
+            const { action, id } = button.dataset;
+            if (action === 'copy') this.copyBookmark(id);
+            else if (action === 'share') this.shareBookmark(id);
+            else if (action === 'remove') this.removeBookmark(id);
+        });
+
         // Keyboard shortcut
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.drawerOpen) {
@@ -499,27 +526,27 @@ class BookmarkManager {
         }
 
         this.listContainer.innerHTML = bookmarks.map(bookmark => `
-            <div class="bookmark-item" data-id="${bookmark.id}">
+            <div class="bookmark-item" data-id="${this.escapeHtml(bookmark.id)}">
                 <div class="bookmark-item-religion">
                     <span>${this.getReligionIcon(bookmark.religion)}</span>
-                    <span>${bookmark.religionName}</span>
+                    <span>${this.escapeHtml(bookmark.religionName)}</span>
                 </div>
                 <div class="bookmark-item-text">"${this.escapeHtml(bookmark.text)}"</div>
-                <div class="bookmark-item-reference">${bookmark.reference}</div>
+                <div class="bookmark-item-reference">${this.escapeHtml(bookmark.reference)}</div>
                 <div class="bookmark-item-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="bookmarkManager.copyBookmark('${bookmark.id}')">
+                    <button class="btn btn-secondary btn-sm" data-action="copy" data-id="${this.escapeHtml(bookmark.id)}">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                         </svg>
                         Copy
                     </button>
-                    <button class="btn btn-secondary btn-sm" onclick="bookmarkManager.shareBookmark('${bookmark.id}')">
+                    <button class="btn btn-secondary btn-sm" data-action="share" data-id="${this.escapeHtml(bookmark.id)}">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
                         </svg>
                         Share
                     </button>
-                    <button class="btn btn-secondary btn-sm" onclick="bookmarkManager.removeBookmark('${bookmark.id}')">
+                    <button class="btn btn-secondary btn-sm" data-action="remove" data-id="${this.escapeHtml(bookmark.id)}">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                         </svg>
@@ -539,9 +566,9 @@ class BookmarkManager {
 
         const lowerQuery = query.toLowerCase();
         const filtered = this.bookmarks.filter(b => 
-            b.text.toLowerCase().includes(lowerQuery) ||
-            b.reference.toLowerCase().includes(lowerQuery) ||
-            b.religionName.toLowerCase().includes(lowerQuery)
+            String(b.text).toLowerCase().includes(lowerQuery) ||
+            String(b.reference).toLowerCase().includes(lowerQuery) ||
+            String(b.religionName).toLowerCase().includes(lowerQuery)
         );
 
         this.renderBookmarks(filtered);
@@ -552,8 +579,15 @@ class BookmarkManager {
         const bookmark = this.bookmarks.find(b => b.id === id);
         if (bookmark) {
             const text = `"${bookmark.text}" — ${bookmark.reference}`;
+            // The Clipboard API only exists on secure origins.
+            if (!navigator.clipboard) {
+                this.showToast('Copying is not available in this browser', 'error');
+                return;
+            }
             navigator.clipboard.writeText(text).then(() => {
                 this.showToast('Copied to clipboard!', 'success');
+            }).catch(() => {
+                this.showToast('Failed to copy', 'error');
             });
         }
     }
@@ -614,9 +648,7 @@ class BookmarkManager {
 
     // Escape HTML
     escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        return window.HoliBooks.escapeHTML(text);
     }
 
     // Show toast notification

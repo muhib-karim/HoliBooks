@@ -1,8 +1,8 @@
 # HoliBooks - Agent Guide
 
 > **HoliBooks - Sacred Texts Platform**  
-> **Version**: 2.0.0  
-> **Status**: Production Ready  
+> **Version**: 2.0.2  
+> **Status**: See CHANGELOG.md and the Limitations section of README.md  
 > **Live URL**: https://holibooks.vercel.app
 
 ---
@@ -11,12 +11,28 @@
 
 | Field | Value |
 |-------|-------|
-| **Version** | 2.0.0 |
-| **Last Updated** | January 2026 |
+| **Version** | 2.0.2 |
+| **Last Updated** | November 2026 |
 | **GitHub Repository** | https://github.com/muhib-karim/HoliBooks |
 | **Vercel Deployment** | https://holibooks.vercel.app |
 | **License** | MIT |
-| **Node.js Required** | >=16.0.0 |
+| **Node.js Required** | >=18.0.0 |
+
+---
+
+## Rules for agents (read first)
+
+These come from the 2.0.2 production audit. Each one was a real defect.
+
+1. **Verify upstream IDs before using them.** Book, version and edition IDs must exist upstream. Run `npm run test:apis` (live) and add any new endpoint or edition to `test-apis.js`. Do not invent IDs or field names.
+2. **Never bundle scripture translations** unless the licence allows it and README.md "Data sources and licences" lists it. No "fallback" or "sample" verses: when an API is down, show `HoliBooks.showError(container, message, retry)`.
+3. **Test fixtures hold no copyrighted translation text.** Keep source-language text and the JSON shape; use placeholders such as `FIXTURE ENGLISH TRANSLATION 1`. See `tests/fixtures/README.md`.
+4. **Escape everything that reaches `innerHTML`** with `HoliBooks.escapeHTML` (API text, URL parameters, localStorage). No handlers built from strings (`onclick="..."`); use listeners.
+5. **Validate what you read back.** Range-check numbers with `HoliBooks.clampInt`; treat `localStorage` as untrusted and possibly corrupt.
+6. **Ignore stale responses** with `HoliBooks.latestOnly()` when a reader can start a second request before the first returns.
+7. **One version string.** `package.json`, `VERSION`, `manifest.json`, the cache names in `sw.js` and every `?v=` must match; a test enforces it. A page asset must be listed in `sw.js` under the exact URL the page requests.
+8. **Every bug fix comes with a test** in `tests/`. Reader scripts are loaded into a fake DOM by `tests/helpers/browser-env.mjs`; no dependencies are needed.
+9. **Keep each file's line endings.** The repo mixes CRLF and LF, sometimes within one file. Do not normalise a file you are only editing in part.
 
 ---
 
@@ -154,16 +170,21 @@ HoliBooks is built with **vanilla JavaScript** - no React, Vue, Angular, or othe
 ```
 HoliBooks/
 ├── index.html                    # Landing page with religion selector
+├── offline.html                  # Service-worker offline fallback
 ├── manifest.json                 # PWA manifest
-├── package.json                  # Node.js dependencies and scripts
-├── serve.js                      # Local development server
-├── test-apis.js                  # API endpoint testing
-├── README.md                     # User documentation
-├── LICENSE                       # MIT license
-├── .gitignore                    # Git ignore rules
-├── .vercel/                      # Vercel configuration
-│   ├── project.json
-│   └── README.txt
+├── sw.js                         # Service worker (precache + offline)
+├── package.json                  # Scripts only; there are no dependencies
+├── serve.js                      # Local preview server
+├── test-apis.js                  # Optional live API check (npm run test:apis)
+├── README.md                     # User documentation, data sources and licences
+├── CHANGELOG.md                  # Release notes
+├── LICENSE                       # MIT license (code only)
+├── .github/workflows/ci.yml      # CI: syntax check, tests, gitleaks
+├── scripts/
+│   └── build-dhammapada.mjs      # Regenerates dhammapada-data.js from SuttaCentral
+├── tests/                        # Offline node:test suite
+│   ├── helpers/browser-env.mjs   # Fake DOM for loading the browser scripts
+│   └── fixtures/                 # Recorded API response shapes
 ├── css/
 │   ├── global.css               # Global styles, CSS variables, themes
 │   └── animations.css           # Animation keyframes and effects
@@ -183,7 +204,7 @@ HoliBooks/
 │       │   ├── judaism-card.svg
 │       │   ├── sikhism-card.svg
 │       │   └── buddhism-card.svg
-│       └── icons/               # UI icons (if any)
+│   └── icons/                   # App icons: icon.svg, icon-192.png, icon-512.png
 ├── religions/                   # Individual religion readers
 │   ├── islam/
 │   │   ├── quran.html          # Quran reader page
@@ -206,9 +227,10 @@ HoliBooks/
 │   │   ├── gurbani.css         # Gurbani-specific styles
 │   │   └── gurbani.js          # Gurbani reader logic
 │   └── buddhism/
-│       ├── tripitaka.html      # Tripitaka reader page
-│       ├── tripitaka.css       # Tripitaka-specific styles
-│       └── tripitaka.js        # Tripitaka reader logic
+│       ├── tripitaka.html      # Dhammapada reader page
+│       ├── tripitaka.css       # Dhammapada-specific styles
+│       ├── dhammapada-data.js  # Generated: all 423 verses (SuttaCentral, CC0)
+│       └── tripitaka.js        # Dhammapada reader logic
 └── screenshots/                # Screenshots for README/PWA
     ├── home.png
     └── quran.png
@@ -221,8 +243,7 @@ HoliBooks/
 ### Local Development
 
 ```bash
-# Install dependencies
-npm install
+# There is nothing to install: no dependencies.
 
 # Start development server
 npm run dev
@@ -237,10 +258,14 @@ node serve.js
 ### Testing
 
 ```bash
-# Test all API endpoints
+# Offline test suite (no network needed; this is what CI runs)
 npm test
-# OR
-node test-apis.js
+
+# Syntax-check every tracked JS file
+npm run check
+
+# Live check of every API endpoint and edition the readers use
+npm run test:apis
 
 # Manual testing checklist:
 # - Theme toggle works on all pages
@@ -296,9 +321,11 @@ CORS: Enabled
 Base URL: https://cdn.jsdelivr.net/gh/wldeh/bible-api
 
 Endpoints:
-- GET /bibles.json                    # List all Bible versions
-- GET /bibles/{version}/books.json    # List books in version
+- GET /bibles/bibles.json             # List all Bible versions (with copyright field)
 - GET /bibles/{version}/books/{book}/chapters/{chapter}.json
+  # {book} is lowercase with no hyphens: 1samuel, songofsolomon
+  # Versions used: en-kjv, en-web, en-asv (Bible); en-ojps, he-wlc, en-kjv (Torah)
+  # Upstream repeats verses in some versions; readers de-duplicate
 
 Rate Limit: JSDelivr CDN (high limit)
 CORS: Enabled via CDN
@@ -309,8 +336,10 @@ CORS: Enabled via CDN
 Base URL: https://vedicscriptures.github.io
 
 Endpoints:
-- GET /slok/{chapter}/{verse}    # Get specific verse
-- GET /chapter/{number}          # Get chapter info
+- GET /slok/{chapter}/{verse}/   # One verse (trailing slash; without it you get a redirect)
+- GET /chapter/{number}/         # Chapter summary
+  # There is no per-chapter verse endpoint: /slok/{chapter}/ is an HTML page.
+  # English: purohit.et (fallback siva.et). Hindi: tej.ht (fallback rams.ht).
 
 Rate Limit: Unknown (be respectful)
 CORS: Enabled
@@ -321,7 +350,8 @@ CORS: Enabled
 Base URL: https://api.gurbaninow.com/v2
 
 Endpoints:
-- GET /ang/{number}              # Get page by ang number
+- GET /ang/{number}              # Page by ang number: page[].line.{gurmukhi.unicode,
+                                 #   transliteration.english.text, translation.english.default, writer.english}
 - GET /search/{query}            # Search Gurbani
 - GET /hukamnama                 # Get today's hukamnama
 
@@ -720,15 +750,15 @@ npm test
 
 **Problem**: Vercel build fails  
 **Solutions**:
-1. Check `vercel.json` configuration
+1. There is no `vercel.json`; the project deploys as static files with default settings
 2. Verify `package.json` scripts
 3. Check for syntax errors
 4. Review Vercel build logs
 
 **Problem**: 404 errors on refresh  
 **Solutions**:
-1. Check `vercel.json` routes
-2. Ensure SPA routing configured
+1. There is no `vercel.json`; each page is a real file, so no routing is needed
+2. Check the path and its case
 3. Verify file paths are correct
 
 ### Performance Issues
@@ -813,4 +843,4 @@ This project is licensed under the MIT License. See [LICENSE](./LICENSE) for det
 
 ---
 
-*Last updated: January 2026 | Version 2.0.0*
+*Last updated: November 2026 | Version 2.0.2*

@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.2] - 2026-11-10
+
+Production audit. Every fix below has a regression test in `tests/`.
+
+### Fixed
+- **Bible:** 18 of 66 books and 9 of 12 versions pointed at IDs that do not exist upstream; every verse was shown twice (upstream repeats them). Versions offered are now KJV, WEB and ASV.
+- **Torah:** three of four languages did not exist upstream. Now JPS 1917 (default), Hebrew (Westminster Leningrad Codex) and KJV.
+- **Bhagavad Gita:** the reader never loaded live data (wrong URL) and showed five bundled verses per chapter. It now loads every verse from the API; English is Shri Purohit Swami.
+- **Guru Granth Sahib:** transliteration rendered as `[object Object]`; the writer never showed.
+- **Dhammapada:** the embedded text was incomplete and largely wrong. Replaced with all 423 verses from SuttaCentral (CC0).
+- **Quran:** the Bismillah appeared twice on 112 surahs; with the API down any surah showed Al-Fatihah; Back did not reload the surah.
+- **Offline:** the service worker never served its precached shell (URL mismatch, `/` and query-string navigations). The app shell now works offline after one visit.
+- **Install:** the manifest had no real icons; 192px and 512px icons added.
+- **Security:** API text and bookmark fields are escaped before reaching `innerHTML`; the preview server no longer serves dotfiles or answers foreign Host headers.
+- **Robustness:** corrupt `localStorage` no longer breaks pages; Retry buttons work; stale responses are ignored.
+- **Audio:** playback speed is kept across tracks and saved; errors no longer loop forever offline.
+- **API status badge:** it reported "All systems operational" whatever the APIs answered; it now reads real status codes and no longer polls.
+- **Homepage and search:** two misattributed quotes corrected; search result links no longer 404.
+
+### Removed
+- Bundled translations that were copyrighted, mislabelled or wrong (Gita, Gurbani, Dhammapada, Quran samples).
+- Bible and Torah versions that never existed upstream.
+- Unused legacy files: `app.js`, `style.css`, `quran_arabic.json`, `extract_pdf.py`, `EntireQuranonOnePage.pdf`, and five stale status documents.
+- The unused `vercel` devDependency.
+
+### Changed
+- CI checks the syntax of every JavaScript file, runs the tests on Node 18, 20 and 22, and scans the full history for secrets.
+
+---
+
 ## [2.0.1] - 2026-01-31
 
 ### Fixed
