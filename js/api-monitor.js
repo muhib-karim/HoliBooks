@@ -38,7 +38,6 @@ class APIMonitor {
         
         // Each URL is an endpoint a reader really requests (see the API_BASE
         // constant in each religions/*/ script); tests keep them in step.
-        this.cache = new Map();
         this.statusIndicator = null;
         this.tooltip = null;
         
@@ -265,56 +264,6 @@ class APIMonitor {
         }
     }
     
-    // Cache management for offline support
-    async fetchWithCache(url, options = {}) {
-        const cacheKey = `${url}-${JSON.stringify(options)}`;
-        
-        // Try cache first
-        if (this.cache.has(cacheKey)) {
-            const cached = this.cache.get(cacheKey);
-            if (Date.now() - cached.timestamp < 24 * 60 * 60 * 1000) {
-                console.log('[API Monitor] Using cached data for:', url);
-                return cached.data;
-            }
-        }
-        
-        // Fetch fresh data
-        try {
-            const response = await fetch(url, options);
-            const data = await response.json();
-            
-            // Cache successful response
-            this.cache.set(cacheKey, {
-                data,
-                timestamp: Date.now()
-            });
-            
-            return data;
-        } catch (error) {
-            // Return cached data if available, even if expired
-            if (this.cache.has(cacheKey)) {
-                console.log('[API Monitor] Using stale cached data for:', url);
-                return this.cache.get(cacheKey).data;
-            }
-            throw error;
-        }
-    }
-    
-    // Clear expired cache entries
-    clearExpiredCache() {
-        const now = Date.now();
-        const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-        
-        for (const [key, value] of this.cache.entries()) {
-            if (now - value.timestamp > maxAge) {
-                this.cache.delete(key);
-            }
-        }
-    }
-    
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
     
     showToast(message, type = 'info') {
         if (window.HoliBooks && window.HoliBooks.showToast) {

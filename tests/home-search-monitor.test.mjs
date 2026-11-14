@@ -141,3 +141,10 @@ test('API monitor checks once per load and does not poll or retry in a loop', as
   assert.equal(env.intervals.length, 0, 'no setInterval polling of third-party APIs');
   assert.equal(env.window.HoliBooks.apiMonitor, env.window.apiMonitor, 'HoliBooks.apiMonitor is the live instance');
 });
+
+test('API monitor carries no unused response cache', async () => {
+  const { monitor } = await openMonitor(async () => ({ ok: true, status: 200 }));
+  for (const name of ['fetchWithCache', 'clearExpiredCache', 'sleep', 'cache']) {
+    assert.equal(monitor[name], undefined, `${name} is dead code`);
+  }
+});
