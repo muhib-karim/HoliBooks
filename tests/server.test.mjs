@@ -12,6 +12,8 @@ async function startServer(t) {
   const child = spawn(process.execPath, ['serve.js'], {cwd:root, env:{...process.env,PORT:'0'}, stdio:['ignore','pipe','pipe']});
   const stopped = once(child, 'exit');
   t.after(async () => {child.kill(); await stopped;});
+  let stderr = '';
+  child.stderr.on('data', chunk => { stderr += chunk; });
   const startup = await new Promise((resolve,reject) => {
     let text = '';
     const timer = setTimeout(() => reject(new Error('Server startup timeout')), 5000);
@@ -20,11 +22,13 @@ async function startServer(t) {
     child.stdout.on('data', chunk => {text += chunk; if (text.includes('http://')) {clearTimeout(timer);resolve(text);}});
   });
   const port = Number(startup.match(/127\.0\.0\.1:(\d+)/)[1]);
-  return (urlPath, {method='GET', headers={}}={}) => new Promise((resolve,reject) => {
+  const get = (urlPath, {method='GET', headers={}}={}) => new Promise((resolve,reject) => {
     const req = request({hostname:'127.0.0.1',port,path:urlPath,method,headers}, res => {
       let body='';res.on('data', x => body+=x);res.on('end',()=>resolve({status:res.statusCode,body,type:res.headers['content-type'],headers:res.headers}));
     });req.on('error',reject);req.end();
   });
+  get.stderr = () => stderr;
+  return get;
 }
 
 test('local server boots as ESM and serves only expected paths', async (t) => {
@@ -71,4 +75,14 @@ test('local server sends length, no-store and correct types', async (t) => {
   assert.match((await get('/tests/server.test.mjs')).type, /javascript/);
   assert.match((await get('/assets/icons/icon.svg')).type, /image\/svg\+xml/);
   assert.match((await get('/manifest.json')).type, /application\/json/);
+});
+
+test('local server logs the cause of a 500 so it can be debugged', async (t) => {
+  const get = await startServer(t);
+  // A path segment longer than NAME_MAX (255) makes stat() fail with ENAMETOOLONG: not a 404.
+  const res = await get('/' + 'a'.repeat(300));
+  assert.equal(res.status, 500);
+  assert.equal(res.body, 'Server error', 'the client still gets no detail');
+  for (let i = 0; i < 50 && !get.stderr().includes('ENAMETOOLONG'); i++) await new Promise(r => setTimeout(r, 20));
+  assert.match(get.stderr(), /ENAMETOOLONG/);
 });
