@@ -45,6 +45,7 @@ const server = http.createServer(async (req, res) => {
     res.end(req.method === 'HEAD' ? undefined : content);
   } catch (err) {
     const status = err instanceof URIError ? 400 : ['ENOENT','ENOTDIR','EISDIR'].includes(err.code) ? 404 : 500;
+    if (status === 500) console.error(err);
     res.writeHead(status); res.end(status === 404 ? 'Not found' : status === 400 ? 'Invalid path' : 'Server error');
   }
 });
