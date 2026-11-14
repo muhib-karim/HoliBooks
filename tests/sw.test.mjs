@@ -163,6 +163,34 @@ test('API responses are network-first with a cache fallback', async () => {
   assert.equal((await worker.request('https://api.alquran.cloud/v1/surah/2', { mode: 'cors' })).type, 'error');
 });
 
+test('a full cache never costs the user a fresh API answer', async () => {
+  const worker = createWorker();
+  await worker.install();
+
+  // First answer caches fine; then the store refuses every further write, as
+  // Cache Storage does at quota.
+  const url = 'https://api.alquran.cloud/v1/surah/1';
+  assert.equal((await worker.request(url, { mode: 'cors' })).text, 'remote:/v1/surah/1');
+  const dynamic = worker.stores.get(worker.constant('DYNAMIC_CACHE'));
+  const realPut = dynamic.put.bind(dynamic);
+  let refuse = true;
+  dynamic.put = async (...args) => {
+    if (refuse) throw new DOMException('The quota has been exceeded.', 'QuotaExceededError');
+    return realPut(...args);
+  };
+
+  // The network is fine; only the cache is full. The fresh answer must still win.
+  const fresh = await worker.request('https://api.alquran.cloud/v1/surah/2', { mode: 'cors' });
+  assert.equal(fresh.status, 200, 'a rejected cache write must not swallow the network answer');
+  assert.equal(fresh.text, 'remote:/v1/surah/2');
+
+  // Once the store accepts writes again (after trim freed space), caching resumes.
+  refuse = false;
+  await worker.request('https://api.alquran.cloud/v1/surah/3', { mode: 'cors' });
+  worker.state.online = false;
+  assert.equal((await worker.request('https://api.alquran.cloud/v1/surah/3', { mode: 'cors' })).text, 'remote:/v1/surah/3');
+});
+
 test('requests the worker should not handle pass straight through', async () => {
   const worker = createWorker();
   await worker.install();

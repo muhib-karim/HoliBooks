@@ -175,8 +175,15 @@ async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
-      await cache.put(request, networkResponse.clone());
-      await trimCache(cache);
+      // Make room before writing: at quota the put rejects before a later trim
+      // could evict anything. And never let a failed write cost the user the
+      // answer the network just returned.
+      try {
+        await trimCache(cache, DYNAMIC_CACHE_LIMIT - 1);
+        await cache.put(request, networkResponse.clone());
+      } catch {
+        // Quota or serialization failure: the response is still served.
+      }
     }
     return networkResponse;
   } catch (error) {
@@ -189,11 +196,13 @@ async function networkFirst(request) {
  * Cache.keys() returns Requests in insertion order, so the first keys are the
  * oldest answers.
  * @param {Cache} cache
+ * @param {number} [limit] keep at most this many entries; callers about to
+ *   insert pass one less than the cap so the write lands within the bound.
  * @returns {Promise<void>}
  */
-async function trimCache(cache) {
+async function trimCache(cache, limit = DYNAMIC_CACHE_LIMIT) {
   const keys = await cache.keys();
-  for (let i = 0; i < keys.length - DYNAMIC_CACHE_LIMIT; i++) {
+  for (let i = 0; i < keys.length - limit; i++) {
     await cache.delete(keys[i]);
   }
 }
