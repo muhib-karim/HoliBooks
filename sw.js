@@ -8,6 +8,9 @@
 const STATIC_CACHE = 'holibooks-static-v2.0.2';
 const DYNAMIC_CACHE = 'holibooks-dynamic-v2.0.2';
 const OFFLINE_URL = '/offline.html';
+// The dynamic cache holds API answers. Without a cap it would grow for the life
+// of the install, so once it is full the oldest entries are evicted first.
+const DYNAMIC_CACHE_LIMIT = 8;
 
 // Everything a page needs to render, listed under the exact URL the pages
 // request (including the ?v= cache-buster): a cache lookup does not ignore
@@ -172,11 +175,35 @@ async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone());
+      // Make room before writing: at quota the put rejects before a later trim
+      // could evict anything. And never let a failed write cost the user the
+      // answer the network just returned.
+      try {
+        await trimCache(cache, DYNAMIC_CACHE_LIMIT - 1);
+        await cache.put(request, networkResponse.clone());
+      } catch {
+        // Quota or serialization failure: the response is still served.
+      }
     }
     return networkResponse;
   } catch (error) {
     return (await cache.match(request)) || Response.error();
+  }
+}
+
+/**
+ * Keep the dynamic cache bounded: drop the oldest entries beyond the limit.
+ * Cache.keys() returns Requests in insertion order, so the first keys are the
+ * oldest answers.
+ * @param {Cache} cache
+ * @param {number} [limit] keep at most this many entries; callers about to
+ *   insert pass one less than the cap so the write lands within the bound.
+ * @returns {Promise<void>}
+ */
+async function trimCache(cache, limit = DYNAMIC_CACHE_LIMIT) {
+  const keys = await cache.keys();
+  for (let i = 0; i < keys.length - limit; i++) {
+    await cache.delete(keys[i]);
   }
 }
 
