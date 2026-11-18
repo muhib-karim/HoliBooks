@@ -2068,7 +2068,7 @@
             
             toast.innerHTML = `
                 <span style="font-size: 1.2rem;">${icon}</span>
-                <span>${message}</span>
+                <span>${HoliBooks.escapeHTML(message)}</span>
             `;
             
             container.appendChild(toast);
