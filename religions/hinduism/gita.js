@@ -158,8 +158,10 @@ async function fetchChapter(chapter) {
 
 function readCachedChapter(chapter) {
     const cached = HoliBooks.storage.get(CACHE_PREFIX + chapter.number);
+    // Every field renderVerses reads must be present; storage can hold anything.
     const valid = Array.isArray(cached) && cached.length === chapter.verses &&
-        cached.every(v => v && typeof v.slok === 'string' && typeof v.verse === 'number');
+        cached.every(v => v && typeof v.verse === 'number' &&
+            ['slok', 'transliteration', 'english', 'englishBy', 'hindi', 'hindiBy'].every(k => typeof v[k] === 'string'));
     return valid ? cached : null;
 }
 

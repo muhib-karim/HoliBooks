@@ -135,3 +135,13 @@ test('Gita ships no bundled verses', () => {
   assert.ok(!src.includes('getFallbackVerses'));
   assert.ok(src.length < 30000, `gita.js is ${src.length} bytes`);
 });
+
+test('Gita refetches a cached chapter whose verses lack the translation fields', async () => {
+  // Storage is untrusted: an entry with the right length but missing fields must not be served.
+  const stale = Array.from({ length: 20 }, (_, i) => ({ verse: i + 1, slok: 'FIXTURE SLOK', transliteration: '' }));
+  const { env } = await openGita({ storage: { gita_chapter_v3_12: JSON.stringify(stale) } });
+  assert.equal(env.requests.length, 20, 'an incomplete cache entry must not be served');
+  assert.match(env.el('verses-container').innerHTML, /English of verse 20/);
+  const cached = JSON.parse(env.store.get('gita_chapter_v3_12'));
+  assert.equal(typeof cached[0].english, 'string', 'the cache is rewritten in full');
+});
