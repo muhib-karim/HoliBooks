@@ -20,6 +20,9 @@ class FakeCache {
     fetched.forEach(([abs, response]) => this.entries.set(abs, response));
   }
   async put(request, response) { this.entries.set(typeof request === 'string' ? new URL(request, ORIGIN).href : request.url, response); }
+  // Cache API: keys() lists Requests in insertion order; delete() removes one.
+  async keys() { return [...this.entries.keys()].map((url) => new Request(url)); }
+  async delete(request) { return this.entries.delete(typeof request === 'string' ? new URL(request, ORIGIN).href : request.url); }
   async match(request, options = {}) {
     const url = typeof request === 'string' ? new URL(request, ORIGIN).href : request.url;
     if (this.entries.has(url)) return this.entries.get(url).clone();
@@ -66,6 +69,8 @@ function createWorker({ failing = [] } = {}) {
   return {
     state, stores, caches,
     precache: [...vm.runInContext('PRECACHE_URLS', context)],
+    /** Read a top-level constant from sw.js, or undefined if it is not declared. */
+    constant: (name) => { try { return vm.runInContext(name, context); } catch { return undefined; } },
     install: () => lifecycle('install'),
     activate: () => lifecycle('activate'),
     /** Send a fetch event; resolves to { intercepted, text, type, status }. */
@@ -158,6 +163,34 @@ test('API responses are network-first with a cache fallback', async () => {
   assert.equal((await worker.request('https://api.alquran.cloud/v1/surah/2', { mode: 'cors' })).type, 'error');
 });
 
+test('a full cache never costs the user a fresh API answer', async () => {
+  const worker = createWorker();
+  await worker.install();
+
+  // First answer caches fine; then the store refuses every further write, as
+  // Cache Storage does at quota.
+  const url = 'https://api.alquran.cloud/v1/surah/1';
+  assert.equal((await worker.request(url, { mode: 'cors' })).text, 'remote:/v1/surah/1');
+  const dynamic = worker.stores.get(worker.constant('DYNAMIC_CACHE'));
+  const realPut = dynamic.put.bind(dynamic);
+  let refuse = true;
+  dynamic.put = async (...args) => {
+    if (refuse) throw new DOMException('The quota has been exceeded.', 'QuotaExceededError');
+    return realPut(...args);
+  };
+
+  // The network is fine; only the cache is full. The fresh answer must still win.
+  const fresh = await worker.request('https://api.alquran.cloud/v1/surah/2', { mode: 'cors' });
+  assert.equal(fresh.status, 200, 'a rejected cache write must not swallow the network answer');
+  assert.equal(fresh.text, 'remote:/v1/surah/2');
+
+  // Once the store accepts writes again (after trim freed space), caching resumes.
+  refuse = false;
+  await worker.request('https://api.alquran.cloud/v1/surah/3', { mode: 'cors' });
+  worker.state.online = false;
+  assert.equal((await worker.request('https://api.alquran.cloud/v1/surah/3', { mode: 'cors' })).text, 'remote:/v1/surah/3');
+});
+
 test('requests the worker should not handle pass straight through', async () => {
   const worker = createWorker();
   await worker.install();
@@ -178,4 +211,57 @@ test('activation clears old caches and does not force-reload open tabs', async (
   assert.ok(!names.includes('holibooks-static-v2-0-0'), `old cache still present: ${names}`);
   assert.equal(worker.state.claimed, 1);
   assert.equal(worker.state.navigated, 0, 'client.navigate() would discard reading position and stop audio');
+});
+
+// F3: networkFirst() put every API answer into DYNAMIC_CACHE with no eviction,
+// so the cache grew for the life of the install. The dynamic cache must stay
+// bounded: once the cap is reached, the oldest entries go first.
+test('the dynamic cache is bounded and evicts the oldest entries', async () => {
+  const worker = createWorker();
+  await worker.install();
+
+  // The worker declares its own cap; without one there is nothing to respect.
+  const cap = worker.constant('DYNAMIC_CACHE_LIMIT');
+  assert.equal(typeof cap, 'number', 'sw.js must declare a numeric DYNAMIC_CACHE_LIMIT');
+  assert.ok(cap > 0, `DYNAMIC_CACHE_LIMIT must be positive, got ${cap}`);
+
+  // Cache twice as many API answers as the cap allows.
+  const total = cap * 2;
+  const urls = Array.from({ length: total }, (_, i) => `https://api.alquran.cloud/v1/surah/${i + 1}`);
+  for (const url of urls) {
+    const answer = await worker.request(url, { mode: 'cors' });
+    assert.equal(answer.text, `remote:/v1/surah/${url.split('/').pop()}`, `${url} is served from the network`);
+  }
+
+  const dynamic = worker.stores.get(worker.constant('DYNAMIC_CACHE'));
+  assert.ok(dynamic, 'the dynamic cache exists after API traffic');
+  const cached = [...dynamic.entries.keys()].map((u) => new URL(u).pathname.split('/').pop());
+
+  assert.ok(cached.length <= cap, `dynamic cache holds ${cached.length} entries, cap is ${cap}`);
+  assert.equal(cached.length, cap, 'it keeps the cap worth of entries, not fewer');
+
+  // The newest entries survive; the oldest are the ones evicted.
+  const newest = urls.slice(-cap).map((u) => u.split('/').pop());
+  assert.deepEqual(cached.slice().sort(), newest.slice().sort(), 'the retained entries are the most recent ones');
+  for (const stale of urls.slice(0, total - cap)) {
+    const path = new URL(stale).pathname;
+    assert.ok(!dynamic.entries.has(`https://api.alquran.cloud${path}`), `${stale} should have been evicted`);
+  }
+});
+
+test('a cached API answer is still served offline after eviction pressure', async () => {
+  const worker = createWorker();
+  await worker.install();
+  const cap = worker.constant('DYNAMIC_CACHE_LIMIT') ?? 1;
+  const url = 'https://api.alquran.cloud/v1/surah/1';
+  assert.equal((await worker.request(url, { mode: 'cors' })).text, 'remote:/v1/surah/1');
+
+  // Fill past the cap with newer traffic, then go offline.
+  for (let i = 0; i < cap + 2; i++) await worker.request(`https://api.alquran.cloud/v1/surah/${i + 2}`, { mode: 'cors' });
+  worker.state.online = false;
+
+  const first = await worker.request(url, { mode: 'cors' });
+  assert.equal(first.type, 'error', 'the oldest answer was evicted, so it is not served from cache');
+  const recent = await worker.request(`https://api.alquran.cloud/v1/surah/${cap + 3}`, { mode: 'cors' });
+  assert.equal(recent.text, `remote:/v1/surah/${cap + 3}`, 'the newest answer is still available offline');
 });
