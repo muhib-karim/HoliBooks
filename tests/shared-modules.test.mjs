@@ -132,3 +132,12 @@ test('language selector: stored selections must be a plain object', () => {
   const kept = open('js/language-selector.js', { holibooks_languages: '{"islam":"en.pickthall"}' }).window.languageSelector;
   assert.equal(kept.getLanguage('islam'), 'en.pickthall');
 });
+
+test('bookmarks: a search with no matches says so instead of "No bookmarks yet"', () => {
+  const env = open('js/bookmarks.js', { holibooks_bookmarks: JSON.stringify([{ id: 'a1', religion: 'islam', religionName: 'Islam', text: 'FIXTURE TEXT', reference: 'Quran 2:255' }]) });
+  env.window.bookmarkManager.filterBookmarks('zzz');
+  const html = env.el('bookmark-list').innerHTML;
+  assert.ok(!html.includes('FIXTURE TEXT'), 'the non-matching bookmark is hidden');
+  assert.match(html, /No matching bookmarks/);
+  assert.ok(!html.includes('No bookmarks yet'), 'the user has bookmarks');
+});

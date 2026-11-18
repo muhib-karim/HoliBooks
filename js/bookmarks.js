@@ -512,6 +512,10 @@ class BookmarkManager {
         this.fabCountEl.textContent = count;
         this.fabCountEl.style.display = count > 0 ? 'flex' : 'none';
 
+        if (bookmarks.length === 0 && this.bookmarks.length > 0) {
+            this.listContainer.innerHTML = '<div class="bookmark-empty"><p>No matching bookmarks</p></div>';
+            return;
+        }
         if (bookmarks.length === 0) {
             this.listContainer.innerHTML = `
                 <div class="bookmark-empty">
